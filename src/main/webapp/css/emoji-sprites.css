@@ -1,0 +1,671 @@
+.GrinningFace {
+    background: url('../images/emoji.png') no-repeat -6px -6px;
+    width: 28px;
+    height: 27px;
+}
+
+.GrinningFaceWithBigEyes {
+    background: url('../images/emoji.png') no-repeat -46px -6px;
+    width: 28px;
+    height: 27px;
+}
+
+.GrinningFaceWithSmilingEyes {
+    background: url('../images/emoji.png') no-repeat -86px -6px;
+    width: 28px;
+    height: 27px;
+}
+
+.BeamingFaceWithSmilingEyes {
+    background: url('../images/emoji.png') no-repeat -127px -6px;
+    width: 28px;
+    height: 27px;
+}
+
+.GrinningSquintingFace {
+    background: url('../images/emoji.png') no-repeat -167px -6px;
+    width: 28px;
+    height: 27px;
+}
+
+.GrinningFaceWithSweat {
+    background: url('../images/emoji.png') no-repeat -208px -6px;
+    width: 27px;
+    height: 27px;
+}
+
+.FaceWithTearsOfJoy {
+    background: url('../images/emoji.png') no-repeat -248px -6px;
+    width: 28px;
+    height: 27px;
+}
+
+.RollingOnTheFloorLaughing {
+    background: url('../images/emoji.png') no-repeat -289px -6px;
+    width: 27px;
+    height: 27px;
+}
+
+.SmilingFace {
+    background: url('../images/emoji.png') no-repeat -351px -6px;
+    width: 28px;
+    height: 27px;
+}
+
+.SmilingFaceWithSmilingEyes {
+    background: url('../images/emoji.png') no-repeat -392px -6px;
+    width: 27px;
+    height: 27px;
+}
+
+.SmilingFaceWithHalo {
+    background: url('../images/emoji.png') no-repeat -432px -6px;
+    width: 28px;
+    height: 27px;
+}
+
+.SlightlySmilingFace {
+    background: url('../images/emoji.png') no-repeat -472px -6px;
+    width: 28px;
+    height: 27px;
+}
+
+.Upside-DownFace {
+    background: url('../images/emoji.png') no-repeat -513px -6px;
+    width: 28px;
+    height: 27px;
+}
+
+.WinkingFace {
+    background: url('../images/emoji.png') no-repeat -6px -40px;
+    width: 28px;
+    height: 28px;
+}
+
+.RelievedFace {
+    background: url('../images/emoji.png') no-repeat -46px -40px;
+    width: 28px;
+    height: 28px;
+}
+
+.SmilingFaceWithHeart-Eyes {
+    background: url('../images/emoji.png') no-repeat -86px -40px;
+    width: 28px;
+    height: 28px;
+}
+
+.SmilingFaceWithHearts {
+    background: url('../images/emoji.png') no-repeat -127px -40px;
+    width: 28px;
+    height: 28px;
+}
+
+.FaceBlowingAKiss {
+    background: url('../images/emoji.png') no-repeat -167px -40px;
+    width: 28px;
+    height: 28px;
+}
+
+.KissingFace {
+    background: url('../images/emoji.png') no-repeat -208px -40px;
+    width: 27px;
+    height: 28px;
+}
+
+.KissingFaceWithSmilingEyes {
+    background: url('../images/emoji.png') no-repeat -248px -40px;
+    width: 28px;
+    height: 28px;
+}
+
+.KissingFaceWithClosedEyes {
+    background: url('../images/emoji.png') no-repeat -289px -40px;
+    width: 27px;
+    height: 28px;
+}
+
+.FaceSavoringFood {
+    background: url('../images/emoji.png') no-repeat -329px -40px;
+    width: 28px;
+    height: 28px;
+}
+
+.FaceWithTongue {
+    background: url('../images/emoji.png') no-repeat -369px -40px;
+    width: 28px;
+    height: 28px;
+}
+
+.SquintingFaceWithTongue {
+    background: url('../images/emoji.png') no-repeat -409px -40px;
+    width: 29px;
+    height: 28px;
+}
+
+.WinkingFaceWithTongue {
+    background: url('../images/emoji.png') no-repeat -450px -40px;
+    width: 28px;
+    height: 28px;
+}
+
+.ZanyFace {
+    background: url('../images/emoji.png') no-repeat -490px -40px;
+    width: 28px;
+    height: 28px;
+}
+
+.FaceWithRaisedEyebrow {
+    background: url('../images/emoji.png') no-repeat -531px -40px;
+    width: 27px;
+    height: 28px;
+}
+
+.FaceWithMonocle {
+    background: url('../images/emoji.png') no-repeat -6px -75px;
+    width: 28px;
+    height: 28px;
+}
+
+.NerdFace {
+    background: url('../images/emoji.png') no-repeat -46px -75px;
+    width: 28px;
+    height: 28px;
+}
+
+.SmilingFaceWithSunglasses {
+    background: url('../images/emoji.png') no-repeat -86px -75px;
+    width: 28px;
+    height: 28px;
+}
+
+.Star-Struck {
+    background: url('../images/emoji.png') no-repeat -149px -75px;
+    width: 28px;
+    height: 28px;
+}
+
+.PartyingFace {
+    background: url('../images/emoji.png') no-repeat -190px -75px;
+    width: 28px;
+    height: 28px;
+}
+
+.SmirkingFace {
+    background: url('../images/emoji.png') no-repeat -230px -75px;
+    width: 28px;
+    height: 28px;
+}
+
+.UnamusedFace {
+    background: url('../images/emoji.png') no-repeat -271px -75px;
+    width: 27px;
+    height: 28px;
+}
+
+.DisappointedFace {
+    background: url('../images/emoji.png') no-repeat -311px -75px;
+    width: 28px;
+    height: 28px;
+}
+
+.PensiveFace {
+    background: url('../images/emoji.png') no-repeat -351px -75px;
+    width: 28px;
+    height: 28px;
+}
+
+.WorriedFace {
+    background: url('../images/emoji.png') no-repeat -392px -75px;
+    width: 27px;
+    height: 28px;
+}
+
+.ConfusedFace {
+    background: url('../images/emoji.png') no-repeat -432px -75px;
+    width: 28px;
+    height: 28px;
+}
+
+.SlightlyFrowningFace {
+    background: url('../images/emoji.png') no-repeat -472px -75px;
+    width: 28px;
+    height: 28px;
+}
+
+.FrowningFace {
+    background: url('../images/emoji.png') no-repeat -513px -75px;
+    width: 28px;
+    height: 28px;
+}
+
+.PerseveringFace {
+    background: url('../images/emoji.png') no-repeat -6px -110px;
+    width: 28px;
+    height: 28px;
+}
+
+.ConfoundedFace {
+    background: url('../images/emoji.png') no-repeat -46px -110px;
+    width: 28px;
+    height: 28px;
+}
+
+.TiredFace {
+    background: url('../images/emoji.png') no-repeat -86px -110px;
+    width: 28px;
+    height: 28px;
+}
+
+.WearyFace {
+    background: url('../images/emoji.png') no-repeat -127px -110px;
+    width: 28px;
+    height: 28px;
+}
+
+.PleadingFace {
+    background: url('../images/emoji.png') no-repeat -167px -110px;
+    width: 28px;
+    height: 28px;
+}
+
+.CryingFace {
+    background: url('../images/emoji.png') no-repeat -167px -110px;
+    width: 28px;
+    height: 28px;
+}
+
+.LoudlyCryingFace {
+    background: url('../images/emoji.png') no-repeat -248px -110px;
+    width: 28px;
+    height: 28px;
+}
+
+.FaceWithSteamFromNose {
+    background: url('../images/emoji.png') no-repeat -289px -110px;
+    width: 27px;
+    height: 28px;
+}
+
+.AngryFace {
+    background: url('../images/emoji.png') no-repeat -329px -110px;
+    width: 28px;
+    height: 28px;
+}
+
+.PoutingFace {
+    background: url('../images/emoji.png') no-repeat -369px -110px;
+    width: 28px;
+    height: 28px;
+}
+
+.FaceWithSymbolsOnMouth {
+    background: url('../images/emoji.png') no-repeat -409px -110px;
+    width: 29px;
+    height: 28px;
+}
+
+.ExplodingHead {
+    background: url('../images/emoji.png') no-repeat -450px -110px;
+    width: 28px;
+    height: 28px;
+}
+
+.FlushedFace {
+    background: url('../images/emoji.png') no-repeat -490px -110px;
+    width: 28px;
+    height: 28px;
+}
+
+.HotFace {
+    background: url('../images/emoji.png') no-repeat -531px -110px;
+    width: 27px;
+    height: 28px;
+}
+
+.ColdFace {
+    background: url('../images/emoji.png') no-repeat -6px -145px;
+    width: 28px;
+    height: 28px;
+}
+
+.FaceScreamingInFear {
+    background: url('../images/emoji.png') no-repeat -46px -145px;
+    width: 28px;
+    height: 28px;
+}
+
+.FearfulFace {
+    background: url('../images/emoji.png') no-repeat -86px -145px;
+    width: 28px;
+    height: 28px;
+}
+
+.AnxiousFaceWithSweat {
+    background: url('../images/emoji.png') no-repeat -127px -145px;
+    width: 28px;
+    height: 28px;
+}
+
+.SadButRelievedFace {
+    background: url('../images/emoji.png') no-repeat -167px -145px;
+    width: 28px;
+    height: 28px;
+}
+
+.DowncastFaceWithSweat {
+    background: url('../images/emoji.png') no-repeat -208px -145px;
+    width: 27px;
+    height: 28px;
+}
+
+.HuggingFace {
+    background: url('../images/emoji.png') no-repeat -248px -145px;
+    width: 28px;
+    height: 28px;
+}
+
+.ThinkingFace {
+    background: url('../images/emoji.png') no-repeat -289px -145px;
+    width: 27px;
+    height: 28px;
+}
+
+.FaceWithHandOverMouth {
+    background: url('../images/emoji.png') no-repeat -329px -145px;
+    width: 28px;
+    height: 28px;
+}
+
+.ShushingFace {
+    background: url('../images/emoji.png') no-repeat -369px -145px;
+    width: 28px;
+    height: 28px;
+}
+
+.LyingFace {
+    background: url('../images/emoji.png') no-repeat -409px -146px;
+    width: 29px;
+    height: 27px;
+}
+
+.FaceWithoutMouth {
+    background: url('../images/emoji.png') no-repeat -450px -145px;
+    width: 28px;
+    height: 28px;
+}
+
+.NeutralFace {
+    background: url('../images/emoji.png') no-repeat -490px -145px;
+    width: 28px;
+    height: 28px;
+}
+
+.ExpressionlessFace {
+    background: url('../images/emoji.png') no-repeat -531px -145px;
+    width: 27px;
+    height: 28px;
+}
+
+.GrimacingFace {
+    background: url('../images/emoji.png') no-repeat -6px -180px;
+    width: 28px;
+    height: 27px;
+}
+
+.FaceWithRollingEyes {
+    background: url('../images/emoji.png') no-repeat -46px -180px;
+    width: 28px;
+    height: 27px;
+}
+
+.HushedFace {
+    background: url('../images/emoji.png') no-repeat -86px -180px;
+    width: 28px;
+    height: 27px;
+}
+
+.FrowningFaceWithOpenMouth {
+    background: url('../images/emoji.png') no-repeat -127px -180px;
+    width: 28px;
+    height: 27px;
+}
+
+.AnguishedFace {
+    background: url('../images/emoji.png') no-repeat -167px -180px;
+    width: 28px;
+    height: 27px;
+}
+
+.FaceWithOpenMouth {
+    background: url('../images/emoji.png') no-repeat -208px -180px;
+    width: 27px;
+    height: 27px;
+}
+
+.AstonishedFace {
+    background: url('../images/emoji.png') no-repeat -248px -180px;
+    width: 28px;
+    height: 27px;
+}
+
+.YawningFace {
+    background: url('../images/emoji.png') no-repeat -289px -180px;
+    width: 27px;
+    height: 27px;
+}
+
+.SleepingFace {
+    background: url('../images/emoji.png') no-repeat -329px -180px;
+    width: 28px;
+    height: 27px;
+}
+
+.DroolingFace {
+    background: url('../images/emoji.png') no-repeat -369px -180px;
+    width: 28px;
+    height: 27px;
+}
+
+.SleepyFace {
+    background: url('../images/emoji.png') no-repeat -409px -180px;
+    width: 29px;
+    height: 27px;
+}
+
+.DizzyFace {
+    background: url('../images/emoji.png') no-repeat -450px -180px;
+    width: 28px;
+    height: 27px;
+}
+
+.Zipper-MouthFace {
+    background: url('../images/emoji.png') no-repeat -490px -180px;
+    width: 28px;
+    height: 27px;
+}
+
+.WoozyFace {
+    background: url('../images/emoji.png') no-repeat -531px -180px;
+    width: 27px;
+    height: 27px;
+}
+
+.NauseatedFace {
+    background: url('../images/emoji.png') no-repeat -6px -215px;
+    width: 28px;
+    height: 27px;
+}
+
+.FaceVomiting {
+    background: url('../images/emoji.png') no-repeat -46px -215px;
+    width: 28px;
+    height: 27px;
+}
+
+.SneezingFace {
+    background: url('../images/emoji.png') no-repeat -86px -215px;
+    width: 28px;
+    height: 27px;
+}
+
+.FaceWithMedicalMask {
+    background: url('../images/emoji.png') no-repeat -127px -215px;
+    width: 28px;
+    height: 27px;
+}
+
+.FaceWithThermometer {
+    background: url('../images/emoji.png') no-repeat -167px -215px;
+    width: 28px;
+    height: 27px;
+}
+
+.FaceWithHead-Bandage {
+    background: url('../images/emoji.png') no-repeat -208px -215px;
+    width: 27px;
+    height: 27px;
+}
+
+.Money-MouthFace {
+    background: url('../images/emoji.png') no-repeat -248px -215px;
+    width: 28px;
+    height: 27px;
+}
+
+.CowboyHatFace {
+    background: url('../images/emoji.png') no-repeat -289px -215px;
+    width: 27px;
+    height: 27px;
+}
+
+.SmilingFaceWithHorns {
+    background: url('../images/emoji.png') no-repeat -329px -215px;
+    width: 28px;
+    height: 27px;
+}
+
+.AngryFaceWithHorns {
+    background: url('../images/emoji.png') no-repeat -369px -215px;
+    width: 28px;
+    height: 27px;
+}
+
+.Ogre {
+    background: url('../images/emoji.png') no-repeat -409px -215px;
+    width: 29px;
+    height: 27px;
+}
+
+.Goblin {
+    background: url('../images/emoji.png') no-repeat -450px -215px;
+    width: 28px;
+    height: 27px;
+}
+
+.ClownFace {
+    background: url('../images/emoji.png') no-repeat -490px -215px;
+    width: 28px;
+    height: 27px;
+}
+
+.PileOfPoo {
+    background: url('../images/emoji.png') no-repeat -531px -218px;
+    width: 27px;
+    height: 24px;
+}
+
+.Ghost {
+    background: url('../images/emoji.png') no-repeat -6px -249px;
+    width: 28px;
+    height: 28px;
+}
+
+.Skull {
+    background: url('../images/emoji.png') no-repeat -47px -249px;
+    width: 24px;
+    height: 27px;
+}
+
+.SkullAndCrossbones {
+    background: url('../images/emoji.png') no-repeat -85px -249px;
+    width: 27px;
+    height: 28px;
+}
+
+.Alien {
+    background: url('../images/emoji.png') no-repeat -125px -249px;
+    width: 27px;
+    height: 28px;
+}
+
+.AlienMonster {
+    background: url('../images/emoji.png') no-repeat -162px -249px;
+    width: 28px;
+    height: 28px;
+}
+
+.Robot {
+    background: url('../images/emoji.png') no-repeat -203px -249px;
+    width: 27px;
+    height: 28px;
+}
+
+.Jack-O-Lantern {
+    background: url('../images/emoji.png') no-repeat -243px -249px;
+    width: 28px;
+    height: 28px;
+}
+
+.GrinningCat {
+    background: url('../images/emoji.png') no-repeat -283px -249px;
+    width: 28px;
+    height: 28px;
+}
+
+.GrinningCatWithSmilingEyes {
+    background: url('../images/emoji.png') no-repeat -324px -249px;
+    width: 27px;
+    height: 28px;
+}
+
+.CatWithTearsOfJoy {
+    background: url('../images/emoji.png') no-repeat -364px -249px;
+    width: 28px;
+    height: 28px;
+}
+
+.SmilingCatWithHeart-Eyes {
+    background: url('../images/emoji.png') no-repeat -404px -249px;
+    width: 28px;
+    height: 28px;
+}
+
+.CatWithWrySmile {
+    background: url('../images/emoji.png') no-repeat -445px -249px;
+    width: 28px;
+    height: 28px;
+}
+
+.KissingCat {
+    background: url('../images/emoji.png') no-repeat -485px -249px;
+    width: 28px;
+    height: 28px;
+}
+
+.WearyCat {
+    background: url('../images/emoji.png') no-repeat -526px -249px;
+    width: 27px;
+    height: 28px;
+}
+
+.CryingCat {
+    background: url('../images/emoji.png') no-repeat -6px -284px;
+    width: 28px;
+    height: 28px;
+}
+
+.PoutingCat {
+    background: url('../images/emoji.png') no-repeat -46px -284px;
+    width: 28px;
+    height: 28px;
+}
