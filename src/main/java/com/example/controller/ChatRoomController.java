@@ -70,7 +70,7 @@ public class ChatRoomController {
         try {
             // 连接到房间
             Socket socket = new Socket(hostAddress, port);
-            socket.setSoTimeout(100);// 设置超时时间
+            socket.setSoTimeout(20 * 1000);// 设置超时时间
             // 获取ip和端口号
             String localAddress = socket.getLocalAddress().toString().substring(1);
             int localPort = socket.getLocalPort();
@@ -86,6 +86,9 @@ public class ChatRoomController {
             Message message = new Message(msg, localAddress, localPort);
             // 获取输出流
             ObjectOutputStream oos = SocketMap.getObjectOutputStream(socket);
+            if (oos == null) {
+                return ResultEntity.createResultEntity(ResultEntity.ResultType.FAILED, CustomConstant.MESSAGE_SYSTEM_ERROR_NULL_POINTER_EXCEPTION + "ObjectOutputStream", null);
+            }
             // 发送数据
             oos.writeObject(message);
             return ResultEntity.createResultEntity(ResultEntity.ResultType.SUCCESS, null, null);
@@ -123,6 +126,9 @@ public class ChatRoomController {
             Message message = new Message(msg, localAddress, localPort);
             // 获取输出流
             ObjectOutputStream oos = SocketMap.getObjectOutputStream(socket);
+            if (oos == null) {
+                return ResultEntity.createResultEntity(ResultEntity.ResultType.FAILED, CustomConstant.MESSAGE_SYSTEM_ERROR_NULL_POINTER_EXCEPTION + "ObjectOutputStream", null);
+            }
             // 发送数据
             oos.writeObject(message);
             if (socket == null) {

@@ -151,7 +151,7 @@
     $(function () {
         // 发送点击事件
         $("#sendBtn").click(function () {
-            var image = $("#inputPicture").val();
+            const image = $("#inputPicture").val();
             if (image === "") {
                 sendMsg();
             } else {// 发送图片
@@ -218,7 +218,7 @@
 
         // 发送文件
         $("#uploadFile").click(function () {
-            var formData = new FormData();
+            const formData = new FormData();
             formData.append("files", $("#file")[0].files[0]);
             formData.append("port", ${sessionScope.port});
             formData.append("localAddress", "${sessionScope.localAddress}");
@@ -275,6 +275,9 @@
                 $("#msg").css("font-style", "normal");
             }
         })
+
+        // 页面加载成功后立即获取消息
+        recvMsg();
     })
 
     // 发送文字信息
@@ -327,10 +330,10 @@
     }
 
     /**
-     *轮询接收消息
+     *长轮询接收消息
      */
-    window.setInterval(function () {
-        var localAddress = "${sessionScope.localAddress}";
+    function recvMsg() {
+        const localAddress = "${sessionScope.localAddress}";
         var localPort = ${sessionScope.localPort};
         $.ajax({
             url: "chat/recv/message.json",
@@ -339,6 +342,7 @@
                 "localPort": localPort
             },
             dataType: "json",
+            timeout: 30000, // 超时时间要大于后台的超时时间
             success: function (response) {
                 const result = response.result;
                 if (result === "SUCCESS") {
@@ -380,9 +384,13 @@
                     let div = document.getElementById('words');
                     div.scrollTop = div.scrollHeight;
                 }
+                recvMsg();
+            },
+            error: function () {
+                recvMsg();
             }
         })
-    }, 400);
+    }
 
     // 监听后退
     $(document).ready(function () {

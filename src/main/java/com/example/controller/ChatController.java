@@ -36,6 +36,9 @@ public class ChatController {
         try {
             // 获取输出流
             ObjectOutputStream oos = SocketMap.getObjectOutputStream(socket);
+            if (oos == null) {
+                return ResultEntity.createResultEntity(ResultEntity.ResultType.FAILED, CustomConstant.MESSAGE_SYSTEM_ERROR_NULL_POINTER_EXCEPTION + "ObjectOutputStream", null);
+            }
             // 发送数据
             oos.writeObject(message);
             return ResultEntity.createResultEntity(ResultEntity.ResultType.SUCCESS, null, null);
@@ -57,15 +60,25 @@ public class ChatController {
         if (socket == null) {
             return ResultEntity.createResultEntity(ResultEntity.ResultType.FAILED, CustomConstant.MESSAGE_SOCKET_NOT_FOUND, null);
         }
+
         try {
             // 获取输入流
             ObjectInputStream ois = SocketMap.getObjectInputStream(socket);
             // 获取Message对象
-            Message message = (Message) ois.readObject();
-            return ResultEntity.createResultEntity(ResultEntity.ResultType.SUCCESS, null, message);
-        } catch (IOException | ClassNotFoundException e) {
+            Message message = null;
+            try {
+                message = (Message) ois.readObject();// socket的超时时间已经设置为20s
+            } catch (IOException ignored) {
+            }
+            if (message != null) {
+                return ResultEntity.createResultEntity(ResultEntity.ResultType.SUCCESS, null, message);
+            } else {
+                return ResultEntity.createResultEntity(ResultEntity.ResultType.FAILED, CustomConstant.MESSAGE_RECEIVE_TIMEOUT, null);
+            }
+        } catch (ClassNotFoundException | IOException e) {
             return ResultEntity.createResultEntity(ResultEntity.ResultType.FAILED, e.toString(), null);
         }
+
     }
 
     @ResponseBody
@@ -85,13 +98,18 @@ public class ChatController {
 
             String path = session.getServletContext().getRealPath("upload") + '\\' + localAddress + "\\" + localPort;
             String fileName = file.getOriginalFilename();
+            if (fileName == null) {
+                return ResultEntity.createResultEntity(ResultEntity.ResultType.FAILED, CustomConstant.MESSAGE_SYSTEM_ERROR_NULL_POINTER_EXCEPTION + "fileName", null);
+            }
             int p = fileName.lastIndexOf('.');
             String prefix = fileName.substring(0, p);// 文件名
             String suffix = fileName.substring(p + 1);// 文件后缀
             String filePath = path + '\\' + prefix + '-' + UUID.randomUUID().toString().replace("-", "") + '.' + suffix;// 文件路径
             File desFile = new File(filePath);
             if (!desFile.getParentFile().exists()) {// 如果文件夹不存在则创建
-                desFile.mkdirs();
+                if(!desFile.mkdirs()){
+                    return ResultEntity.createResultEntity(ResultEntity.ResultType.FAILED,CustomConstant.MESSAGE_SYSTEM_ERROR_MKDIRS,null);
+                }
             }
             // 保存文件
             file.transferTo(desFile);
@@ -113,6 +131,9 @@ public class ChatController {
             Message message = new Message(msg, localAddress, localPort, new File(filePath));
             // 获取输出流
             ObjectOutputStream oos = SocketMap.getObjectOutputStream(socket);
+            if (oos == null) {
+                return ResultEntity.createResultEntity(ResultEntity.ResultType.FAILED, CustomConstant.MESSAGE_SYSTEM_ERROR_NULL_POINTER_EXCEPTION + "ObjectOutputStream", null);
+            }
             // 发送数据
             oos.writeObject(message);
         } catch (IllegalStateException | IOException e) {
@@ -191,6 +212,9 @@ public class ChatController {
 
             String path = session.getServletContext().getRealPath("upload") + '\\' + localAddress + "\\" + localPort;
             String fileName = file.getOriginalFilename();
+            if (fileName == null) {
+                return ResultEntity.createResultEntity(ResultEntity.ResultType.FAILED, CustomConstant.MESSAGE_SYSTEM_ERROR_NULL_POINTER_EXCEPTION + "fileName", null);
+            }
             int p = fileName.lastIndexOf('.');
             String prefix = fileName.substring(0, p);// 文件名
             String suffix = fileName.substring(p + 1);// 文件后缀
@@ -198,7 +222,9 @@ public class ChatController {
             String filePath = path + '\\' + fileName; // 文件绝对路径
             File desFile = new File(filePath);
             if (!desFile.getParentFile().exists()) {// 如果文件夹不存在则创建
-                desFile.mkdirs();
+                if(!desFile.mkdirs()){
+                    return ResultEntity.createResultEntity(ResultEntity.ResultType.FAILED,CustomConstant.MESSAGE_SYSTEM_ERROR_MKDIRS,null);
+                }
             }
             // 保存文件
             file.transferTo(desFile);
@@ -211,6 +237,9 @@ public class ChatController {
             message.setImage(filePath, ContextPath);
             // 获取输出流
             ObjectOutputStream oos = SocketMap.getObjectOutputStream(socket);
+            if (oos == null) {
+                return ResultEntity.createResultEntity(ResultEntity.ResultType.FAILED, CustomConstant.MESSAGE_SYSTEM_ERROR_NULL_POINTER_EXCEPTION + "ObjectOutputStream", null);
+            }
             // 发送数据
             oos.writeObject(message);
         } catch (IllegalStateException | IOException e) {
