@@ -57,6 +57,7 @@ public class ChatRoom implements Serializable {
                                         // 获取输出流
                                         ObjectOutputStream oos = SocketMap.getObjectOutputStream(member);
                                         // 发送数据
+                                        assert oos != null;
                                         oos.writeObject(message);
                                     }
                                 } else {
