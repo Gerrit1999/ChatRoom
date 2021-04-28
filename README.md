@@ -4,6 +4,8 @@
 
 ## 1.1 概述
 
+​		随着网络的大幅度普及，以及网络技术快速发展，人们通过网络进行交流的方式发生着巨大的变化，人们不再拘泥于移动电话的通话模式，越来越多的人通过网络聊天工具进行交流，网络聊天室便是非常典型的聊天工具之一。聊天室系统的即时交流方式满足了网络中人们同时与多人进行聊天交流的需要,使得较多的人在同一个聊天页面进行交流变得方便，简单。		
+
 ​		ChatRoom聊天室是采用B/S结构进行开发的网页聊天室项目，使用socket技术来进行通信，主要功能如下：
 
 ​		首先，该系统可以创建多个房间，创建的房间都有一个唯一的房间号，用户能够输入房间号来进入对应的房间，进入房间后也可以退出。每个用户能够创建和加入多个房间。房间中的其他人都能获取到每个用户进入房间和退出房间的消息。每个房间可以加入多个用户，房间之间相互独立，互不干扰。用户发送信息到房间后，房间内的所有人均能立即收到消息。
@@ -57,6 +59,8 @@
 ![Image text](https://gitee.com/Gerrit1999/ChatRoom/raw/master/img/productShow/img3.1.png)
 
 <div align = "center">图 3.1</div>
+
+
 
 ## 3.2 加入房间
 
@@ -112,11 +116,15 @@
 
 <div align = "center">图 4.1-1</div>
 
+
+
 ​		打开另外一个浏览器，进入到刚才创建的房间。如图4.1-2所示。
 
 ![Image text](https://gitee.com/Gerrit1999/ChatRoom/raw/master/img/productShow/img4.1-2.png)
 
 <div align = "center">图 4.1-2</div>
+
+
 
 ​		点击进入后，跳转到聊天界面，如图4.1-3所示，此时第一个浏览器显示有用户加入了房间的消息。如图4.1-4所示。
 
@@ -124,9 +132,13 @@
 
 <div align = "center">图 4.1-3</div>
 
+
+
 ![Image text](https://gitee.com/Gerrit1999/ChatRoom/raw/master/img/productShow/img4.1-4.png)
 
 <div align = "center">图 4.1-4</div>
+
+
 
 ## 4.2 发送和接收消息
 
@@ -142,6 +154,8 @@
 
 <div align = "center">图 4.2-2</div>
 
+
+
 ![Image text](https://gitee.com/Gerrit1999/ChatRoom/raw/master/img/productShow/img4.2-3.png)
 
 <div align = "center">图 4.2-3</div>
@@ -152,6 +166,8 @@
 
 <div align = "center">图 4.2-4</div>
 
+
+
 ## 4.3 发送和接收图片
 
 ​		发送图片后，其他成员同样可以接收到，图片的比例也没有发生改变，如图4.3-1、4.3-2、4.3-3所示。
@@ -160,13 +176,19 @@
 
 <div align = "center">图 4.3-1</div>
 
+
+
 ![Image text](https://gitee.com/Gerrit1999/ChatRoom/raw/master/img/productShow/img4.3-2.png) 
 
 <div align = "center">图 4.3-2</div>
 
+
+
 ![Image text](https://gitee.com/Gerrit1999/ChatRoom/raw/master/img/productShow/img4.3-3.png)
 
 <div align = "center">图 4.3-3</div>
+
+
 
 ## 4.4 文件的发送和接收
 
@@ -182,6 +204,8 @@
 
 <div align = "center">图 4.4-2</div>
 
+
+
 ## 4.5 退出房间
 
 ​		用户点击退出房间后，会显示模态框，如图4.5-1所示。点击确定后将回到主页，同时房间中的其他成员显示提示信息，如图4.5-2所示。
@@ -189,6 +213,8 @@
 ![Image text](https://gitee.com/Gerrit1999/ChatRoom/raw/master/img/productShow/img4.5-1.png)
 
 <div align = "center">图 4.5-1</div>
+
+
 
 ![Image text](https://gitee.com/Gerrit1999/ChatRoom/raw/master/img/productShow/img4.5-2.png)
 
