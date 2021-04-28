@@ -14,7 +14,7 @@
 
 ## 1.2 系统的部署
 
-​		使用Maven将项目源代码打包为war放到tomcat的wabapps目录下，然后打开tomcat/bin/startup.bat启动服务器，启动完成后浏览器访问http://localhost:8080/ChatRoom即可。
+​		使用Maven将项目源代码打包为war放到tomcat的wabapps目录下，然后打开tomcat/bin/startup.bat启动服务器，启动完成后浏览器访问 http://localhost:8080/ChatRoom 即可。
 
 ## 1.3 功能模块图
 
