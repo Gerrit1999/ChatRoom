@@ -34,7 +34,7 @@ public class Image implements Serializable {
         }
     }
 
-    public String getcontextPath() {
+    public String getContextPath() {
         return contextPath;
     }
 

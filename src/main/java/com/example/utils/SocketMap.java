@@ -79,8 +79,4 @@ public class SocketMap {
         inputMap.put(socket, ois);
         return inputMap.put(socket, ois);
     }
-
-    public static boolean containsSocket(String sessionId, Integer port) {
-        return socketMap.containsKey(new Key(sessionId, port));
-    }
 }

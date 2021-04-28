@@ -143,12 +143,13 @@ public class ChatController {
     }
 
     @RequestMapping("/download/file.html")
-    public void downloadFile(@RequestParam("filePath") String filePath,
+    public void downloadFile(@RequestParam("file") File file,
                              HttpServletRequest request,
                              HttpServletResponse response) {
         OutputStreamWriter osw = null;
         InputStream in = null;
         OutputStream os = null;
+        String filePath = file.getPath();
         try {
             request.setCharacterEncoding("utf-8");
             // 获取需要下载的文件名
@@ -159,7 +160,6 @@ public class ChatController {
             response.addHeader("content-Disposition", "attachment;filename=" + UriUtils.encode(fileName, "utf-8"));//filename包含后缀
 
             osw = new OutputStreamWriter(response.getOutputStream(), StandardCharsets.UTF_8);
-            File file = new File(filePath);
             // 获取要下载的文件输入流
             in = new FileInputStream(file);
             // 如果不填setContentLength，不会报错，但是下载的时候会显示大小未知

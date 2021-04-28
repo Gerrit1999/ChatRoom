@@ -155,9 +155,8 @@
             if (image === "") {
                 sendMsg();
             } else {// 发送图片
-                var formData = new FormData();
+                const formData = new FormData();
                 formData.append("image", $("#inputPicture")[0].files[0]);
-                formData.append("port", ${sessionScope.port});
                 formData.append("localAddress", "${sessionScope.localAddress}");
                 formData.append("localPort", ${sessionScope.localPort});
                 $.ajax({
@@ -220,7 +219,6 @@
         $("#uploadFile").click(function () {
             const formData = new FormData();
             formData.append("files", $("#file")[0].files[0]);
-            formData.append("port", ${sessionScope.port});
             formData.append("localAddress", "${sessionScope.localAddress}");
             formData.append("localPort", ${sessionScope.localPort});
             $.ajax({
@@ -364,11 +362,11 @@
                     } else {// 是其他人发的消息
                         $("#words").append('<div style="text-align: left;margin-bottom: 5px;"><span>' + date + '  [ From: ' + sourceAddress + ':' + sourcePort + ' ]</span></div>')
                         const file = data.file;
-                        if (data.file !== null) {// 是文件
+                        if (file !== null) {// 是文件
                             $("#words").append('<div class="uTalk">' +
                                 '<span>' + msg + '</span><br/>' +
                                 '<span style="margin-top: 5px;">' + '<form action="chat/download/file.html" method="post" style="margin: 0">' +
-                                '<input name="filePath" type="hidden" value="' + file + '">' +
+                                '<input name="file" type="hidden" value="' + file + '">' +
                                 '<input type="submit" value="下载" style="background: #0181cc;color: white;padding: 0;border: 0"></form>' +
                                 '</span></div>');
                         } else if (data.image !== null) {// 是图片
