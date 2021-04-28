@@ -12,13 +12,17 @@
 
 ​		其次，用户可以发送多种类型的消息，例如文本、表情、图片、文件等。文本和表情消息可以选择字体大小、字体风格和字体粗细，图片消息能根据图片的长宽比例在聊天框中显示，文件消息发送后保存到服务器，房间中的其他成员可以接收到发送文件的消息，选择是否下载。
 
-## 1.2 功能模块图
+## 1.2 系统的部署
 
-功能模块图见图1.1。
+​		使用Maven将项目源代码打包为war放到tomcat的wabapps目录下，然后打开tomcat/bin/startup.bat启动服务器，启动完成后浏览器访问http://localhost:8080/ChatRoom即可。
 
-![Image text](https://gitee.com/Gerrit1999/ChatRoom/raw/master/img/productShow/img1.1.jpg)
+## 1.3 功能模块图
 
-<div align = "center">图 1.1 功能模块图</div>
+功能模块图见图1.3。
+
+![Image text](https://gitee.com/Gerrit1999/ChatRoom/raw/master/img/productShow/img1.3.jpg)
+
+<div align = "center">图 1.3 功能模块图</div>
 
 
 
