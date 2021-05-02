@@ -1,9 +1,11 @@
 package com.example.controller;
 
 import com.example.entity.Message;
+import com.example.service.UserService;
 import com.example.utils.CustomConstant;
 import com.example.utils.ResultEntity;
 import com.example.utils.SocketMap;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -21,15 +23,16 @@ import java.util.UUID;
 @Controller
 @RequestMapping("/chat")
 public class ChatController {
+    @Autowired
+    UserService userService;
 
     @ResponseBody
     @RequestMapping("/send/message.json")
-    public ResultEntity<String> sendMessage(@RequestBody Message message, HttpSession session) {
+    public ResultEntity<String> sendMessage(@RequestBody Message message) {
         if (message.getMsg() == null || message.getMsg().isEmpty()) {// msg不能为空
             return ResultEntity.createResultEntity(ResultEntity.ResultType.FAILED, CustomConstant.MESSAGE_STRING_INVALIDATE, null);
         }
-        String sessionId = session.getId();// 获取用户标识
-        Socket socket = SocketMap.getSocket(sessionId, message.getSourcePort());// 获取对应的socket
+        Socket socket = SocketMap.getSocket(message.getRoomId(), message.getUserId());// 获取对应的socket
         if (socket == null) {
             return ResultEntity.createResultEntity(ResultEntity.ResultType.FAILED, CustomConstant.MESSAGE_SOCKET_NOT_FOUND, null);
         }
@@ -48,19 +51,14 @@ public class ChatController {
         }
     }
 
-    /**
-     * @param localPort 本地端口
-     */
     @ResponseBody
     @RequestMapping("/recv/message.json")
-    public ResultEntity<Message> recvMessage(@RequestParam("localPort") Integer localPort,
-                                             HttpSession session) {
-        String sessionId = session.getId();// 获取用户标识
-        Socket socket = SocketMap.getSocket(sessionId, localPort);// 获取对应的socket
+    public ResultEntity<Message> recvMessage(@RequestParam("roomId") Integer roomId,
+                                             @RequestParam("userId") Integer userId) {
+        Socket socket = SocketMap.getSocket(roomId, userId);// 获取对应的socket
         if (socket == null) {
             return ResultEntity.createResultEntity(ResultEntity.ResultType.FAILED, CustomConstant.MESSAGE_SOCKET_NOT_FOUND, null);
         }
-
         try {
             // 获取输入流
             ObjectInputStream ois = SocketMap.getObjectInputStream(socket);
@@ -84,19 +82,17 @@ public class ChatController {
     @ResponseBody
     @RequestMapping("/upload/file.json")
     public ResultEntity<String> uploadFile(@RequestParam(value = "files", required = false) MultipartFile file,
-                                           @RequestParam(value = "localAddress", required = false) String localAddress,
-                                           @RequestParam(value = "localPort", required = false) Integer localPort,
+                                           @RequestParam("roomId") Integer roomId,
+                                           @RequestParam("userId") Integer userId,
                                            HttpSession session) {
         try {
-            // 获取用户标识
-            String sessionId = session.getId();
             // 获取套接字
-            Socket socket = SocketMap.getSocket(sessionId, localPort);
+            Socket socket = SocketMap.getSocket(roomId, userId);
             if (socket == null) {
                 return ResultEntity.createResultEntity(ResultEntity.ResultType.FAILED, CustomConstant.MESSAGE_SOCKET_NOT_FOUND, null);
             }
 
-            String path = session.getServletContext().getRealPath("upload") + '\\' + localAddress + "\\" + localPort;
+            String path = session.getServletContext().getRealPath("upload") + '\\' + roomId + "\\" + userId;
             String fileName = file.getOriginalFilename();
             if (fileName == null) {
                 return ResultEntity.createResultEntity(ResultEntity.ResultType.FAILED, CustomConstant.MESSAGE_SYSTEM_ERROR_NULL_POINTER_EXCEPTION + "fileName", null);
@@ -107,8 +103,8 @@ public class ChatController {
             String filePath = path + '\\' + prefix + '-' + UUID.randomUUID().toString().replace("-", "") + '.' + suffix;// 文件路径
             File desFile = new File(filePath);
             if (!desFile.getParentFile().exists()) {// 如果文件夹不存在则创建
-                if(!desFile.mkdirs()){
-                    return ResultEntity.createResultEntity(ResultEntity.ResultType.FAILED,CustomConstant.MESSAGE_SYSTEM_ERROR_MKDIRS,null);
+                if (!desFile.mkdirs()) {
+                    return ResultEntity.createResultEntity(ResultEntity.ResultType.FAILED, CustomConstant.MESSAGE_SYSTEM_ERROR_MKDIRS, null);
                 }
             }
             // 保存文件
@@ -126,9 +122,11 @@ public class ChatController {
             } else {
                 unit = "B";
             }
-            String msg = localAddress + ":" + localPort + " 上传了文件: " + fileName + "(" + new DecimalFormat("#.00").format(size) + unit + ")";
+            // 获取用户名
+            String username = userService.getUsernameById(userId);
+            String msg = username + " 上传了文件: " + fileName + "(" + new DecimalFormat("#.00").format(size) + unit + ")";
             // 封装数据
-            Message message = new Message(msg, localAddress, localPort, new File(filePath));
+            Message message = new Message(msg, roomId, userId, new File(filePath));
             // 获取输出流
             ObjectOutputStream oos = SocketMap.getObjectOutputStream(socket);
             if (oos == null) {
@@ -197,20 +195,18 @@ public class ChatController {
     @ResponseBody
     @RequestMapping("/send/image.json")
     public ResultEntity<String> sendImage(@RequestParam(value = "image", required = false) MultipartFile file,
-                                          @RequestParam(value = "localAddress", required = false) String localAddress,
-                                          @RequestParam(value = "localPort", required = false) Integer localPort,
+                                          @RequestParam("roomId") Integer roomId,
+                                          @RequestParam("userId") Integer userId,
                                           HttpSession session,
                                           HttpServletRequest request) {
         if (file.getSize() > 20 * 1024 * 1024) {// 图片大小不能大于20MB
             return ResultEntity.createResultEntity(ResultEntity.ResultType.FAILED, CustomConstant.MESSAGE_IMAGE_SIZE_TOO_LARGE, null);
         }
         try {
-            // 获取用户标识
-            String sessionId = session.getId();
             // 获取套接字
-            Socket socket = SocketMap.getSocket(sessionId, localPort);
-
-            String path = session.getServletContext().getRealPath("upload") + '\\' + localAddress + "\\" + localPort;
+            Socket socket = SocketMap.getSocket(roomId, userId);
+            // 获取路径
+            String path = session.getServletContext().getRealPath("upload") + '\\' + roomId + "\\" + userId;
             String fileName = file.getOriginalFilename();
             if (fileName == null) {
                 return ResultEntity.createResultEntity(ResultEntity.ResultType.FAILED, CustomConstant.MESSAGE_SYSTEM_ERROR_NULL_POINTER_EXCEPTION + "fileName", null);
@@ -222,8 +218,8 @@ public class ChatController {
             String filePath = path + '\\' + fileName; // 文件绝对路径
             File desFile = new File(filePath);
             if (!desFile.getParentFile().exists()) {// 如果文件夹不存在则创建
-                if(!desFile.mkdirs()){
-                    return ResultEntity.createResultEntity(ResultEntity.ResultType.FAILED,CustomConstant.MESSAGE_SYSTEM_ERROR_MKDIRS,null);
+                if (!desFile.mkdirs()) {
+                    return ResultEntity.createResultEntity(ResultEntity.ResultType.FAILED, CustomConstant.MESSAGE_SYSTEM_ERROR_MKDIRS, null);
                 }
             }
             // 保存文件
@@ -231,9 +227,9 @@ public class ChatController {
             // 获取图片路径
             String ContextPath = request.getRequestURL().toString();
             ContextPath = ContextPath.substring(0, ContextPath.indexOf("chat"));
-            ContextPath += "upload/" + localAddress + '/' + localPort + '/' + fileName;
+            ContextPath += "upload/" + roomId + '/' + userId + '/' + fileName;
             // 封装数据
-            Message message = new Message(null, localAddress, localPort);
+            Message message = new Message(null, roomId, userId);
             message.setImage(filePath, ContextPath);
             // 获取输出流
             ObjectOutputStream oos = SocketMap.getObjectOutputStream(socket);

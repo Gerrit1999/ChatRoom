@@ -22,6 +22,7 @@
     </bean>
 
     <mvc:view-controller path="/to/chat.html" view-name="chat"/>
+    <mvc:view-controller path="/to/login.html" view-name="login"/>
 
     <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
         <property name="defaultEncoding" value="utf-8"/>

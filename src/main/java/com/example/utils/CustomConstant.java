@@ -9,7 +9,7 @@ public class CustomConstant {
 
     public static final String MESSAGE_SYSTEM_ERROR_MKDIRS = "系统错误! 创建文件夹失败!";
 
-    public static final String MESSAGE_CHAT_ROOM_NOT_FOUNT = "抱歉, 房间不存在!";
+    public static final String MESSAGE_CHAT_ROOM_NOT_FOUNT = "抱歉, 房间不存在或密码错误!";
 
     public static final String MESSAGE_SOCKET_NOT_FOUND = "系统错误! 找不到套接字!";
 

@@ -2,14 +2,16 @@ package com.example.controller;
 
 import com.example.entity.ChatRoom;
 import com.example.entity.Message;
-import com.example.utils.ChatRoomMap;
+import com.example.entity.Server;
+import com.example.service.ChatRoomService;
+import com.example.service.UserService;
 import com.example.utils.CustomConstant;
 import com.example.utils.ResultEntity;
 import com.example.utils.SocketMap;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.net.*;
@@ -17,73 +19,57 @@ import java.net.*;
 @Controller
 @RequestMapping("/chatRoom")
 public class ChatRoomController {
-    private String hostAddress = null;
+    @Autowired
+    ChatRoomService chatRoomService;
 
-    public ChatRoomController() {
-        // 获取本机ip
-        try {
-            hostAddress = InetAddress.getLocalHost().getHostAddress();
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
-        }
-    }
+    @Autowired
+    UserService userService;
 
     /**
      * 创建房间
      */
     @ResponseBody
     @RequestMapping("/create/chatRoom.json")
-    public ResultEntity<Integer> createChatRoom(HttpSession session) {
+    public ResultEntity<Integer> createChatRoom(@RequestBody ChatRoom chatRoom) {
         try {
-            ServerSocket socket = new ServerSocket();
-            // 绑定ip
-            socket.bind(new InetSocketAddress(hostAddress, 0));
-            // 获取端口号
-            int port = socket.getLocalPort();
             // 开启服务器
-            ChatRoom chatRoom = new ChatRoom(socket);
-            chatRoom.open();
-            ChatRoomMap.addChatRoom(port, chatRoom);
-            // 存入session域
-            session.setAttribute("port", port);
-            return ResultEntity.createResultEntity(ResultEntity.ResultType.SUCCESS, null, port);
-        } catch (IOException e) {
+            Class.forName("com.example.entity.Server");
+            // 创建房间
+            chatRoomService.addChatRoom(chatRoom);
+            return ResultEntity.createResultEntity(ResultEntity.ResultType.SUCCESS, null, null);
+        } catch (ClassNotFoundException e) {
             return ResultEntity.createResultEntity(ResultEntity.ResultType.FAILED, e.toString(), null);
         }
     }
 
     /**
      * 加入房间
-     *
-     * @param port 房间端口号
      */
     @ResponseBody
     @RequestMapping("/join/chatRoom.json")
-    public ResultEntity<String> toChatRoom(@RequestParam("port") Integer port, HttpSession session) {
-        // 获取房间
-        ChatRoom chatRoom = ChatRoomMap.getChatRoom(port);
-        if (chatRoom == null) {// 房间不存在
+    public ResultEntity<String> toChatRoom(@RequestParam("userId") Integer userId,
+                                           @RequestParam("roomId") Integer roomId,
+                                           @RequestParam("password") String password) {
+        // 如果不在房间就加入房间
+        if (!chatRoomService.judgeUserInRoom(roomId, userId) && !chatRoomService.addUserToChatRoom(roomId, userId, password)) {
             return ResultEntity.createResultEntity(ResultEntity.ResultType.FAILED, CustomConstant.MESSAGE_CHAT_ROOM_NOT_FOUNT, null);
         }
-        // 用户标识
-        String sessionId = session.getId();
         try {
             // 连接到房间
-            Socket socket = new Socket(hostAddress, port);
-            socket.setSoTimeout(20 * 1000);// 设置超时时间
-            // 获取ip和端口号
-            String localAddress = socket.getLocalAddress().toString().substring(1);
-            int localPort = socket.getLocalPort();
-            // 保存到session
-            session.setAttribute("localAddress", localAddress);
-            session.setAttribute("port", port);
-            session.setAttribute("localPort", localPort);
+            Socket socket = SocketMap.getSocket(roomId, userId);
+            if (socket == null) {
+                socket = new Socket(Server.getAddress(), Server.getPort());
+            }
+            // 设置超时时间
+            socket.setSoTimeout(20 * 1000);
             // 保存socket
-            SocketMap.addSocket(sessionId, localPort, socket);
+            SocketMap.addSocket(roomId, userId, socket);
+            // 获取用户名
+            String username = userService.getUsernameById(userId);
             // 提示信息
-            String msg = localAddress + ":" + localPort + " 已进入房间";
+            String msg = username + " 已进入房间";
             // 封装数据
-            Message message = new Message(msg, localAddress, localPort);
+            Message message = new Message(msg, roomId, userId);
             // 获取输出流
             ObjectOutputStream oos = SocketMap.getObjectOutputStream(socket);
             if (oos == null) {
@@ -100,30 +86,24 @@ public class ChatRoomController {
 
     /**
      * 退出房间
-     *
-     * @param port      房间端口号
-     * @param localPort 本地端口号
      */
     @ResponseBody
     @RequestMapping("/do/exit.json")
-    public ResultEntity<String> doExit(@RequestParam("port") Integer port,
-                                       @RequestParam("localAddress") String localAddress,
-                                       @RequestParam("localPort") Integer localPort,
-                                       HttpSession session) {
-        // 获取房间
-        ChatRoom chatRoom = ChatRoomMap.getChatRoom(port);
-        if (chatRoom == null) {
+    public ResultEntity<String> doExit(@RequestParam("roomId") Integer roomId,
+                                       @RequestParam("userId") Integer userId) {
+        // 退出房间
+        if (!chatRoomService.removeUserFromChatRoom(roomId, userId)) {
             return ResultEntity.createResultEntity(ResultEntity.ResultType.FAILED, CustomConstant.MESSAGE_CHAT_ROOM_NOT_FOUNT, null);
         }
         try {
-            // 获取用户标识
-            String sessionId = session.getId();
-            // 获取套接字
-            Socket socket = SocketMap.getSocket(sessionId, localPort);
+            // 获取用户名
+            String username = userService.getUsernameById(userId);
             // 提示信息
-            String msg = localAddress + ":" + localPort + " 已离开房间";
+            String msg = username + " 已退出房间";
             // 封装数据
-            Message message = new Message(msg, localAddress, localPort);
+            Message message = new Message(msg, roomId, userId);
+            // 获取socket
+            Socket socket = SocketMap.getSocket(roomId, userId);
             // 获取输出流
             ObjectOutputStream oos = SocketMap.getObjectOutputStream(socket);
             if (oos == null) {
@@ -131,20 +111,12 @@ public class ChatRoomController {
             }
             // 发送数据
             oos.writeObject(message);
-            if (socket == null) {
-                return ResultEntity.createResultEntity(ResultEntity.ResultType.FAILED, CustomConstant.MESSAGE_SOCKET_NOT_FOUND, null);
-            }
-            // 从房间移除
-            chatRoom.removeSocket(socket);
-            // 从map中移除
-            SocketMap.removeSocket(sessionId, localPort);
-            // 清除session
-            session.removeAttribute("port");
-            session.removeAttribute("localAddress");
-            session.removeAttribute("localPort");
+            // 删除socket
+            SocketMap.removeSocket(roomId, userId);
+            return ResultEntity.createResultEntity(ResultEntity.ResultType.SUCCESS, null, null);
         } catch (IOException e) {
+            e.printStackTrace();
             return ResultEntity.createResultEntity(ResultEntity.ResultType.FAILED, e.toString(), null);
         }
-        return ResultEntity.createResultEntity(ResultEntity.ResultType.SUCCESS, null, null);
     }
 }

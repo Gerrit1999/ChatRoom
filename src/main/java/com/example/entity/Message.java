@@ -16,9 +16,9 @@ public class Message implements Serializable {
 
     private String fontStyle;// 字体风格
 
-    private String sourceAddress;// 消息源IP
+    private Integer userId;// 消息源
 
-    private Integer sourcePort;// 消息源端口
+    private Integer roomId;// 所在房间
 
     private File file = null;
 
@@ -30,18 +30,15 @@ public class Message implements Serializable {
         date = simpleDateFormat.format(new Date());
     }
 
-    public Message(String msg, String sourceAddress, Integer sourcePort) {
-        date = simpleDateFormat.format(new Date());
+    public Message(String msg, Integer roomId, Integer userId) {
+        this();
         this.msg = msg;
-        this.sourceAddress = sourceAddress;
-        this.sourcePort = sourcePort;
+        this.roomId = roomId;
+        this.userId = userId;
     }
 
-    public Message(String msg, String sourceAddress, Integer sourcePort, File file) {
-        date = simpleDateFormat.format(new Date());
-        this.msg = msg;
-        this.sourceAddress = sourceAddress;
-        this.sourcePort = sourcePort;
+    public Message(String msg, Integer roomId, Integer userId, File file) {
+        this(msg, roomId, userId);
         this.file = file;
     }
 
@@ -82,20 +79,20 @@ public class Message implements Serializable {
         this.fontStyle = fontStyle;
     }
 
-    public String getSourceAddress() {
-        return sourceAddress;
+    public Integer getUserId() {
+        return userId;
     }
 
-    public void setSourceAddress(String sourceAddress) {
-        this.sourceAddress = sourceAddress;
+    public void setUserId(Integer userId) {
+        this.userId = userId;
     }
 
-    public Integer getSourcePort() {
-        return sourcePort;
+    public Integer getRoomId() {
+        return roomId;
     }
 
-    public void setSourcePort(Integer sourcePort) {
-        this.sourcePort = sourcePort;
+    public void setRoomId(Integer roomId) {
+        this.roomId = roomId;
     }
 
     public File getFile() {
@@ -118,8 +115,8 @@ public class Message implements Serializable {
                 ", fontSize='" + fontSize + '\'' +
                 ", fontWeight='" + fontWeight + '\'' +
                 ", fontStyle='" + fontStyle + '\'' +
-                ", sourceAddress='" + sourceAddress + '\'' +
-                ", sourcePort=" + sourcePort +
+                ", userId=" + userId +
+                ", roomId=" + roomId +
                 ", file=" + file +
                 ", image=" + image +
                 '}';

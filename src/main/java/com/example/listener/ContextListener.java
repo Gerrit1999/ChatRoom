@@ -1,11 +1,9 @@
 package com.example.listener;
 
-import com.example.entity.ChatRoom;
-import com.example.utils.ChatRoomMap;
+import com.example.entity.Server;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
-import java.util.Map;
 
 /**
  * 服务器关闭后的资源回收操作
@@ -18,10 +16,7 @@ public class ContextListener implements ServletContextListener {
 
     @Override
     public void contextDestroyed(ServletContextEvent servletContextEvent) {
-        // 销毁房间线程
-        Map<Integer, ChatRoom> map = ChatRoomMap.getMap();
-        for (Map.Entry<Integer, ChatRoom> entry : map.entrySet()) {
-            entry.getValue().close();
-        }
+        // 关闭服务器线程
+        Server.close();
     }
 }
