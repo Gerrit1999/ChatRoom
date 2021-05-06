@@ -7,7 +7,7 @@ public class ChatRoom {
 
     private String password;
 
-    private String icon;
+    private Integer hostId;
 
     public Integer getId() {
         return id;
@@ -33,11 +33,21 @@ public class ChatRoom {
         this.password = password == null ? null : password.trim();
     }
 
-    public String getIcon() {
-        return icon;
+    public Integer getHostId() {
+        return hostId;
     }
 
-    public void setIcon(String icon) {
-        this.icon = icon == null ? null : icon.trim();
+    public void setHostId(Integer hostId) {
+        this.hostId = hostId;
+    }
+
+    @Override
+    public String toString() {
+        return "ChatRoom{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", password='" + password + '\'' +
+                ", hostId=" + hostId +
+                '}';
     }
 }

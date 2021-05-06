@@ -5,6 +5,7 @@ import com.example.entity.UserExample;
 import com.example.mapper.UserMapper;
 import com.example.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,6 +14,9 @@ import java.util.List;
 public class UserServiceImpl implements UserService {
     @Autowired
     UserMapper userMapper;
+
+    @Autowired
+    BCryptPasswordEncoder passwordEncoder;
 
     @Override
     public User getUserById(Integer id) {
@@ -27,6 +31,24 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getUserByUsername(String username) {
+        UserExample userExample = new UserExample();
+        UserExample.Criteria criteria = userExample.createCriteria();
+        criteria.andUsernameEqualTo(username);
+        List<User> users = userMapper.selectByExample(userExample);
+        return (users == null || users.isEmpty()) ? null : users.get(0);
+    }
+
+    @Override
+    public boolean addUser(User user) {
+        String password = user.getPassword();
+        password = passwordEncoder.encode(password);
+        user.setPassword(password);
+        int cnt = userMapper.insertSelective(user);
+        return cnt == 1;
+    }
+
+    @Override
+    public User findUserByUsername(String username) {
         UserExample userExample = new UserExample();
         UserExample.Criteria criteria = userExample.createCriteria();
         criteria.andUsernameEqualTo(username);

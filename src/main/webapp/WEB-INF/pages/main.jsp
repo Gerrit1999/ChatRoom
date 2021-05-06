@@ -6,7 +6,9 @@
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" isELIgnored="false" %>
-<html lang="en">
+<%@ taglib prefix="security" uri="http://www.springframework.org/security/tags" %>
+
+<html lang="zh">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -23,7 +25,7 @@
             width: 600px;
             height: 668px;
             /*border: 1px solid #666;*/
-            margin: 30px auto auto 450px;
+            margin: 0 0 0 270px;
             background: #f9f9f9;
         }
 
@@ -67,21 +69,46 @@
             color: #fff;
             padding: 5px 10px;
         }
+
+        .roomItem {
+            height: 60px;
+        }
+
+        .roomItem a {
+            height: 50px;
+        }
     </style>
 </head>
 <body>
-<div>
-    <%--<div class="panel panel-default" style="float: left;margin-left: 350px;height: 670px">
-        <div class="panel-heading" style="text-align: center">在线列表</div>
+<div class="panel panel-default" style="width: 882px;margin-left: 370px;margin-top: 30px;padding: 5px">
+    <%--<div class="panel panel-default" style="float: left;width: 270px;height: 668px;margin-bottom: 0">
+        <div class="panel-heading" style="height: 69px;"></div>
         <div class="list-group" style="overflow:auto;height: 626px">
             <button href="#" class="list-group-item" style="width: 200px">Dapibus ac facilisis in</button>
         </div>
     </div>--%>
+    <div class="bs-example" style="float: left;width: 260px;height: 668px;margin-bottom: 0">
+        <ul id="roomList" class="nav nav-pills nav-stacked nav-pills-stacked-example">
+            <li role="presentation">
+                <div>
+                    <div style="float: left;">
+                        <img src="images/bg.jpg" alt="头像" height="50px" width="50px">
+                        &nbsp;&nbsp;用户名: <security:authentication property="principal.originalUser.username"/><br/>
+                        <input id="userId" type="hidden"
+                               value="<security:authentication property="principal.originalUser.id"/>">
+                    </div>
+                    <br/><br/><br/>
+                </div>
+            </li>
+            <li role="presentation" class="active"><a href="javascript:createChatRoom();">创建房间</a></li>
+            <li role="presentation"><a href="javascript:joinChatRom();">加入房间</a></li>
+            已加入的房间
+        </ul>
+    </div>
     <div class="panel panel-default talk_con">
         <div class="panel-heading" style="height: 70px">
             <div style="float: left;margin-top: 3px"><h3 class="panel-title" style="font-size: 25px">
-                房间号: ${sessionScope.port}</h3>
-                我的地址: ${sessionScope.localAddress}:${sessionScope.localPort}</h4>
+                房间号: ${port}</h3>
             </div>
             <div style="float: right;margin-top: 1px">
                 <button id="exitBtn" type="button" class="btn btn-primary btn-lg active" style="margin-left: 20px">
@@ -140,6 +167,8 @@
 </div>
 </body>
 
+<%@ include file="/WEB-INF/modal/join-chatRoom.jsp" %>
+<%@ include file="/WEB-INF/modal/create-chatRoom.jsp" %>
 <%@ include file="/WEB-INF/modal/exit-confirm.jsp" %>
 <script>
     /*$(document).keyup(function (event) {
@@ -147,8 +176,63 @@
             sendMsg();
         }
     });*/
+    // 加入聊天室
+    function createChatRoom() {
+        $("#createChatRoomModal").modal("show");
+    }
+
+    // 加入聊天室
+    function joinChatRom() {
+        $("#joinChatRoomModal").modal("show");
+    }
 
     $(function () {
+        // 创建聊天室确认按钮
+        $("#createConfirmBtn").click(function () {
+            const userId = $("#userId").val();
+            const roomName = $("#setRoomName").val();
+            const roomPassword = $("#setRoomPassword").val();
+            $("#roomName").val("");
+            $("#roomPassword").val("");
+            $("#createChatRoomModal").modal("hide");
+            const data = JSON.stringify({
+                hostId: userId,
+                name: roomName,
+                password: roomPassword
+            });
+            $.ajax({
+                url: "chatRoom/create/chatRoom.json",
+                type: "post",
+                contentType: "application/json;charset=utf-8",
+                data: data,
+                dataType: "json",
+                success: function (response) {
+                    const result = response.result;
+                    if (result === "SUCCESS") {
+                        toChatRoom(response.data, roomPassword)
+                    } else if (result === "FAILED") {
+                        layer.msg("创建失败! " + response.message);
+                    }
+                },
+                error: function (response) {
+                    layer.msg("创建失败! " + response.status + " " + response.statusText)
+                }
+            })
+            $("#setRoomName").val("");
+            $("#setRoomPassword").val("");
+            $("#createChatRoomModal").modal("hide");
+        })
+
+        // 加入聊天室确认按钮
+        $("#joinConfirmBtn").click(function () {
+            const roomId = $("#inputRoomId").val();
+            const roomPassword = $("#inputRoomPassword").val();
+            $("#inputRoomId").val("");
+            $("#inputRoomPassword").val("");
+            $("#joinChatRoomModal").modal("hide");
+            toChatRoom(roomId, roomPassword);
+        })
+
         // 发送点击事件
         $("#sendBtn").click(function () {
             const image = $("#inputPicture").val();
@@ -173,7 +257,6 @@
                     },
                     error: function (response) {
                         layer.msg("发送失败! " + response.status + " " + response.statusText);
-
                     }
                 })
                 $("#msg").val("");
@@ -188,23 +271,14 @@
 
         // 退出房间确认
         $("#exitConfirmBtn").click(function () {
-            var port = ${sessionScope.port};
-            var localAddress = "${sessionScope.localAddress}";
-            var localPort = ${sessionScope.localPort};
             $.ajax({
                 url: "chatRoom/do/exit.json",
                 type: "post",
-                data: {
-                    "port": port,
-                    "localAddress": localAddress,
-                    "localPort": localPort
-                },
+                data: {},
                 dataType: "json",
                 success: function (response) {
-                    var result = response.result;
+                    const result = response.result;
                     if (result === "SUCCESS") {
-                        // 回到主页
-                        $(location).attr("href", "");
                     } else if (result === "FAILED") {
                         layer.msg("退出失败! " + response.message);
                     }
@@ -274,9 +348,71 @@
             }
         })
 
-        // 页面加载成功后立即获取消息
-        recvMsg();
+        // 页面加载成功后获取所有加入的房间
+        getAllChatRooms();
     })
+
+    function toChatRoom(roomId, roomPassword) {
+        const userId = $("#userId").val();
+        $.ajax({
+            url: "chatRoom/join/chatRoom.json",
+            type: "post",
+            data: {
+                "userId": userId,
+                "roomId": roomId,
+                "password": roomPassword
+            },
+            dataType: "json",
+            success: function (response) {
+                const result = response.result;
+                if (result === "SUCCESS") {
+                    layer.msg("加入成功!");
+                    appendRoomItem(response.data);
+                } else if (result === "FAILED") {
+                    layer.msg("加入失败! " + response.message);
+                }
+            },
+            error: function (response) {
+                layer.msg("加入失败! " + response.status + " " + response.statusText)
+            }
+        })
+    }
+
+    // 添加到房间列表
+    function appendRoomItem(roomItem) {
+        $('#roomList').append(
+            '<li role="presentation" class="roomItem">' +
+            '<a style="padding: 0">' +
+            '<div style="float: left;">' +
+            '<img src="images/bg.jpg" alt="' + roomItem.id + '" width="50px" height="50px">' +
+            '</div>' +
+            '<div style="height: 50px;line-height: 50px">&nbsp;&nbsp;' + roomItem.name + '</div>' +
+            '</a>' +
+            '</li>'
+        );
+    }
+
+    function getAllChatRooms() {
+        const userId = $('#userId').val();
+        $.ajax({
+            url: "chatRoom/get/allChatRooms.json",
+            type: "post",
+            data: {
+                "userId": userId,
+            },
+            dataType: "json",
+            success: function (response) {
+                const n = response.length;
+                for (let i = 0; i < n; i++) {
+                    const roomItem = response[i];
+                    appendRoomItem(roomItem);
+                }
+            },
+            error: function (response) {
+                layer.msg("加入失败! " + response.status + " " + response.statusText)
+            }
+        })
+    }
 
     // 发送文字信息
     function sendMsg() {
@@ -285,8 +421,8 @@
         const fontSize = textarea.css("font-size");
         const fontWeight = textarea.css("font-weight");
         const fontStyle = textarea.css("font-style");
-        const localAddress = "${sessionScope.localAddress}";
-        const localPort = ${sessionScope.localPort};
+        <%--const localAddress = "${sessionScope.localAddress}";--%>
+        <%--const localPort = ${sessionScope.localPort};--%>
         const data = JSON.stringify({
             "msg": msg,
             "fontSize": fontSize,
@@ -331,8 +467,8 @@
      *长轮询接收消息
      */
     function recvMsg() {
-        const localAddress = "${sessionScope.localAddress}";
-        var localPort = ${sessionScope.localPort};
+        <%--const localAddress = "${sessionScope.localAddress}";--%>
+        <%--const localPort = ${sessionScope.localPort};--%>
         $.ajax({
             url: "chat/recv/message.json",
             type: "post",
@@ -394,12 +530,12 @@
     $(document).ready(function () {
         if (window.history && window.history.pushState) {
             $(window).on('popstate', function () {
-                window.history.pushState('forward', null, './to/chat.html');
+                window.history.pushState('forward', null, './to/main.html');
                 window.history.forward(1);
                 $("#exitConfirmModal").modal("show");
             });
         }
-        window.history.pushState('forward', null, './to/chat.html'); //在IE中必须得有这两行
+        window.history.pushState('forward', null, './to/main.html'); //在IE中必须得有这两行
         window.history.forward(1);
     });
 

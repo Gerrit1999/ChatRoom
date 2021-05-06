@@ -304,73 +304,63 @@ public class ChatRoomExample {
             return (Criteria) this;
         }
 
-        public Criteria andIconIsNull() {
-            addCriterion("icon is null");
+        public Criteria andHostIdIsNull() {
+            addCriterion("hostId is null");
             return (Criteria) this;
         }
 
-        public Criteria andIconIsNotNull() {
-            addCriterion("icon is not null");
+        public Criteria andHostIdIsNotNull() {
+            addCriterion("hostId is not null");
             return (Criteria) this;
         }
 
-        public Criteria andIconEqualTo(String value) {
-            addCriterion("icon =", value, "icon");
+        public Criteria andHostIdEqualTo(Integer value) {
+            addCriterion("hostId =", value, "hostId");
             return (Criteria) this;
         }
 
-        public Criteria andIconNotEqualTo(String value) {
-            addCriterion("icon <>", value, "icon");
+        public Criteria andHostIdNotEqualTo(Integer value) {
+            addCriterion("hostId <>", value, "hostId");
             return (Criteria) this;
         }
 
-        public Criteria andIconGreaterThan(String value) {
-            addCriterion("icon >", value, "icon");
+        public Criteria andHostIdGreaterThan(Integer value) {
+            addCriterion("hostId >", value, "hostId");
             return (Criteria) this;
         }
 
-        public Criteria andIconGreaterThanOrEqualTo(String value) {
-            addCriterion("icon >=", value, "icon");
+        public Criteria andHostIdGreaterThanOrEqualTo(Integer value) {
+            addCriterion("hostId >=", value, "hostId");
             return (Criteria) this;
         }
 
-        public Criteria andIconLessThan(String value) {
-            addCriterion("icon <", value, "icon");
+        public Criteria andHostIdLessThan(Integer value) {
+            addCriterion("hostId <", value, "hostId");
             return (Criteria) this;
         }
 
-        public Criteria andIconLessThanOrEqualTo(String value) {
-            addCriterion("icon <=", value, "icon");
+        public Criteria andHostIdLessThanOrEqualTo(Integer value) {
+            addCriterion("hostId <=", value, "hostId");
             return (Criteria) this;
         }
 
-        public Criteria andIconLike(String value) {
-            addCriterion("icon like", value, "icon");
+        public Criteria andHostIdIn(List<Integer> values) {
+            addCriterion("hostId in", values, "hostId");
             return (Criteria) this;
         }
 
-        public Criteria andIconNotLike(String value) {
-            addCriterion("icon not like", value, "icon");
+        public Criteria andHostIdNotIn(List<Integer> values) {
+            addCriterion("hostId not in", values, "hostId");
             return (Criteria) this;
         }
 
-        public Criteria andIconIn(List<String> values) {
-            addCriterion("icon in", values, "icon");
+        public Criteria andHostIdBetween(Integer value1, Integer value2) {
+            addCriterion("hostId between", value1, value2, "hostId");
             return (Criteria) this;
         }
 
-        public Criteria andIconNotIn(List<String> values) {
-            addCriterion("icon not in", values, "icon");
-            return (Criteria) this;
-        }
-
-        public Criteria andIconBetween(String value1, String value2) {
-            addCriterion("icon between", value1, value2, "icon");
-            return (Criteria) this;
-        }
-
-        public Criteria andIconNotBetween(String value1, String value2) {
-            addCriterion("icon not between", value1, value2, "icon");
+        public Criteria andHostIdNotBetween(Integer value1, Integer value2) {
+            addCriterion("hostId not between", value1, value2, "hostId");
             return (Criteria) this;
         }
     }

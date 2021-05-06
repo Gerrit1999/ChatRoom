@@ -304,73 +304,73 @@ public class UserExample {
             return (Criteria) this;
         }
 
-        public Criteria andAvatarIsNull() {
-            addCriterion("avatar is null");
+        public Criteria andEmailIsNull() {
+            addCriterion("Email is null");
             return (Criteria) this;
         }
 
-        public Criteria andAvatarIsNotNull() {
-            addCriterion("avatar is not null");
+        public Criteria andEmailIsNotNull() {
+            addCriterion("Email is not null");
             return (Criteria) this;
         }
 
-        public Criteria andAvatarEqualTo(String value) {
-            addCriterion("avatar =", value, "avatar");
+        public Criteria andEmailEqualTo(String value) {
+            addCriterion("Email =", value, "Email");
             return (Criteria) this;
         }
 
-        public Criteria andAvatarNotEqualTo(String value) {
-            addCriterion("avatar <>", value, "avatar");
+        public Criteria andEmailNotEqualTo(String value) {
+            addCriterion("Email <>", value, "Email");
             return (Criteria) this;
         }
 
-        public Criteria andAvatarGreaterThan(String value) {
-            addCriterion("avatar >", value, "avatar");
+        public Criteria andEmailGreaterThan(String value) {
+            addCriterion("Email >", value, "Email");
             return (Criteria) this;
         }
 
-        public Criteria andAvatarGreaterThanOrEqualTo(String value) {
-            addCriterion("avatar >=", value, "avatar");
+        public Criteria andEmailGreaterThanOrEqualTo(String value) {
+            addCriterion("Email >=", value, "Email");
             return (Criteria) this;
         }
 
-        public Criteria andAvatarLessThan(String value) {
-            addCriterion("avatar <", value, "avatar");
+        public Criteria andEmailLessThan(String value) {
+            addCriterion("Email <", value, "Email");
             return (Criteria) this;
         }
 
-        public Criteria andAvatarLessThanOrEqualTo(String value) {
-            addCriterion("avatar <=", value, "avatar");
+        public Criteria andEmailLessThanOrEqualTo(String value) {
+            addCriterion("Email <=", value, "Email");
             return (Criteria) this;
         }
 
-        public Criteria andAvatarLike(String value) {
-            addCriterion("avatar like", value, "avatar");
+        public Criteria andEmailLike(String value) {
+            addCriterion("Email like", value, "Email");
             return (Criteria) this;
         }
 
-        public Criteria andAvatarNotLike(String value) {
-            addCriterion("avatar not like", value, "avatar");
+        public Criteria andEmailNotLike(String value) {
+            addCriterion("Email not like", value, "Email");
             return (Criteria) this;
         }
 
-        public Criteria andAvatarIn(List<String> values) {
-            addCriterion("avatar in", values, "avatar");
+        public Criteria andEmailIn(List<String> values) {
+            addCriterion("Email in", values, "Email");
             return (Criteria) this;
         }
 
-        public Criteria andAvatarNotIn(List<String> values) {
-            addCriterion("avatar not in", values, "avatar");
+        public Criteria andEmailNotIn(List<String> values) {
+            addCriterion("Email not in", values, "Email");
             return (Criteria) this;
         }
 
-        public Criteria andAvatarBetween(String value1, String value2) {
-            addCriterion("avatar between", value1, value2, "avatar");
+        public Criteria andEmailBetween(String value1, String value2) {
+            addCriterion("Email between", value1, value2, "Email");
             return (Criteria) this;
         }
 
-        public Criteria andAvatarNotBetween(String value1, String value2) {
-            addCriterion("avatar not between", value1, value2, "avatar");
+        public Criteria andEmailNotBetween(String value1, String value2) {
+            addCriterion("Email not between", value1, value2, "Email");
             return (Criteria) this;
         }
     }

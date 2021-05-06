@@ -1,6 +1,8 @@
 package com.example.entity;
 
 import com.example.utils.SocketMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -33,6 +35,7 @@ public class Server {
         String hostAddress = InetAddress.getLocalHost().getHostAddress();
         server = new ServerSocket();
         server.bind(new InetSocketAddress(hostAddress, 0));
+        Logger logger = LoggerFactory.getLogger(Server.class);
         // 服务器线程
         Thread serverThread = new Thread(() -> {
             while (true) {
@@ -49,7 +52,7 @@ public class Server {
                                 Message message = (Message) ois.readObject();
                                 int roomId = message.getRoomId();
                                 if (message != null) {
-                                    System.out.println("服务器收到一条消息: " + message);
+                                    logger.info("服务器收到一条消息: " + message);
                                     // 转发
                                     /*for (Socket member : sockets) {
                                         // 获取输出流

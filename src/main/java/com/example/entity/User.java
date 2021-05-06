@@ -7,7 +7,7 @@ public class User {
 
     private String password;
 
-    private String avatar;
+    private String email;
 
     public Integer getId() {
         return id;
@@ -33,11 +33,11 @@ public class User {
         this.password = password == null ? null : password.trim();
     }
 
-    public String getAvatar() {
-        return avatar;
+    public String getEmail() {
+        return email;
     }
 
-    public void setAvatar(String avatar) {
-        this.avatar = avatar == null ? null : avatar.trim();
+    public void setEmail(String email) {
+        this.email = email == null ? null : email.trim();
     }
 }

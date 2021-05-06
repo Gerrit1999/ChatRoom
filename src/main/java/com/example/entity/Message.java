@@ -3,18 +3,12 @@ package com.example.entity;
 import java.io.File;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class Message implements Serializable {
     private final String date;// 消息时间
-
-    private String msg;// 消息内容
-
-    private String fontSize;// 字体大小
-
-    private String fontWeight;// 字体粗细
-
-    private String fontStyle;// 字体风格
 
     private Integer userId;// 消息源
 
@@ -23,6 +17,14 @@ public class Message implements Serializable {
     private File file = null;
 
     private Image image = null;
+
+    private String msg;// 消息内容
+
+    private String fontSize;// 字体大小
+
+    private String fontWeight;// 字体粗细
+
+    private String fontStyle;// 字体风格
 
     private static final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 
@@ -111,14 +113,56 @@ public class Message implements Serializable {
     public String toString() {
         return "Message{" +
                 "date='" + date + '\'' +
-                ", msg='" + msg + '\'' +
-                ", fontSize='" + fontSize + '\'' +
-                ", fontWeight='" + fontWeight + '\'' +
-                ", fontStyle='" + fontStyle + '\'' +
                 ", userId=" + userId +
                 ", roomId=" + roomId +
                 ", file=" + file +
                 ", image=" + image +
+                ", msg='" + msg + '\'' +
+                ", fontSize='" + fontSize + '\'' +
+                ", fontWeight='" + fontWeight + '\'' +
+                ", fontStyle='" + fontStyle + '\'' +
                 '}';
+    }
+
+    public static class ChatRoom {
+        private Integer id;
+
+        private String name;
+
+        private String password;
+
+        private Integer hostid;
+
+        public Integer getId() {
+            return id;
+        }
+
+        public void setId(Integer id) {
+            this.id = id;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name == null ? null : name.trim();
+        }
+
+        public String getPassword() {
+            return password;
+        }
+
+        public void setPassword(String password) {
+            this.password = password == null ? null : password.trim();
+        }
+
+        public Integer getHostid() {
+            return hostid;
+        }
+
+        public void setHostid(Integer hostid) {
+            this.hostid = hostid;
+        }
     }
 }

@@ -16,4 +16,6 @@ public class CustomConstant {
     public static final String MESSAGE_IMAGE_SIZE_TOO_LARGE = "图片大小不能大于20MB!";
 
     public static final String MESSAGE_RECEIVE_TIMEOUT = "接收数据超时!";
+
+    public static final String MESSAGE_USERNAME_EXIST = "抱歉! 用户名已存在!";
 }

@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.net.*;
+import java.util.List;
 
 @Controller
 @RequestMapping("/chatRoom")
@@ -36,7 +37,7 @@ public class ChatRoomController {
             Class.forName("com.example.entity.Server");
             // 创建房间
             chatRoomService.addChatRoom(chatRoom);
-            return ResultEntity.createResultEntity(ResultEntity.ResultType.SUCCESS, null, null);
+            return ResultEntity.createResultEntity(ResultEntity.ResultType.SUCCESS, null, chatRoom.getId());
         } catch (ClassNotFoundException e) {
             return ResultEntity.createResultEntity(ResultEntity.ResultType.FAILED, e.toString(), null);
         }
@@ -47,9 +48,14 @@ public class ChatRoomController {
      */
     @ResponseBody
     @RequestMapping("/join/chatRoom.json")
-    public ResultEntity<String> toChatRoom(@RequestParam("userId") Integer userId,
-                                           @RequestParam("roomId") Integer roomId,
-                                           @RequestParam("password") String password) {
+    public ResultEntity<ChatRoom> toChatRoom(@RequestParam("userId") Integer userId,
+                                             @RequestParam("roomId") Integer roomId,
+                                             @RequestParam("password") String password) {
+        // 获取房间
+        ChatRoom chatRoom = chatRoomService.getChatRoomById(roomId);
+        if (chatRoom == null) {
+            return ResultEntity.createResultEntity(ResultEntity.ResultType.FAILED, CustomConstant.MESSAGE_CHAT_ROOM_NOT_FOUNT, null);
+        }
         // 如果不在房间就加入房间
         if (!chatRoomService.judgeUserInRoom(roomId, userId) && !chatRoomService.addUserToChatRoom(roomId, userId, password)) {
             return ResultEntity.createResultEntity(ResultEntity.ResultType.FAILED, CustomConstant.MESSAGE_CHAT_ROOM_NOT_FOUNT, null);
@@ -77,7 +83,7 @@ public class ChatRoomController {
             }
             // 发送数据
             oos.writeObject(message);
-            return ResultEntity.createResultEntity(ResultEntity.ResultType.SUCCESS, null, null);
+            return ResultEntity.createResultEntity(ResultEntity.ResultType.SUCCESS, null, chatRoom);
         } catch (IOException e) {
             e.printStackTrace();
             return ResultEntity.createResultEntity(ResultEntity.ResultType.FAILED, e.toString(), null);
@@ -118,5 +124,11 @@ public class ChatRoomController {
             e.printStackTrace();
             return ResultEntity.createResultEntity(ResultEntity.ResultType.FAILED, e.toString(), null);
         }
+    }
+
+    @ResponseBody
+    @RequestMapping("/get/allChatRooms.json")
+    public List<ChatRoom> getAllChatRooms(@RequestParam("userId") Integer userId) {
+        return chatRoomService.getChatRoomsByUserId(userId);
     }
 }

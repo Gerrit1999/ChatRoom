@@ -1,108 +1,118 @@
 <%--
-  sessionIdd by IntelliJ IDEA.
+  Created by IntelliJ IDEA.
   User: Gerrit
-  Date: 2021/4/9
-  Time: 22:01
+  Date: 2021/5/3
+  Time: 21:02
   To change this template use File | Settings | File Templates.
 --%>
-<%@ page contentType="text/html;charset=UTF-8" language="java" isELIgnored="false" %>
-<html>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<html lang="zh-CN">
+
 <head>
-    <title>主页</title>
-    <base href="http://${pageContext.request.serverName}:${pageContext.request.serverPort}${pageContext.request.contextPath}/">
-    <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
-    <script type="text/javascript" src="jquery/jquery-2.1.1.min.js"></script>
-    <script type="text/javascript" src="bootstrap/js/bootstrap.min.js"></script>
-    <script type="text/javascript" src="layer/layer.js"></script>
+    <meta charset="utf-8">
+    <title>聊天室</title>
+    <link rel="stylesheet" href="css/style.css">
 </head>
+
 <body>
-<div>
-    <button id="createBtn" type="button" class="btn btn-primary btn-lg btn-block"
-            style="display:block;margin:150px auto 0;width: 200px;height: 100px;font-size: 27px">
-        创建聊天室
-    </button>
-    <button id="joinBtn" type="button" class="btn btn-default btn-lg btn-block"
-            style="display:block;margin:30px auto;width: 200px;height: 100px;font-size: 27px">
-        加入聊天室
-    </button>
-    <div id="tip" class="alert alert-info"
-         style="display:block;margin:30px auto;width: 240px;height: 50px;font-size: 18px;padding-top: 13px;visibility: hidden"
-         role="alert">
+<div class="content">
+    <div class="form sign-in">
+        <h2>欢迎回来</h2>
+        <p>${SPRING_SECURITY_LAST_EXCEPTION.message}</p>
+        <form method="post" action="security/do/login.html">
+            <%--            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}">--%>
+            <label>
+                <span>用户名</span>
+                <input type="text" name="username" required="required"/>
+            </label>
+            <label>
+                <span>密码</span>
+                <input type="password" name="password" required="required"/>
+            </label>
+            <button type="submit" class="submit">登 录</button>
+        </form>
+    </div>
+    <div class="sub-cont">
+        <div class="img">
+            <div class="img__text m--up">
+                <h2>还未注册？</h2>
+                <p>点击下方注册吧！</p>
+            </div>
+            <div class="img__text m--in">
+                <h2>已有帐号？</h2>
+                <p>有帐号就登录吧，好久不见了！</p>
+            </div>
+            <div class="img__btn">
+                <span class="m--up">注 册</span>
+                <span class="m--in">登 录</span>
+            </div>
+        </div>
+        <div class="form sign-up">
+            <h2>立即注册</h2>
+            <%--            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}">--%>
+            <form onsubmit="register()" target="rfFrame">
+                <iframe id="rfFrame" name="rfFrame" src="about:blank" style="display:none;"></iframe>
+                <label>
+                    <span>用户名</span>
+                    <input type="text" id="username" required="required"/>
+                </label>
+                <label>
+                    <span>用户名</span>
+                    <input type="email" id="email" required="required"/>
+                </label>
+                <label>
+                    <span>密码</span>
+                    <input type="password" id="password" required="required"/>
+                </label>
+                <button class="submit" type="submit">注册</button>
+            </form>
+        </div>
     </div>
 </div>
-</body>
 
-<%@ include file="WEB-INF/modal/join-chatRoom.jsp" %>
-<script type="text/javascript">
-    $(function () {
-        // 创建聊天室
-        $("#createBtn").click(function () {
-            $.ajax({
-                url: "chatRoom/create/chatRoom.json",
-                type: "post",
-                dataType: "json",
-                success: function (response) {
-                    var result = response.result;
-                    if (result === "SUCCESS") {
-                        toChatRoom(response.data)
-                    } else if (result === "FAILED") {
-                        layer.msg("创建失败! " + response.message);
-                    }
-                },
-                error: function (response) {
-                    layer.msg("创建失败! " + response.status + " " + response.statusText)
-                }
-            })
-        })
+<script src="js/script.js"></script>
+<script src="jquery/jquery-2.1.1.min.js"></script>
+<script type="text/javascript" src="layer/layer.js"></script>
 
-        // 加入聊天室
-        $("#joinBtn").click(function () {
-            $("#joinChatRoomModal").modal("show");
-        })
+<script>
 
-        // 加入聊天室确认按钮
-        $("#joinConfirmBtn").click(function () {
-            var port = $("#roomPortInput").val();
-            $("#joinRoomNameInput").val("");
-            $("#joinChatRoomModal").modal("hide");
-            if (port === "${sessionScope.port}") {
-                $(location).attr("href", "to/chat.html");
-            } else {
-                toChatRoom(port)
-            }
-        })
-    })
-
-    function toChatRoom(port) {
+    function register() {
+        const username = $('#username').val();
+        const email = $('#email').val();
+        const password = $('#password').val();
+        const data = JSON.stringify({
+            "username": username,
+            "email": email,
+            "password": password
+        });
         $.ajax({
-            url: "chatRoom/join/chatRoom.json",
+            url: "user/do/register.json",
             type: "post",
-            data: {
-                "port": port
-            },
+            contentType: "application/json;charset=utf-8",
+            data: data,
             dataType: "json",
+            async: false,
             success: function (response) {
-                var result = response.result;
+                const result = response.result;
                 if (result === "SUCCESS") {
-                    $(location).attr("href", "to/chat.html");
+                    layer.msg("注册成功! 3s后跳转到登录页面");
+                    setTimeout(function () {
+                        $(location).attr("href", "index.jsp");
+                    }, 3000);
                 } else if (result === "FAILED") {
-                    layer.msg("加入失败! " + response.message);
+                    layer.msg("注册失败! " + response.message);
                 }
             },
             error: function (response) {
-                layer.msg("加入失败! " + response.status + " " + response.statusText)
+                console.log(1)
+                layer.msg("注册失败! " + response.status + " " + response.statusText);
             }
-        })
+        });
     }
 
-    window.setInterval(function () {
-        if (${!empty sessionScope.port}) {
-            $("#tip").css("visibility", "visible");
-            $("#tip").empty();
-            $("#tip").append('上次进入的聊天室: ' + "${sessionScope.port}");
-        } else {
-            $("#tip").css("visibility", "hidden");
-        }
-    }, 1000);
 </script>
+
+
+</body>
+
 </html>

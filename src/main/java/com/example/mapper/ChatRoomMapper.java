@@ -4,7 +4,6 @@ import com.example.entity.ChatRoom;
 import com.example.entity.ChatRoomExample;
 import com.example.entity.User;
 import org.apache.ibatis.annotations.Param;
-import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
@@ -36,4 +35,6 @@ public interface ChatRoomMapper {
     void deleteUser(@Param("roomId") Integer roomId, @Param("userId") Integer userId);
 
     List<User> selectUserInRoom(@Param("roomId") Integer roomId, @Param("userId") Integer userId);
+
+    List<ChatRoom> selectChatRoomsByUserId(@Param("userId") Integer userId);
 }

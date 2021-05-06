@@ -5,7 +5,7 @@
     <id column="id" jdbcType="INTEGER" property="id" />
     <result column="username" jdbcType="VARCHAR" property="username" />
     <result column="password" jdbcType="CHAR" property="password" />
-    <result column="avatar" jdbcType="VARCHAR" property="avatar" />
+    <result column="email" jdbcType="VARCHAR" property="email" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -66,7 +66,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, username, password, avatar
+    id, username, password, email
   </sql>
   <select id="selectByExample" parameterType="com.example.entity.UserExample" resultMap="BaseResultMap">
     select
@@ -99,10 +99,9 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.example.entity.User">
-    insert into t_user (id, username, password, 
-      avatar)
+    insert into t_user (id, username, password, email)
     values (#{id,jdbcType=INTEGER}, #{username,jdbcType=VARCHAR}, #{password,jdbcType=CHAR}, 
-      #{avatar,jdbcType=VARCHAR})
+      #{email,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.example.entity.User">
     insert into t_user
@@ -116,8 +115,8 @@
       <if test="password != null">
         password,
       </if>
-      <if test="avatar != null">
-        avatar,
+      <if test="email != null">
+        email,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -130,8 +129,8 @@
       <if test="password != null">
         #{password,jdbcType=CHAR},
       </if>
-      <if test="avatar != null">
-        #{avatar,jdbcType=VARCHAR},
+      <if test="email != null">
+        #{email,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -153,8 +152,8 @@
       <if test="record.password != null">
         password = #{record.password,jdbcType=CHAR},
       </if>
-      <if test="record.avatar != null">
-        avatar = #{record.avatar,jdbcType=VARCHAR},
+      <if test="record.email != null">
+        email = #{record.email,jdbcType=VARCHAR},
       </if>
     </set>
     <if test="_parameter != null">
@@ -166,7 +165,7 @@
     set id = #{record.id,jdbcType=INTEGER},
       username = #{record.username,jdbcType=VARCHAR},
       password = #{record.password,jdbcType=CHAR},
-      avatar = #{record.avatar,jdbcType=VARCHAR}
+      email = #{record.email,jdbcType=VARCHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -180,8 +179,8 @@
       <if test="password != null">
         password = #{password,jdbcType=CHAR},
       </if>
-      <if test="avatar != null">
-        avatar = #{avatar,jdbcType=VARCHAR},
+      <if test="email != null">
+        email = #{email,jdbcType=VARCHAR},
       </if>
     </set>
     where id = #{id,jdbcType=INTEGER}
@@ -190,7 +189,7 @@
     update t_user
     set username = #{username,jdbcType=VARCHAR},
       password = #{password,jdbcType=CHAR},
-      avatar = #{avatar,jdbcType=VARCHAR}
+      email = #{email,jdbcType=VARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
 </mapper>
