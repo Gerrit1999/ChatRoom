@@ -1,6 +1,7 @@
 package com.example.controller;
 
 import com.example.entity.Message;
+import com.example.entity.Server;
 import com.example.service.UserService;
 import com.example.utils.CustomConstant;
 import com.example.utils.ResultEntity;
@@ -32,10 +33,13 @@ public class ChatController {
         if (message.getMsg() == null || message.getMsg().isEmpty()) {// msg不能为空
             return ResultEntity.createResultEntity(ResultEntity.ResultType.FAILED, CustomConstant.MESSAGE_STRING_INVALIDATE, null);
         }
-        Socket socket = SocketMap.getSocket(message.getRoomId(), message.getUserId());// 获取对应的socket
+        Integer roomId = message.getRoomId();
+        Integer userId = message.getUserId();
+        Socket socket = SocketMap.getSocket(roomId, userId);// 获取对应的socket
         if (socket == null) {
             return ResultEntity.createResultEntity(ResultEntity.ResultType.FAILED, CustomConstant.MESSAGE_SOCKET_NOT_FOUND, null);
         }
+
         try {
             // 获取输出流
             ObjectOutputStream oos = SocketMap.getObjectOutputStream(socket);

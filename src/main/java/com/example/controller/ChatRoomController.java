@@ -26,21 +26,24 @@ public class ChatRoomController {
     @Autowired
     UserService userService;
 
+    static {
+        // 开启服务器
+        try {
+            Class.forName("com.example.entity.Server");
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
     /**
      * 创建房间
      */
     @ResponseBody
     @RequestMapping("/create/chatRoom.json")
     public ResultEntity<Integer> createChatRoom(@RequestBody ChatRoom chatRoom) {
-        try {
-            // 开启服务器
-            Class.forName("com.example.entity.Server");
-            // 创建房间
-            chatRoomService.addChatRoom(chatRoom);
-            return ResultEntity.createResultEntity(ResultEntity.ResultType.SUCCESS, null, chatRoom.getId());
-        } catch (ClassNotFoundException e) {
-            return ResultEntity.createResultEntity(ResultEntity.ResultType.FAILED, e.toString(), null);
-        }
+        // 创建房间
+        chatRoomService.addChatRoom(chatRoom);
+        return ResultEntity.createResultEntity(ResultEntity.ResultType.SUCCESS, null, chatRoom.getId());
     }
 
     /**
@@ -65,11 +68,11 @@ public class ChatRoomController {
             Socket socket = SocketMap.getSocket(roomId, userId);
             if (socket == null) {
                 socket = new Socket(Server.getAddress(), Server.getPort());
+                // 设置超时时间
+                socket.setSoTimeout(20 * 1000);
+                // 保存socket
+                SocketMap.addSocket(roomId, userId, socket);
             }
-            // 设置超时时间
-            socket.setSoTimeout(20 * 1000);
-            // 保存socket
-            SocketMap.addSocket(roomId, userId, socket);
             // 获取用户名
             String username = userService.getUsernameById(userId);
             // 提示信息
@@ -129,6 +132,21 @@ public class ChatRoomController {
     @ResponseBody
     @RequestMapping("/get/allChatRooms.json")
     public List<ChatRoom> getAllChatRooms(@RequestParam("userId") Integer userId) {
+        List<ChatRoom> chatRooms = chatRoomService.getChatRoomsByUserId(userId);
+        for (ChatRoom chatRoom : chatRooms) {
+            Integer roomId = chatRoom.getId();
+            if (!SocketMap.containsSocket(roomId, userId)) {
+                try {
+                    Socket socket = new Socket(Server.getAddress(), Server.getPort());
+                    // 设置超时时间
+                    socket.setSoTimeout(20 * 1000);
+                    // 保存socket
+                    SocketMap.addSocket(roomId, userId, socket);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
         return chatRoomService.getChatRoomsByUserId(userId);
     }
 }

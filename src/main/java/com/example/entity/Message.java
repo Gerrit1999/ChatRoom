@@ -14,6 +14,8 @@ public class Message implements Serializable {
 
     private Integer roomId;// 所在房间
 
+    private Integer receiverId = 0;// 接收者id, 0为房间中的全体成员
+
     private File file = null;
 
     private Image image = null;
@@ -26,7 +28,7 @@ public class Message implements Serializable {
 
     private String fontStyle;// 字体风格
 
-    private static final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+    private static final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     public Message() {
         date = simpleDateFormat.format(new Date());
@@ -57,6 +59,30 @@ public class Message implements Serializable {
         this.msg = msg;
     }
 
+    public Integer getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Integer userId) {
+        this.userId = userId;
+    }
+
+    public Integer getRoomId() {
+        return roomId;
+    }
+
+    public void setRoomId(Integer roomId) {
+        this.roomId = roomId;
+    }
+
+    public Integer getReceiverId() {
+        return receiverId;
+    }
+
+    public void setReceiverId(Integer receiverId) {
+        this.receiverId = receiverId;
+    }
+
     public String getFontSize() {
         return fontSize;
     }
@@ -79,22 +105,6 @@ public class Message implements Serializable {
 
     public void setFontStyle(String fontStyle) {
         this.fontStyle = fontStyle;
-    }
-
-    public Integer getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Integer userId) {
-        this.userId = userId;
-    }
-
-    public Integer getRoomId() {
-        return roomId;
-    }
-
-    public void setRoomId(Integer roomId) {
-        this.roomId = roomId;
     }
 
     public File getFile() {
@@ -122,47 +132,5 @@ public class Message implements Serializable {
                 ", fontWeight='" + fontWeight + '\'' +
                 ", fontStyle='" + fontStyle + '\'' +
                 '}';
-    }
-
-    public static class ChatRoom {
-        private Integer id;
-
-        private String name;
-
-        private String password;
-
-        private Integer hostid;
-
-        public Integer getId() {
-            return id;
-        }
-
-        public void setId(Integer id) {
-            this.id = id;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name == null ? null : name.trim();
-        }
-
-        public String getPassword() {
-            return password;
-        }
-
-        public void setPassword(String password) {
-            this.password = password == null ? null : password.trim();
-        }
-
-        public Integer getHostid() {
-            return hostid;
-        }
-
-        public void setHostid(Integer hostid) {
-            this.hostid = hostid;
-        }
     }
 }

@@ -14,4 +14,6 @@ public interface UserService {
     boolean addUser(User user);
 
     User findUserByUsername(String username);
+
+    List<User> getUsersByRoomId(int roomId);
 }

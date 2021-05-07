@@ -100,15 +100,20 @@
                     <br/><br/><br/>
                 </div>
             </li>
-            <li role="presentation" class="active"><a href="javascript:createChatRoom();">创建房间</a></li>
-            <li role="presentation"><a href="javascript:joinChatRom();">加入房间</a></li>
+            <li role="presentation" class="active"><a href="javascript:createChatRoomShow();">创建房间</a></li>
+            <li role="presentation"><a href="javascript:joinChatRoomShow();">加入房间</a></li>
             已加入的房间
         </ul>
     </div>
     <div class="panel panel-default talk_con">
         <div class="panel-heading" style="height: 70px">
-            <div style="float: left;margin-top: 3px"><h3 class="panel-title" style="font-size: 25px">
-                房间号: ${port}</h3>
+            <div style="float: left;margin-top: 3px">
+                <h3 class="panel-title" style="font-size: 25px">
+                    <span id="roomName"></span>
+                </h3>
+                <h3 class="panel-title" style="font-size: 15px">
+                    id: <span id="roomId"></span>
+                </h3>
             </div>
             <div style="float: right;margin-top: 1px">
                 <button id="exitBtn" type="button" class="btn btn-primary btn-lg active" style="margin-left: 20px">
@@ -177,12 +182,12 @@
         }
     });*/
     // 加入聊天室
-    function createChatRoom() {
+    function createChatRoomShow() {
         $("#createChatRoomModal").modal("show");
     }
 
     // 加入聊天室
-    function joinChatRom() {
+    function joinChatRoomShow() {
         $("#joinChatRoomModal").modal("show");
     }
 
@@ -209,7 +214,7 @@
                 success: function (response) {
                     const result = response.result;
                     if (result === "SUCCESS") {
-                        toChatRoom(response.data, roomPassword)
+                        joinChatRoom(response.data, roomPassword)
                     } else if (result === "FAILED") {
                         layer.msg("创建失败! " + response.message);
                     }
@@ -230,7 +235,7 @@
             $("#inputRoomId").val("");
             $("#inputRoomPassword").val("");
             $("#joinChatRoomModal").modal("hide");
-            toChatRoom(roomId, roomPassword);
+            joinChatRoom(roomId, roomPassword);
         })
 
         // 发送点击事件
@@ -352,7 +357,7 @@
         getAllChatRooms();
     })
 
-    function toChatRoom(roomId, roomPassword) {
+    function joinChatRoom(roomId, roomPassword) {
         const userId = $("#userId").val();
         $.ajax({
             url: "chatRoom/join/chatRoom.json",
@@ -380,9 +385,10 @@
 
     // 添加到房间列表
     function appendRoomItem(roomItem) {
+        const href = "javascript:gotoChatRoom(" + roomItem.id + ",'" + roomItem.name + "')";
         $('#roomList').append(
             '<li role="presentation" class="roomItem">' +
-            '<a style="padding: 0">' +
+            '<a style="padding: 0" href=' + href + '>' +
             '<div style="float: left;">' +
             '<img src="images/bg.jpg" alt="' + roomItem.id + '" width="50px" height="50px">' +
             '</div>' +
@@ -390,6 +396,12 @@
             '</a>' +
             '</li>'
         );
+    }
+
+    function gotoChatRoom(roomId, roomName) {
+        $('#roomId').text(roomId);
+        $('#roomName').text(roomName);
+        // recvMsg();
     }
 
     function getAllChatRooms() {
@@ -406,6 +418,9 @@
                 for (let i = 0; i < n; i++) {
                     const roomItem = response[i];
                     appendRoomItem(roomItem);
+                    if (i === 0) {
+                        gotoChatRoom(roomItem.id, roomItem.name);
+                    }
                 }
             },
             error: function (response) {
@@ -418,18 +433,18 @@
     function sendMsg() {
         const textarea = $("#msg");
         const msg = textarea.val();
+        const userId = <security:authentication property="principal.originalUser.id"/>;
+        const roomId = $('#roomId').text();
         const fontSize = textarea.css("font-size");
         const fontWeight = textarea.css("font-weight");
         const fontStyle = textarea.css("font-style");
-        <%--const localAddress = "${sessionScope.localAddress}";--%>
-        <%--const localPort = ${sessionScope.localPort};--%>
         const data = JSON.stringify({
             "msg": msg,
+            "userId": userId,
+            "roomId": roomId,
             "fontSize": fontSize,
             "fontWeight": fontWeight,
-            "fontStyle": fontStyle,
-            "sourceAddress": localAddress,
-            "sourcePort": localPort
+            "fontStyle": fontStyle
         });
         $.ajax({
             url: "chat/send/message.json",
@@ -438,7 +453,7 @@
             data: data,
             dataType: "json",
             success: function (response) {
-                var result = response.result;
+                const result = response.result;
                 if (result === "SUCCESS") {
                     layer.msg("发送成功!");
                 } else if (result === "FAILED") {
@@ -467,13 +482,14 @@
      *长轮询接收消息
      */
     function recvMsg() {
-        <%--const localAddress = "${sessionScope.localAddress}";--%>
-        <%--const localPort = ${sessionScope.localPort};--%>
+        const userId = <security:authentication property="principal.originalUser.id"/>;
+        const roomId = $('#roomId').text();
         $.ajax({
             url: "chat/recv/message.json",
             type: "post",
             data: {
-                "localPort": localPort
+                "userId": userId,
+                "roomId": roomId
             },
             dataType: "json",
             timeout: 30000, // 超时时间要大于后台的超时时间

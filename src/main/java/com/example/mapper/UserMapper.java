@@ -1,6 +1,7 @@
 package com.example.mapper;
 
 import java.util.List;
+
 import org.apache.ibatis.annotations.Param;
 import com.example.entity.User;
 import com.example.entity.UserExample;
@@ -28,4 +29,6 @@ public interface UserMapper {
     int updateByPrimaryKeySelective(User record);
 
     int updateByPrimaryKey(User record);
+
+    List<User> selectUsersByRoomId(@Param("roomId") Integer roomId);
 }

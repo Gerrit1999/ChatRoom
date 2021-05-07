@@ -5,4 +5,5 @@
 
     <import resource="spring-persist-tx.xml"/>
     <import resource="spring-security.xml"/>
+    
 </beans>

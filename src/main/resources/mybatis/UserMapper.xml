@@ -68,6 +68,18 @@
   <sql id="Base_Column_List">
     id, username, password, email
   </sql>
+  <select id="selectUsersByRoomId" resultMap="BaseResultMap">
+    SELECT
+      t_user.id,
+      t_user.username,
+      t_user.`password`,
+      t_user.email
+    FROM
+      t_user
+        RIGHT JOIN inner_room_user ON t_user.id = inner_room_user.user_id
+    WHERE
+      room_id = #{roomId}
+  </select>
   <select id="selectByExample" parameterType="com.example.entity.UserExample" resultMap="BaseResultMap">
     select
     <if test="distinct">

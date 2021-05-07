@@ -57,7 +57,7 @@
                     <input type="text" id="username" required="required"/>
                 </label>
                 <label>
-                    <span>用户名</span>
+                    <span>邮箱</span>
                     <input type="email" id="email" required="required"/>
                 </label>
                 <label>
