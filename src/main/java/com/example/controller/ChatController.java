@@ -1,7 +1,6 @@
 package com.example.controller;
 
 import com.example.entity.Message;
-import com.example.entity.Server;
 import com.example.service.UserService;
 import com.example.utils.CustomConstant;
 import com.example.utils.ResultEntity;
@@ -43,13 +42,10 @@ public class ChatController {
         try {
             // 获取输出流
             ObjectOutputStream oos = SocketMap.getObjectOutputStream(socket);
-            if (oos == null) {
-                return ResultEntity.createResultEntity(ResultEntity.ResultType.FAILED, CustomConstant.MESSAGE_SYSTEM_ERROR_NULL_POINTER_EXCEPTION + "ObjectOutputStream", null);
-            }
             // 发送数据
             oos.writeObject(message);
             return ResultEntity.createResultEntity(ResultEntity.ResultType.SUCCESS, null, null);
-        } catch (IOException e) {
+        } catch (IOException | NullPointerException e) {
             e.printStackTrace();
             return ResultEntity.createResultEntity(ResultEntity.ResultType.FAILED, CustomConstant.MESSAGE_SYSTEM_ERROR_IO_EXCEPTION, null);
         }
@@ -133,12 +129,9 @@ public class ChatController {
             Message message = new Message(msg, roomId, userId, new File(filePath));
             // 获取输出流
             ObjectOutputStream oos = SocketMap.getObjectOutputStream(socket);
-            if (oos == null) {
-                return ResultEntity.createResultEntity(ResultEntity.ResultType.FAILED, CustomConstant.MESSAGE_SYSTEM_ERROR_NULL_POINTER_EXCEPTION + "ObjectOutputStream", null);
-            }
             // 发送数据
             oos.writeObject(message);
-        } catch (IllegalStateException | IOException e) {
+        } catch (IllegalStateException | IOException | NullPointerException e) {
             return ResultEntity.createResultEntity(ResultEntity.ResultType.FAILED, e.toString(), null);
         }
         return ResultEntity.createResultEntity(ResultEntity.ResultType.SUCCESS, null, null);

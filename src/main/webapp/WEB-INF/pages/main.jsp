@@ -245,9 +245,11 @@
                 sendMsg();
             } else {// 发送图片
                 const formData = new FormData();
+                const userId = <security:authentication property="principal.originalUser.id"/>;
+                const roomId = $('#roomId').text();
                 formData.append("image", $("#inputPicture")[0].files[0]);
-                formData.append("localAddress", "${sessionScope.localAddress}");
-                formData.append("localPort", ${sessionScope.localPort});
+                formData.append("userId", userId);
+                formData.append("roomId", roomId);
                 $.ajax({
                     type: "post",
                     url: "chat/send/image.json",
@@ -297,9 +299,11 @@
         // 发送文件
         $("#uploadFile").click(function () {
             const formData = new FormData();
+            const userId = <security:authentication property="principal.originalUser.id"/>;
+            const roomId = $('#roomId').text();
             formData.append("files", $("#file")[0].files[0]);
-            formData.append("localAddress", "${sessionScope.localAddress}");
-            formData.append("localPort", ${sessionScope.localPort});
+            formData.append("userId", userId);
+            formData.append("roomId", roomId);
             $.ajax({
                 type: "post",
                 url: "chat/upload/file.json",
@@ -401,7 +405,7 @@
     function gotoChatRoom(roomId, roomName) {
         $('#roomId').text(roomId);
         $('#roomName').text(roomName);
-        // recvMsg();
+        recvMsg();
     }
 
     function getAllChatRooms() {
@@ -499,9 +503,8 @@
                     const data = response.data;
                     const date = data.date;
                     let msg = data.msg;
-                    const sourceAddress = data.sourceAddress;
-                    const sourcePort = data.sourcePort;
-                    if (sourceAddress === localAddress && sourcePort === localPort) {// 是我发的消息
+                    const sender = data.userId;
+                    if (sender === userId) {// 是我发的消息
                         $("#words").append('<div style="text-align: right;margin-bottom: 5px;"><span>' + date + '</span></div>')
                         if (data.image !== null) {// 是图片
                             let image = data.image;
@@ -512,7 +515,7 @@
                             $("#words").append('<div class="iTalk"><span style="font-size:' + data.fontSize + ';font-weight:' + data.fontWeight + ';font-style:' + data.fontStyle + '">' + msg + '</span></div>');
                         }
                     } else {// 是其他人发的消息
-                        $("#words").append('<div style="text-align: left;margin-bottom: 5px;"><span>' + date + '  [ From: ' + sourceAddress + ':' + sourcePort + ' ]</span></div>')
+                        $("#words").append('<div style="text-align: left;margin-bottom: 5px;"><span>' + date + '  [ From: ' + sender + ' ]</span></div>')
                         const file = data.file;
                         if (file !== null) {// 是文件
                             $("#words").append('<div class="uTalk">' +

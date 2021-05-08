@@ -93,4 +93,12 @@ public class SocketMap {
         inputMap.put(socket, ois);
         return inputMap.put(socket, ois);
     }
+
+    public static void removeObjectOutputStream(Socket socket) {
+        outputMap.remove(socket);
+    }
+
+    public static void removeObjectInputStream(Socket socket) {
+        inputMap.remove(socket);
+    }
 }
