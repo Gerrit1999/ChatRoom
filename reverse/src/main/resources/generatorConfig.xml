@@ -44,6 +44,6 @@
         </javaClientGenerator>
 
         <!-- 指定数据表 -->
-        <table tableName="t_room" domainObjectName="ChatRoom"/>
+        <table tableName="t_image" domainObjectName="Image"/>
     </context>
 </generatorConfiguration>

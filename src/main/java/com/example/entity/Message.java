@@ -1,70 +1,57 @@
 package com.example.entity;
 
-import java.io.File;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 public class Message implements Serializable {
-    private final String date;// 消息时间
+    private Integer id;
 
-    private Integer userId;// 消息源
+    private Date date;
 
-    private Integer roomId;// 所在房间
+    private Integer roomId;
 
-    private Integer receiverId = 0;// 接收者id, 0为房间中的全体成员
+    private User sender;// 发送方
 
-    private File file = null;
+    private User receiver;// 接收方
 
-    private Image image = null;
+    private File file;
 
-    private String msg;// 消息内容
+    private String message;
 
-    private String fontSize;// 字体大小
+    private Integer fontSize;
 
-    private String fontWeight;// 字体粗细
+    private Integer fontWeight;
 
-    private String fontStyle;// 字体风格
-
-    private static final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    private String fontStyle;
 
     public Message() {
-        date = simpleDateFormat.format(new Date());
+        date = new Date();
     }
 
-    public Message(String msg, Integer roomId, Integer userId) {
+    public Message(String message, Integer roomId, User user) {
         this();
-        this.msg = msg;
+        this.message = message;
         this.roomId = roomId;
-        this.userId = userId;
+        user.setPassword(null);
+        this.sender = user;
     }
 
-    public Message(String msg, Integer roomId, Integer userId, File file) {
-        this(msg, roomId, userId);
-        this.file = file;
+    public Integer getId() {
+        return id;
     }
 
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
     public String getDate() {
-        return date;
+        SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        return sdf.format(date);
     }
 
-    public String getMsg() {
-        return msg;
-    }
-
-    public void setMsg(String msg) {
-        this.msg = msg;
-    }
-
-    public Integer getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Integer userId) {
-        this.userId = userId;
+    public void setDate(Date date) {
+        this.date = date;
     }
 
     public Integer getRoomId() {
@@ -75,27 +62,51 @@ public class Message implements Serializable {
         this.roomId = roomId;
     }
 
-    public Integer getReceiverId() {
-        return receiverId;
+    public User getSender() {
+        return sender;
     }
 
-    public void setReceiverId(Integer receiverId) {
-        this.receiverId = receiverId;
+    public void setSender(User sender) {
+        this.sender = sender;
     }
 
-    public String getFontSize() {
+    public User getReceiver() {
+        return receiver;
+    }
+
+    public void setReceiver(User receiver) {
+        this.receiver = receiver;
+    }
+
+    public File getFile() {
+        return file;
+    }
+
+    public void setFile(File file) {
+        this.file = file;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message == null ? null : message.trim();
+    }
+
+    public Integer getFontSize() {
         return fontSize;
     }
 
-    public void setFontSize(String fontSize) {
+    public void setFontSize(Integer fontSize) {
         this.fontSize = fontSize;
     }
 
-    public String getFontWeight() {
+    public Integer getFontWeight() {
         return fontWeight;
     }
 
-    public void setFontWeight(String fontWeight) {
+    public void setFontWeight(Integer fontWeight) {
         this.fontWeight = fontWeight;
     }
 
@@ -104,32 +115,21 @@ public class Message implements Serializable {
     }
 
     public void setFontStyle(String fontStyle) {
-        this.fontStyle = fontStyle;
-    }
-
-    public File getFile() {
-        return file;
-    }
-
-    public Image getImage() {
-        return image;
-    }
-
-    public void setImage(String filePath, String contextPath) {
-        image = new Image(filePath, contextPath);
+        this.fontStyle = fontStyle == null ? null : fontStyle.trim();
     }
 
     @Override
     public String toString() {
         return "Message{" +
-                "date='" + date + '\'' +
-                ", userId=" + userId +
+                "id=" + id +
+                ", date=" + date +
                 ", roomId=" + roomId +
+                ", sender=" + sender +
+                ", receiver=" + receiver +
                 ", file=" + file +
-                ", image=" + image +
-                ", msg='" + msg + '\'' +
-                ", fontSize='" + fontSize + '\'' +
-                ", fontWeight='" + fontWeight + '\'' +
+                ", message='" + message + '\'' +
+                ", fontSize=" + fontSize +
+                ", fontWeight=" + fontWeight +
                 ", fontStyle='" + fontStyle + '\'' +
                 '}';
     }

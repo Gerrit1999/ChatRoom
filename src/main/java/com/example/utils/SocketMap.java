@@ -81,8 +81,9 @@ public class SocketMap {
         // 获取输出流
         ObjectOutputStream oos = new ObjectOutputStream(socket.getOutputStream());
         outputMap.put(socket, oos);
-        return outputMap.put(socket, oos);
+        return oos;
     }
+
 
     public static ObjectInputStream getObjectInputStream(Socket socket) throws IOException {
         if (inputMap.containsKey(socket)) {
@@ -91,7 +92,7 @@ public class SocketMap {
         // 获取输入流
         ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());
         inputMap.put(socket, ois);
-        return inputMap.put(socket, ois);
+        return ois;
     }
 
     public static void removeObjectOutputStream(Socket socket) {

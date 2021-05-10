@@ -1,6 +1,11 @@
 package com.example.controller;
 
+import com.example.entity.Image;
 import com.example.entity.Message;
+import com.example.entity.User;
+import com.example.service.FileService;
+import com.example.service.ImageService;
+import com.example.service.MessageService;
 import com.example.service.UserService;
 import com.example.utils.CustomConstant;
 import com.example.utils.ResultEntity;
@@ -26,14 +31,25 @@ public class ChatController {
     @Autowired
     UserService userService;
 
+    @Autowired
+    MessageService messageService;
+
+    @Autowired
+    FileService fileService;
+
+    @Autowired
+    ImageService imageService;
+
     @ResponseBody
     @RequestMapping("/send/message.json")
     public ResultEntity<String> sendMessage(@RequestBody Message message) {
-        if (message.getMsg() == null || message.getMsg().isEmpty()) {// msg不能为空
+        if (message.getMessage() == null || message.getMessage().isEmpty()) {// msg不能为空
             return ResultEntity.createResultEntity(ResultEntity.ResultType.FAILED, CustomConstant.MESSAGE_STRING_INVALIDATE, null);
         }
+        // 保存数据库
+        messageService.addMessage(message);
         Integer roomId = message.getRoomId();
-        Integer userId = message.getUserId();
+        Integer userId = message.getSender().getId();
         Socket socket = SocketMap.getSocket(roomId, userId);// 获取对应的socket
         if (socket == null) {
             return ResultEntity.createResultEntity(ResultEntity.ResultType.FAILED, CustomConstant.MESSAGE_SOCKET_NOT_FOUND, null);
@@ -55,7 +71,7 @@ public class ChatController {
     @RequestMapping("/recv/message.json")
     public ResultEntity<Message> recvMessage(@RequestParam("roomId") Integer roomId,
                                              @RequestParam("userId") Integer userId) {
-        Socket socket = SocketMap.getSocket(roomId, userId);// 获取对应的socket
+        Socket socket = SocketMap.getSocket(roomId, userId);    // 获取对应的socket
         if (socket == null) {
             return ResultEntity.createResultEntity(ResultEntity.ResultType.FAILED, CustomConstant.MESSAGE_SOCKET_NOT_FOUND, null);
         }
@@ -76,12 +92,11 @@ public class ChatController {
         } catch (ClassNotFoundException | IOException e) {
             return ResultEntity.createResultEntity(ResultEntity.ResultType.FAILED, e.toString(), null);
         }
-
     }
 
     @ResponseBody
     @RequestMapping("/upload/file.json")
-    public ResultEntity<String> uploadFile(@RequestParam(value = "files", required = false) MultipartFile file,
+    public ResultEntity<String> uploadFile(@RequestParam(value = "multipartFile", required = false) MultipartFile multipartFile,
                                            @RequestParam("roomId") Integer roomId,
                                            @RequestParam("userId") Integer userId,
                                            HttpSession session) {
@@ -91,28 +106,14 @@ public class ChatController {
             if (socket == null) {
                 return ResultEntity.createResultEntity(ResultEntity.ResultType.FAILED, CustomConstant.MESSAGE_SOCKET_NOT_FOUND, null);
             }
-
-            String path = session.getServletContext().getRealPath("upload") + '\\' + roomId + "\\" + userId;
-            String fileName = file.getOriginalFilename();
-            if (fileName == null) {
-                return ResultEntity.createResultEntity(ResultEntity.ResultType.FAILED, CustomConstant.MESSAGE_SYSTEM_ERROR_NULL_POINTER_EXCEPTION + "fileName", null);
-            }
-            int p = fileName.lastIndexOf('.');
-            String prefix = fileName.substring(0, p);// 文件名
-            String suffix = fileName.substring(p + 1);// 文件后缀
-            String filePath = path + '\\' + prefix + '-' + UUID.randomUUID().toString().replace("-", "") + '.' + suffix;// 文件路径
-            File desFile = new File(filePath);
-            if (!desFile.getParentFile().exists()) {// 如果文件夹不存在则创建
-                if (!desFile.mkdirs()) {
-                    return ResultEntity.createResultEntity(ResultEntity.ResultType.FAILED, CustomConstant.MESSAGE_SYSTEM_ERROR_MKDIRS, null);
-                }
-            }
             // 保存文件
-            file.transferTo(desFile);
-            // 提示信息
+            com.example.entity.File file = saveFile(roomId, userId, multipartFile, session);
+            // -----提示信息-----
+
             // 文件大小
             String unit;
             double size = file.getSize();
+
             if (size >= 1024 * 1024) {
                 unit = "MB";
                 size /= 1024 * 1024;
@@ -124,14 +125,18 @@ public class ChatController {
             }
             // 获取用户名
             String username = userService.getUsernameById(userId);
-            String msg = username + " 上传了文件: " + fileName + "(" + new DecimalFormat("#.00").format(size) + unit + ")";
+            String msg = username + " 上传了文件: " + file.getName() + "(" + new DecimalFormat("#.00").format(size) + unit + ")";
             // 封装数据
-            Message message = new Message(msg, roomId, userId, new File(filePath));
+            User user = userService.getUserById(userId);
+            Message message = new Message(msg, roomId, user);
+            message.setFile(file);
+            // 保存数据库
+            messageService.addMessage(message);
             // 获取输出流
             ObjectOutputStream oos = SocketMap.getObjectOutputStream(socket);
             // 发送数据
             oos.writeObject(message);
-        } catch (IllegalStateException | IOException | NullPointerException e) {
+        } catch (Exception e) {
             return ResultEntity.createResultEntity(ResultEntity.ResultType.FAILED, e.toString(), null);
         }
         return ResultEntity.createResultEntity(ResultEntity.ResultType.SUCCESS, null, null);
@@ -191,43 +196,30 @@ public class ChatController {
 
     @ResponseBody
     @RequestMapping("/send/image.json")
-    public ResultEntity<String> sendImage(@RequestParam(value = "image", required = false) MultipartFile file,
+    public ResultEntity<String> sendImage(@RequestParam(value = "image", required = false) MultipartFile multipartFile,
                                           @RequestParam("roomId") Integer roomId,
                                           @RequestParam("userId") Integer userId,
                                           HttpSession session,
                                           HttpServletRequest request) {
-        if (file.getSize() > 20 * 1024 * 1024) {// 图片大小不能大于20MB
+        if (multipartFile.getSize() > 20 * 1024 * 1024) {// 图片大小不能大于20MB
             return ResultEntity.createResultEntity(ResultEntity.ResultType.FAILED, CustomConstant.MESSAGE_IMAGE_SIZE_TOO_LARGE, null);
         }
         try {
             // 获取套接字
             Socket socket = SocketMap.getSocket(roomId, userId);
-            // 获取路径
-            String path = session.getServletContext().getRealPath("upload") + '\\' + roomId + "\\" + userId;
-            String fileName = file.getOriginalFilename();
-            if (fileName == null) {
-                return ResultEntity.createResultEntity(ResultEntity.ResultType.FAILED, CustomConstant.MESSAGE_SYSTEM_ERROR_NULL_POINTER_EXCEPTION + "fileName", null);
-            }
-            int p = fileName.lastIndexOf('.');
-            String prefix = fileName.substring(0, p);// 文件名
-            String suffix = fileName.substring(p + 1);// 文件后缀
-            fileName = prefix + '-' + UUID.randomUUID().toString().replace("-", "") + '.' + suffix;
-            String filePath = path + '\\' + fileName; // 文件绝对路径
-            File desFile = new File(filePath);
-            if (!desFile.getParentFile().exists()) {// 如果文件夹不存在则创建
-                if (!desFile.mkdirs()) {
-                    return ResultEntity.createResultEntity(ResultEntity.ResultType.FAILED, CustomConstant.MESSAGE_SYSTEM_ERROR_MKDIRS, null);
-                }
+            if (socket == null) {
+                return ResultEntity.createResultEntity(ResultEntity.ResultType.FAILED, CustomConstant.MESSAGE_SOCKET_NOT_FOUND, null);
             }
             // 保存文件
-            file.transferTo(desFile);
-            // 获取图片路径
-            String ContextPath = request.getRequestURL().toString();
-            ContextPath = ContextPath.substring(0, ContextPath.indexOf("chat"));
-            ContextPath += "upload/" + roomId + '/' + userId + '/' + fileName;
+            com.example.entity.File file = saveFile(roomId, userId, multipartFile, session);
+            Image image = saveImage(roomId, userId, request, file);
+            file.setImage(image);
             // 封装数据
-            Message message = new Message(null, roomId, userId);
-            message.setImage(filePath, ContextPath);
+            User user = userService.getUserById(userId);
+            Message message = new Message(null, roomId, user);
+            message.setFile(file);
+            // 保存数据库
+            messageService.addMessage(message);
             // 获取输出流
             ObjectOutputStream oos = SocketMap.getObjectOutputStream(socket);
             if (oos == null) {
@@ -239,5 +231,41 @@ public class ChatController {
             return ResultEntity.createResultEntity(ResultEntity.ResultType.FAILED, e.toString(), null);
         }
         return ResultEntity.createResultEntity(ResultEntity.ResultType.SUCCESS, null, null);
+    }
+
+    private com.example.entity.File saveFile(Integer roomId, Integer userId, MultipartFile multipartFile, HttpSession session) throws IOException {
+        String basePath = session.getServletContext().getRealPath("upload") + "\\room_" + roomId + "\\user_" + userId;
+        String fileName = multipartFile.getOriginalFilename();
+        if (fileName == null) {
+            throw new RuntimeException(CustomConstant.MESSAGE_SYSTEM_ERROR_NULL_POINTER_EXCEPTION);
+        }
+        int p = fileName.lastIndexOf('.');
+        String prefix = fileName.substring(0, p);// 文件名
+        String suffix = fileName.substring(p + 1);// 文件后缀
+        String filePath = basePath + '\\' + prefix + '-' + UUID.randomUUID().toString().replace("-", "") + '.' + suffix;// 文件路径
+
+        File desFile = new File(filePath);
+        if (!desFile.getParentFile().exists()) {// 如果文件夹不存在则创建
+            if (!desFile.mkdirs()) {
+                throw new RuntimeException(CustomConstant.MESSAGE_SYSTEM_ERROR_MKDIRS);
+            }
+        }
+        // 保存文件
+        multipartFile.transferTo(desFile);
+
+        // 文件大小
+        long size = multipartFile.getSize();
+        // 封装到file
+        return new com.example.entity.File(fileName, filePath, size);
+    }
+
+    private Image saveImage(Integer roomId, Integer userId, HttpServletRequest request, com.example.entity.File file) throws IOException {
+        // 获取图片路径
+        String url = request.getRequestURL().toString();
+        url = url.substring(0, url.indexOf("chat"));
+        String fileName = file.getPath().substring(file.getPath().lastIndexOf('\\') + 1);
+        url += "upload/room_" + roomId + "/user_" + userId + '/' + fileName;
+        // 封装到file对象
+        return new Image(file.getPath(), url);
     }
 }

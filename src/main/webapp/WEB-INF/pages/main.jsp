@@ -242,7 +242,7 @@
         $("#sendBtn").click(function () {
             const image = $("#inputPicture").val();
             if (image === "") {
-                sendMsg();
+                sendMsg($("#msg").val());
             } else {// 发送图片
                 const formData = new FormData();
                 const userId = <security:authentication property="principal.originalUser.id"/>;
@@ -400,12 +400,13 @@
             '</a>' +
             '</li>'
         );
+        // 接收消息
+        recvMsg(roomItem.id);
     }
 
     function gotoChatRoom(roomId, roomName) {
         $('#roomId').text(roomId);
         $('#roomName').text(roomName);
-        recvMsg();
     }
 
     function getAllChatRooms() {
@@ -434,17 +435,22 @@
     }
 
     // 发送文字信息
-    function sendMsg() {
+    function sendMsg(message) {
         const textarea = $("#msg");
-        const msg = textarea.val();
-        const userId = <security:authentication property="principal.originalUser.id"/>;
+        const id = <security:authentication property="principal.originalUser.id"/>;
+        const username = "<security:authentication property="principal.originalUser.username"/>";
         const roomId = $('#roomId').text();
-        const fontSize = textarea.css("font-size");
+        let fontSize = textarea.css("font-size");
+        fontSize = fontSize.substr(0, fontSize.indexOf('px'));
         const fontWeight = textarea.css("font-weight");
         const fontStyle = textarea.css("font-style");
+        const sender = {
+            "id": id,
+            "username": username
+        }
         const data = JSON.stringify({
-            "msg": msg,
-            "userId": userId,
+            "message": message,
+            "sender": sender,
             "roomId": roomId,
             "fontSize": fontSize,
             "fontWeight": fontWeight,
@@ -485,9 +491,9 @@
     /**
      *长轮询接收消息
      */
-    function recvMsg() {
+    function recvMsg(roomId) {
+        console.log(1)
         const userId = <security:authentication property="principal.originalUser.id"/>;
-        const roomId = $('#roomId').text();
         $.ajax({
             url: "chat/recv/message.json",
             type: "post",
@@ -502,45 +508,45 @@
                 if (result === "SUCCESS") {
                     const data = response.data;
                     const date = data.date;
-                    let msg = data.msg;
-                    const sender = data.userId;
-                    if (sender === userId) {// 是我发的消息
+                    let message = data.message;
+                    const sender = data.sender;
+                    const file = data.file;
+                    if (sender.id === userId) {// 是我发的消息
                         $("#words").append('<div style="text-align: right;margin-bottom: 5px;"><span>' + date + '</span></div>')
-                        if (data.image !== null) {// 是图片
-                            let image = data.image;
-                            $("#words").append('<div class="iTalk"><span><img width="' + 160 * image.proportion + '" height="160" src="' + image.contextPath + '"></span></div>')
+                        if (file !== null && file.image !== null) {// 是图片
+                            const image = file.image;
+                            $("#words").append('<div class="iTalk"><span><img width="' + 160 * image.proportion + '" height="160" src="' + image.url + '"></span></div>')
                         } else {// 是文本
                             let re = new RegExp("\n", "g");// 匹配所有的\n, g表示全部global
-                            msg = msg.replace(re, "<br/>");// html中解析换行用<br/>
-                            $("#words").append('<div class="iTalk"><span style="font-size:' + data.fontSize + ';font-weight:' + data.fontWeight + ';font-style:' + data.fontStyle + '">' + msg + '</span></div>');
+                            message = message.replace(re, "<br/>");// html中解析换行用<br/>
+                            $("#words").append('<div class="iTalk"><span style="font-size:' + data.fontSize + ';font-weight:' + data.fontWeight + ';font-style:' + data.fontStyle + '">' + message + '</span></div>');
                         }
                     } else {// 是其他人发的消息
-                        $("#words").append('<div style="text-align: left;margin-bottom: 5px;"><span>' + date + '  [ From: ' + sender + ' ]</span></div>')
-                        const file = data.file;
-                        if (file !== null) {// 是文件
+                        $("#words").append('<div style="text-align: left;margin-bottom: 5px;"><span>' + date + '  [ From: ' + sender.username + ' ]</span></div>')
+                        if (file == null) {// 是文本
+                            let re = new RegExp("\n", "g");// 匹配所有的\n, g表示全部global
+                            message = message.replace(re, "<br/>");// html中解析换行用<br/>
+                            $("#words").append('<div class="utalk"><span style="font-size:' + data.fontSize + ';font-weight:' + data.fontWeight + ';font-style:' + data.fontStyle + '">' + message + '</span></div>');
+                        } else if (file.image == null) {// 是文件
                             $("#words").append('<div class="uTalk">' +
-                                '<span>' + msg + '</span><br/>' +
+                                '<span>' + message + '</span><br/>' +
                                 '<span style="margin-top: 5px;">' + '<form action="chat/download/file.html" method="post" style="margin: 0">' +
                                 '<input name="file" type="hidden" value="' + file + '">' +
                                 '<input type="submit" value="下载" style="background: #0181cc;color: white;padding: 0;border: 0"></form>' +
                                 '</span></div>');
-                        } else if (data.image !== null) {// 是图片
-                            let image = data.image;
-                            $("#words").append('<div class="uTalk"><span><img width="' + 160 * image.proportion + '" height="160" src="' + image.contextPath + '"></span></div>')
-                        } else {// 是文本
-                            let re = new RegExp("\n", "g");// 匹配所有的\n, g表示全部global
-                            msg = msg.replace(re, "<br/>");// html中解析换行用<br/>
-                            $("#words").append('<div class="utalk"><span style="font-size:' + data.fontSize + ';font-weight:' + data.fontWeight + ';font-style:' + data.fontStyle + '">' + msg + '</span></div>');
+                        } else {// 是图片
+                            const image = file.image;
+                            $("#words").append('<div class="uTalk"><span><img width="' + 160 * image.proportion + '" height="160" src="' + image.url + '"></span></div>')
                         }
                     }
                     // 自动滚动到底部
                     let div = document.getElementById('words');
                     div.scrollTop = div.scrollHeight;
                 }
-                recvMsg();
+                recvMsg(roomId);
             },
             error: function () {
-                recvMsg();
+                recvMsg(roomId);
             }
         })
     }
@@ -558,9 +564,12 @@
         window.history.forward(1);
     });
 
-    // 监听页面关闭
-    /*$(window).bind('beforeunload', function () {
-        return false;
-    });*/
+    // 页面刷新
+    window.onbeforeunload = function (event) {
+    };
+
+    // 页面关闭
+    $(window).unload(function () {
+    });
 </script>
 </html>

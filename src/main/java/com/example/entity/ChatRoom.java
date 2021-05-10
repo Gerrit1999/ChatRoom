@@ -4,14 +4,8 @@ import com.example.utils.SocketMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.StreamCorruptedException;
-import java.net.InetAddress;
-import java.net.InetSocketAddress;
-import java.net.ServerSocket;
-import java.net.Socket;
+import java.io.*;
+import java.net.*;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -78,8 +72,8 @@ public class ChatRoom {
             while (true) {
                 try {
                     Socket socket = server.accept();// 发送消息的人
+                    // 加入房间
                     sockets.add(socket);
-
                     // 获取输入流
                     ObjectInputStream ois = SocketMap.getObjectInputStream(socket);
 
@@ -101,9 +95,6 @@ public class ChatRoom {
                                 } else {
                                     break;
                                 }
-                            } catch (StreamCorruptedException e) {
-                                System.out.println("未知消息");
-                                break;
                             } catch (IOException e) {
                                 e.printStackTrace();
                                 break;
@@ -113,9 +104,11 @@ public class ChatRoom {
                         }
                     });
                     readThread.start();
-                } catch (IOException e) {
-                    // e.printStackTrace();
+                } catch (SocketException e) {
+                    e.printStackTrace();
                     break;
+                } catch (IOException e){
+                    e.printStackTrace();
                 }
             }
         });
@@ -131,9 +124,6 @@ public class ChatRoom {
                 break;
             }
         }
-        if (sockets.isEmpty()) {
-            close();
-        }
     }
 
     public void close() {
@@ -141,7 +131,6 @@ public class ChatRoom {
             for (Socket socket : sockets) {
                 socket.close();
             }
-            sockets.clear();
             server.close();
         } catch (IOException e) {
             e.printStackTrace();

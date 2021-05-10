@@ -2,6 +2,7 @@ package com.example.controller;
 
 import com.example.entity.ChatRoom;
 import com.example.entity.Message;
+import com.example.entity.User;
 import com.example.service.ChatRoomService;
 import com.example.service.UserService;
 import com.example.utils.ChatRoomMap;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.*;
 import java.util.List;
@@ -87,7 +89,8 @@ public class ChatRoomController {
             // 提示信息
             String msg = username + " 已进入房间";
             // 封装数据
-            Message message = new Message(msg, roomId, userId);
+            User user = userService.getUserById(userId);
+            Message message = new Message(msg, roomId, user);
             // 获取输出流
             ObjectOutputStream oos = SocketMap.getObjectOutputStream(socket);
             if (oos == null) {
@@ -124,7 +127,8 @@ public class ChatRoomController {
             // 提示信息
             String msg = username + " 已退出房间";
             // 封装数据
-            Message message = new Message(msg, roomId, userId);
+            User user = userService.getUserById(userId);
+            Message message = new Message(msg, roomId, user);
             // 获取socket
             Socket socket = SocketMap.getSocket(roomId, userId);
             if (socket == null) {
@@ -149,7 +153,7 @@ public class ChatRoomController {
 
     @ResponseBody
     @RequestMapping("/get/allChatRooms.json")
-    public List<ChatRoom> getAllChatRooms(@RequestParam("userId") Integer userId) {
+    public List<ChatRoom> ChatRooms(@RequestParam("userId") Integer userId) {
         // 获取所有已加入的房间
         List<ChatRoom> chatRooms = chatRoomService.getChatRoomsByUserId(userId);
         for (ChatRoom chatRoom : chatRooms) {
@@ -165,21 +169,28 @@ public class ChatRoomController {
                 }
             }
 
-            if (!SocketMap.containsSocket(roomId, userId)) {    // 还没有连接到该房间
-                try {
-                    // 获取房间套接字
-                    ServerSocket server = chatRoom.getServer();
-                    // 连接到房间
-                    Socket socket = new Socket(server.getInetAddress().getHostAddress(), server.getLocalPort());
-                    // 设置超时时间
-                    socket.setSoTimeout(timeout);
-                    // 保存socket
-                    SocketMap.addSocket(roomId, userId, socket);
-                } catch (IOException e) {
-                    e.printStackTrace();
+            try {
+                if (SocketMap.containsSocket(roomId, userId)) {    // 释放之前的连接
+                    Socket socket = SocketMap.getSocket(roomId, userId);
+                    SocketMap.removeSocket(roomId, userId);
+                    SocketMap.removeObjectOutputStream(socket);
+                    SocketMap.removeObjectInputStream(socket);
+                    chatRoom.removeSocket(socket);
+                    socket.close();
                 }
+                // 获取房间套接字
+                ServerSocket server = chatRoom.getServer();
+                // -----连接到房间-----
+                Socket socket = new Socket(server.getInetAddress().getHostAddress(), server.getLocalPort());
+                // 设置超时时间
+                socket.setSoTimeout(timeout);
+                // 保存socket
+                SocketMap.addSocket(roomId, userId, socket);
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
+
         return chatRooms;
     }
 }

@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.example.mapper.ChatRoomMapper">
-    <resultMap id="BaseResultMap" type="com.example.entity.ChatRoom">
+<mapper namespace="com.example.mapper.ImageMapper">
+    <resultMap id="BaseResultMap" type="com.example.entity.Image">
         <id column="id" jdbcType="INTEGER" property="id"/>
-        <result column="name" jdbcType="VARCHAR" property="name"/>
-        <result column="password" jdbcType="CHAR" property="password"/>
-        <result column="host_id" jdbcType="INTEGER" property="hostId"/>
+        <result column="url" jdbcType="VARCHAR" property="url"/>
+        <result column="width" jdbcType="INTEGER" property="width"/>
+        <result column="height" jdbcType="INTEGER" property="height"/>
+        <result column="proportion" jdbcType="DOUBLE" property="proportion"/>
     </resultMap>
     <sql id="Example_Where_Clause">
         <where>
@@ -68,30 +69,16 @@
         </where>
     </sql>
     <sql id="Base_Column_List">
-        id, name, password, host_id
+        id
+        , url, width, height, proportion
     </sql>
-    <select id="selectUserInRoom" resultMap="BaseResultMap">
-        select *
-        from inner_room_user
-        where room_id = #{roomId}
-          and user_id = #{userId}
-    </select>
-    <select id="selectChatRoomsByUserId" resultMap="BaseResultMap">
-        SELECT t_room.id,
-               t_room.`name`,
-               t_room.`password`,
-               t_room.host_id
-        FROM t_room
-                 RIGHT JOIN inner_room_user ON t_room.id = inner_room_user.room_id
-        WHERE user_id = #{userId}
-    </select>
-    <select id="selectByExample" parameterType="com.example.entity.ChatRoomExample" resultMap="BaseResultMap">
+    <select id="selectByExample" parameterType="com.example.entity.ImageExample" resultMap="BaseResultMap">
         select
         <if test="distinct">
             distinct
         </if>
         <include refid="Base_Column_List"/>
-        from t_room
+        from t_image
         <if test="_parameter != null">
             <include refid="Example_Where_Clause"/>
         </if>
@@ -102,87 +89,86 @@
     <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
-        from t_room
+        from t_image
         where id = #{id,jdbcType=INTEGER}
     </select>
-    <delete id="deleteUser">
-        delete
-        from inner_room_user
-        where room_id = #{roomId}
-          and user_id = #{userId}
-    </delete>
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
         delete
-        from t_room
+        from t_image
         where id = #{id,jdbcType=INTEGER}
     </delete>
-    <delete id="deleteByExample" parameterType="com.example.entity.ChatRoomExample">
-        delete from t_room
+    <delete id="deleteByExample" parameterType="com.example.entity.ImageExample">
+        delete from t_image
         <if test="_parameter != null">
             <include refid="Example_Where_Clause"/>
         </if>
     </delete>
-    <insert id="insertUser">
-        insert into inner_room_user(room_id, user_id)
-        values (#{roomId}, #{userId})
+    <insert id="insert" parameterType="com.example.entity.Image" keyProperty="id" useGeneratedKeys="true">
+        insert into t_image (id, url, width,
+                             height, proportion)
+        values (#{id,jdbcType=INTEGER}, #{url,jdbcType=VARCHAR}, #{width,jdbcType=INTEGER},
+                #{height,jdbcType=INTEGER}, #{proportion,jdbcType=DOUBLE})
     </insert>
-    <insert id="insert" parameterType="com.example.entity.ChatRoom" keyProperty="id" useGeneratedKeys="true">
-        insert into t_room (id, name, password,
-                            host_id)
-        values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{password,jdbcType=CHAR},
-                #{hostId,jdbcType=INTEGER})
-    </insert>
-    <insert id="insertSelective" parameterType="com.example.entity.ChatRoom" keyProperty="id" useGeneratedKeys="true">
-        insert into t_room
+    <insert id="insertSelective" parameterType="com.example.entity.Image" keyProperty="id" useGeneratedKeys="true">
+        insert into t_image
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="id != null">
                 id,
             </if>
-            <if test="name != null">
-                name,
+            <if test="url != null">
+                url,
             </if>
-            <if test="password != null">
-                password,
+            <if test="width != null">
+                width,
             </if>
-            <if test="hostId != null">
-                host_id,
+            <if test="height != null">
+                height,
+            </if>
+            <if test="proportion != null">
+                proportion,
             </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="id != null">
                 #{id,jdbcType=INTEGER},
             </if>
-            <if test="name != null">
-                #{name,jdbcType=VARCHAR},
+            <if test="url != null">
+                #{url,jdbcType=VARCHAR},
             </if>
-            <if test="password != null">
-                #{password,jdbcType=CHAR},
+            <if test="width != null">
+                #{width,jdbcType=INTEGER},
             </if>
-            <if test="hostId != null">
-                #{hostId,jdbcType=INTEGER},
+            <if test="height != null">
+                #{height,jdbcType=INTEGER},
+            </if>
+            <if test="proportion != null">
+                #{proportion,jdbcType=DOUBLE},
             </if>
         </trim>
     </insert>
-    <select id="countByExample" parameterType="com.example.entity.ChatRoomExample" resultType="java.lang.Long">
-        select count(*) from t_room
+    <select id="countByExample" parameterType="com.example.entity.ImageExample" resultType="java.lang.Long">
+        select count(*) from t_image
         <if test="_parameter != null">
             <include refid="Example_Where_Clause"/>
         </if>
     </select>
     <update id="updateByExampleSelective" parameterType="map">
-        update t_room
+        update t_image
         <set>
             <if test="record.id != null">
                 id = #{record.id,jdbcType=INTEGER},
             </if>
-            <if test="record.name != null">
-                name = #{record.name,jdbcType=VARCHAR},
+            <if test="record.url != null">
+                url = #{record.url,jdbcType=VARCHAR},
             </if>
-            <if test="record.password != null">
-                password = #{record.password,jdbcType=CHAR},
+            <if test="record.width != null">
+                width = #{record.width,jdbcType=INTEGER},
             </if>
-            <if test="record.hostId != null">
-                host_id = #{record.hostId,jdbcType=INTEGER},
+            <if test="record.height != null">
+                height = #{record.height,jdbcType=INTEGER},
+            </if>
+            <if test="record.proportion != null">
+                proportion = #{record.proportion,jdbcType=DOUBLE},
             </if>
         </set>
         <if test="_parameter != null">
@@ -190,35 +176,40 @@
         </if>
     </update>
     <update id="updateByExample" parameterType="map">
-        update t_room
+        update t_image
         set id = #{record.id,jdbcType=INTEGER},
-        name = #{record.name,jdbcType=VARCHAR},
-        password = #{record.password,jdbcType=CHAR},
-        host_id = #{record.hostId,jdbcType=INTEGER}
+        url = #{record.url,jdbcType=VARCHAR},
+        width = #{record.width,jdbcType=INTEGER},
+        height = #{record.height,jdbcType=INTEGER},
+        proportion = #{record.proportion,jdbcType=DOUBLE}
         <if test="_parameter != null">
             <include refid="Update_By_Example_Where_Clause"/>
         </if>
     </update>
-    <update id="updateByPrimaryKeySelective" parameterType="com.example.entity.ChatRoom">
-        update t_room
+    <update id="updateByPrimaryKeySelective" parameterType="com.example.entity.Image">
+        update t_image
         <set>
-            <if test="name != null">
-                name = #{name,jdbcType=VARCHAR},
+            <if test="url != null">
+                url = #{url,jdbcType=VARCHAR},
             </if>
-            <if test="password != null">
-                password = #{password,jdbcType=CHAR},
+            <if test="width != null">
+                width = #{width,jdbcType=INTEGER},
             </if>
-            <if test="hostId != null">
-                host_id = #{hostId,jdbcType=INTEGER},
+            <if test="height != null">
+                height = #{height,jdbcType=INTEGER},
+            </if>
+            <if test="proportion != null">
+                proportion = #{proportion,jdbcType=DOUBLE},
             </if>
         </set>
         where id = #{id,jdbcType=INTEGER}
     </update>
-    <update id="updateByPrimaryKey" parameterType="com.example.entity.ChatRoom">
-        update t_room
-        set name     = #{name,jdbcType=VARCHAR},
-            password = #{password,jdbcType=CHAR},
-            host_id  = #{hostId,jdbcType=INTEGER}
+    <update id="updateByPrimaryKey" parameterType="com.example.entity.Image">
+        update t_image
+        set url        = #{url,jdbcType=VARCHAR},
+            width      = #{width,jdbcType=INTEGER},
+            height     = #{height,jdbcType=INTEGER},
+            proportion = #{proportion,jdbcType=DOUBLE}
         where id = #{id,jdbcType=INTEGER}
     </update>
 </mapper>

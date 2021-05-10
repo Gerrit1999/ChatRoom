@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.example.mapper.ChatRoomMapper">
-    <resultMap id="BaseResultMap" type="com.example.entity.ChatRoom">
+<mapper namespace="com.example.mapper.MessageMapper">
+    <resultMap id="BaseResultMap" type="com.example.entity.Message">
         <id column="id" jdbcType="INTEGER" property="id"/>
-        <result column="name" jdbcType="VARCHAR" property="name"/>
-        <result column="password" jdbcType="CHAR" property="password"/>
-        <result column="host_id" jdbcType="INTEGER" property="hostId"/>
+        <result column="date" jdbcType="TIMESTAMP" property="date"/>
+        <result column="message" jdbcType="VARCHAR" property="message"/>
+        <result column="font_size" jdbcType="INTEGER" property="fontSize"/>
+        <result column="font_weight" jdbcType="INTEGER" property="fontWeight"/>
+        <result column="font_style" jdbcType="CHAR" property="fontStyle"/>
     </resultMap>
     <sql id="Example_Where_Clause">
         <where>
@@ -68,30 +70,16 @@
         </where>
     </sql>
     <sql id="Base_Column_List">
-        id, name, password, host_id
+        id
+        , date, message, font_size, font_weight, font_style
     </sql>
-    <select id="selectUserInRoom" resultMap="BaseResultMap">
-        select *
-        from inner_room_user
-        where room_id = #{roomId}
-          and user_id = #{userId}
-    </select>
-    <select id="selectChatRoomsByUserId" resultMap="BaseResultMap">
-        SELECT t_room.id,
-               t_room.`name`,
-               t_room.`password`,
-               t_room.host_id
-        FROM t_room
-                 RIGHT JOIN inner_room_user ON t_room.id = inner_room_user.room_id
-        WHERE user_id = #{userId}
-    </select>
-    <select id="selectByExample" parameterType="com.example.entity.ChatRoomExample" resultMap="BaseResultMap">
+    <select id="selectByExample" parameterType="com.example.entity.MessageExample" resultMap="BaseResultMap">
         select
         <if test="distinct">
             distinct
         </if>
         <include refid="Base_Column_List"/>
-        from t_room
+        from t_message
         <if test="_parameter != null">
             <include refid="Example_Where_Clause"/>
         </if>
@@ -102,87 +90,99 @@
     <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
-        from t_room
+        from t_message
         where id = #{id,jdbcType=INTEGER}
     </select>
-    <delete id="deleteUser">
-        delete
-        from inner_room_user
-        where room_id = #{roomId}
-          and user_id = #{userId}
-    </delete>
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
         delete
-        from t_room
+        from t_message
         where id = #{id,jdbcType=INTEGER}
     </delete>
-    <delete id="deleteByExample" parameterType="com.example.entity.ChatRoomExample">
-        delete from t_room
+    <delete id="deleteByExample" parameterType="com.example.entity.MessageExample">
+        delete from t_message
         <if test="_parameter != null">
             <include refid="Example_Where_Clause"/>
         </if>
     </delete>
-    <insert id="insertUser">
-        insert into inner_room_user(room_id, user_id)
-        values (#{roomId}, #{userId})
+    <insert id="insertFile">
+        insert into inner_message_file (message_id, file_id)
+        values (#{messageId}, #{fileId})
     </insert>
-    <insert id="insert" parameterType="com.example.entity.ChatRoom" keyProperty="id" useGeneratedKeys="true">
-        insert into t_room (id, name, password,
-                            host_id)
-        values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{password,jdbcType=CHAR},
-                #{hostId,jdbcType=INTEGER})
+    <insert id="insert" parameterType="com.example.entity.Message" keyProperty="id" useGeneratedKeys="true">
+        insert into t_message (id, date, message,
+                               font_size, font_weight, font_style)
+        values (#{id,jdbcType=INTEGER}, #{date,jdbcType=TIMESTAMP}, #{message,jdbcType=VARCHAR},
+                #{fontSize,jdbcType=INTEGER}, #{fontWeight,jdbcType=INTEGER}, #{fontStyle,jdbcType=CHAR})
     </insert>
-    <insert id="insertSelective" parameterType="com.example.entity.ChatRoom" keyProperty="id" useGeneratedKeys="true">
-        insert into t_room
+    <insert id="insertSelective" parameterType="com.example.entity.Message" keyProperty="id" useGeneratedKeys="true">
+        insert into t_message
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="id != null">
                 id,
             </if>
-            <if test="name != null">
-                name,
+            <if test="date != null">
+                date,
             </if>
-            <if test="password != null">
-                password,
+            <if test="message != null">
+                message,
             </if>
-            <if test="hostId != null">
-                host_id,
+            <if test="fontSize != null">
+                font_size,
+            </if>
+            <if test="fontWeight != null">
+                font_weight,
+            </if>
+            <if test="fontStyle != null">
+                font_style,
             </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="id != null">
                 #{id,jdbcType=INTEGER},
             </if>
-            <if test="name != null">
-                #{name,jdbcType=VARCHAR},
+            <if test="date != null">
+                #{date,jdbcType=TIMESTAMP},
             </if>
-            <if test="password != null">
-                #{password,jdbcType=CHAR},
+            <if test="message != null">
+                #{message,jdbcType=VARCHAR},
             </if>
-            <if test="hostId != null">
-                #{hostId,jdbcType=INTEGER},
+            <if test="fontSize != null">
+                #{fontSize,jdbcType=INTEGER},
+            </if>
+            <if test="fontWeight != null">
+                #{fontWeight,jdbcType=INTEGER},
+            </if>
+            <if test="fontStyle != null">
+                #{fontStyle,jdbcType=CHAR},
             </if>
         </trim>
     </insert>
-    <select id="countByExample" parameterType="com.example.entity.ChatRoomExample" resultType="java.lang.Long">
-        select count(*) from t_room
+    <select id="countByExample" parameterType="com.example.entity.MessageExample" resultType="java.lang.Long">
+        select count(*) from t_message
         <if test="_parameter != null">
             <include refid="Example_Where_Clause"/>
         </if>
     </select>
     <update id="updateByExampleSelective" parameterType="map">
-        update t_room
+        update t_message
         <set>
             <if test="record.id != null">
                 id = #{record.id,jdbcType=INTEGER},
             </if>
-            <if test="record.name != null">
-                name = #{record.name,jdbcType=VARCHAR},
+            <if test="record.date != null">
+                date = #{record.date,jdbcType=TIMESTAMP},
             </if>
-            <if test="record.password != null">
-                password = #{record.password,jdbcType=CHAR},
+            <if test="record.message != null">
+                message = #{record.message,jdbcType=VARCHAR},
             </if>
-            <if test="record.hostId != null">
-                host_id = #{record.hostId,jdbcType=INTEGER},
+            <if test="record.fontSize != null">
+                font_size = #{record.fontSize,jdbcType=INTEGER},
+            </if>
+            <if test="record.fontWeight != null">
+                font_weight = #{record.fontWeight,jdbcType=INTEGER},
+            </if>
+            <if test="record.fontStyle != null">
+                font_style = #{record.fontStyle,jdbcType=CHAR},
             </if>
         </set>
         <if test="_parameter != null">
@@ -190,35 +190,45 @@
         </if>
     </update>
     <update id="updateByExample" parameterType="map">
-        update t_room
+        update t_message
         set id = #{record.id,jdbcType=INTEGER},
-        name = #{record.name,jdbcType=VARCHAR},
-        password = #{record.password,jdbcType=CHAR},
-        host_id = #{record.hostId,jdbcType=INTEGER}
+        date = #{record.date,jdbcType=TIMESTAMP},
+        message = #{record.message,jdbcType=VARCHAR},
+        font_size = #{record.fontSize,jdbcType=INTEGER},
+        font_weight = #{record.fontWeight,jdbcType=INTEGER},
+        font_style = #{record.fontStyle,jdbcType=CHAR}
         <if test="_parameter != null">
             <include refid="Update_By_Example_Where_Clause"/>
         </if>
     </update>
-    <update id="updateByPrimaryKeySelective" parameterType="com.example.entity.ChatRoom">
-        update t_room
+    <update id="updateByPrimaryKeySelective" parameterType="com.example.entity.Message">
+        update t_message
         <set>
-            <if test="name != null">
-                name = #{name,jdbcType=VARCHAR},
+            <if test="date != null">
+                date = #{date,jdbcType=TIMESTAMP},
             </if>
-            <if test="password != null">
-                password = #{password,jdbcType=CHAR},
+            <if test="message != null">
+                message = #{message,jdbcType=VARCHAR},
             </if>
-            <if test="hostId != null">
-                host_id = #{hostId,jdbcType=INTEGER},
+            <if test="fontSize != null">
+                font_size = #{fontSize,jdbcType=INTEGER},
+            </if>
+            <if test="fontWeight != null">
+                font_weight = #{fontWeight,jdbcType=INTEGER},
+            </if>
+            <if test="fontStyle != null">
+                font_style = #{fontStyle,jdbcType=CHAR},
             </if>
         </set>
         where id = #{id,jdbcType=INTEGER}
     </update>
-    <update id="updateByPrimaryKey" parameterType="com.example.entity.ChatRoom">
-        update t_room
-        set name     = #{name,jdbcType=VARCHAR},
-            password = #{password,jdbcType=CHAR},
-            host_id  = #{hostId,jdbcType=INTEGER}
+    <update id="updateByPrimaryKey" parameterType="com.example.entity.Message">
+        update t_message
+        set date        = #{date,jdbcType=TIMESTAMP},
+            message     = #{message,jdbcType=VARCHAR},
+            font_size   = #{fontSize,jdbcType=INTEGER},
+            font_weight = #{fontWeight,jdbcType=INTEGER},
+            font_style  = #{fontStyle,jdbcType=CHAR}
         where id = #{id,jdbcType=INTEGER}
     </update>
 </mapper>
