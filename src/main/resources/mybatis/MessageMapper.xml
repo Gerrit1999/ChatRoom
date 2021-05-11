@@ -73,6 +73,21 @@
         id
         , date, message, font_size, font_weight, font_style
     </sql>
+    <select id="selectIntervalMessage" resultMap="BaseResultMap">
+        SELECT t_message.id,
+               t_message.date,
+               t_message.message,
+               t_message.font_size,
+               t_message.font_weight,
+               t_message.font_style
+        FROM t_message
+                 RIGHT JOIN inner_message_receiver ON t_message.id = inner_message_receiver.message_id
+                 RIGHT JOIN inner_message_room ON t_message.id = inner_message_room.message_id
+        WHERE inner_message_room.room_id = #{roomId}
+          AND (inner_message_receiver.user_id = #{userId} OR inner_message_receiver.user_id = 0)
+          AND t_message.date >= DATE_SUB(NOW(), INTERVAL #{intervalDays} DAY)
+        GROUP BY t_message.date ASC
+    </select>
     <select id="selectByExample" parameterType="com.example.entity.MessageExample" resultMap="BaseResultMap">
         select
         <if test="distinct">
@@ -104,6 +119,18 @@
             <include refid="Example_Where_Clause"/>
         </if>
     </delete>
+    <insert id="insertReceiver">
+        insert into inner_message_receiver (message_id, user_id)
+        values (#{messageId}, #{userId})
+    </insert>
+    <insert id="insertSender">
+        insert into inner_message_sender (message_id, user_id)
+        values (#{messageId}, #{userId})
+    </insert>
+    <insert id="insertRoom">
+        insert into inner_message_room (message_id, room_id)
+        values (#{messageId}, #{roomId})
+    </insert>
     <insert id="insertFile">
         insert into inner_message_file (message_id, file_id)
         values (#{messageId}, #{fileId})

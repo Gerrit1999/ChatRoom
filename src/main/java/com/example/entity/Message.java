@@ -13,7 +13,7 @@ public class Message implements Serializable {
 
     private User sender;// 发送方
 
-    private User receiver;// 接收方
+    private Integer receiverId;// 接收方id
 
     private File file;
 
@@ -26,6 +26,7 @@ public class Message implements Serializable {
     private String fontStyle;
 
     public Message() {
+        receiverId = 0;  // 默认群发
         date = new Date();
     }
 
@@ -70,12 +71,12 @@ public class Message implements Serializable {
         this.sender = sender;
     }
 
-    public User getReceiver() {
-        return receiver;
+    public Integer getReceiverId() {
+        return receiverId;
     }
 
-    public void setReceiver(User receiver) {
-        this.receiver = receiver;
+    public void setReceiverId(Integer receiverId) {
+        this.receiverId = receiverId;
     }
 
     public File getFile() {
@@ -125,7 +126,7 @@ public class Message implements Serializable {
                 ", date=" + date +
                 ", roomId=" + roomId +
                 ", sender=" + sender +
-                ", receiver=" + receiver +
+                ", receiverId=" + receiverId +
                 ", file=" + file +
                 ", message='" + message + '\'' +
                 ", fontSize=" + fontSize +

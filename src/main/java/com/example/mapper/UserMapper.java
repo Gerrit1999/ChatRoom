@@ -31,4 +31,6 @@ public interface UserMapper {
     int updateByPrimaryKey(User record);
 
     List<User> selectUsersByRoomId(@Param("roomId") Integer roomId);
+
+    User selectSenderByMessageId(@Param("messageId") Integer messageId);
 }

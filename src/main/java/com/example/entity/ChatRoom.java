@@ -96,7 +96,7 @@ public class ChatRoom {
                                     break;
                                 }
                             } catch (IOException e) {
-                                e.printStackTrace();
+//                                e.printStackTrace();
                                 break;
                             } catch (ClassNotFoundException e) {
                                 e.printStackTrace();
@@ -105,7 +105,7 @@ public class ChatRoom {
                     });
                     readThread.start();
                 } catch (SocketException e) {
-                    e.printStackTrace();
+//                    e.printStackTrace();
                     break;
                 } catch (IOException e){
                     e.printStackTrace();

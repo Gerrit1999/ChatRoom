@@ -23,6 +23,7 @@ import java.io.*;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.text.DecimalFormat;
+import java.util.List;
 import java.util.UUID;
 
 @Controller
@@ -39,6 +40,8 @@ public class ChatController {
 
     @Autowired
     ImageService imageService;
+
+    private static final int intervalDays = 7;
 
     @ResponseBody
     @RequestMapping("/send/message.json")
@@ -143,23 +146,22 @@ public class ChatController {
     }
 
     @RequestMapping("/download/file.html")
-    public void downloadFile(@RequestParam("file") File file,
+    public void downloadFile(@RequestParam("path")String path,
+                             @RequestParam("fileName") String fileName,
                              HttpServletRequest request,
                              HttpServletResponse response) {
         OutputStreamWriter osw = null;
         InputStream in = null;
         OutputStream os = null;
-        String filePath = file.getPath();
         try {
             request.setCharacterEncoding("utf-8");
-            // 获取需要下载的文件名
-            String fileName = filePath.substring(filePath.lastIndexOf('\\') + 1);
-            fileName = fileName.substring(0, fileName.lastIndexOf('-')) + fileName.substring(fileName.lastIndexOf('.'));
             //下载文件需要设置消息头
             response.addHeader("content-Type", "application/octet-stream");//MIME类型:二进制文件(任意文件)
             response.addHeader("content-Disposition", "attachment;filename=" + UriUtils.encode(fileName, "utf-8"));//filename包含后缀
 
             osw = new OutputStreamWriter(response.getOutputStream(), StandardCharsets.UTF_8);
+
+            File file = new File(path);
             // 获取要下载的文件输入流
             in = new FileInputStream(file);
             // 如果不填setContentLength，不会报错，但是下载的时候会显示大小未知
@@ -231,6 +233,15 @@ public class ChatController {
             return ResultEntity.createResultEntity(ResultEntity.ResultType.FAILED, e.toString(), null);
         }
         return ResultEntity.createResultEntity(ResultEntity.ResultType.SUCCESS, null, null);
+    }
+
+    @ResponseBody
+    @RequestMapping("/get/history/message.json")
+    public ResultEntity<List<Message>> getHistoryMessage(@RequestParam("roomId") Integer roomId,
+                                                         @RequestParam("userId") Integer userId) {
+        // 获取最近7天的数据
+        List<Message> messages = messageService.getIntervalMessage(roomId, userId, intervalDays);
+        return ResultEntity.createResultEntity(ResultEntity.ResultType.SUCCESS, null, messages);
     }
 
     private com.example.entity.File saveFile(Integer roomId, Integer userId, MultipartFile multipartFile, HttpSession session) throws IOException {

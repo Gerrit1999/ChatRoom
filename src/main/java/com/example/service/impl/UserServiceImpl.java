@@ -60,4 +60,9 @@ public class UserServiceImpl implements UserService {
     public List<User> getUsersByRoomId(int roomId) {
         return userMapper.selectUsersByRoomId(roomId);
     }
+
+    @Override
+    public User getSenderByMessageId(Integer messageId) {
+        return userMapper.selectSenderByMessageId(messageId);
+    }
 }

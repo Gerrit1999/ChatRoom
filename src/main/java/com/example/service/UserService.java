@@ -16,4 +16,6 @@ public interface UserService {
     User findUserByUsername(String username);
 
     List<User> getUsersByRoomId(int roomId);
+
+    User getSenderByMessageId(Integer messageId);
 }

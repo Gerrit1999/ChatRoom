@@ -30,4 +30,12 @@ public interface MessageMapper {
     int updateByPrimaryKey(Message record);
 
     void insertFile(@Param("messageId") Integer messageId, @Param("fileId") Integer fileId);
+
+    void insertRoom(@Param("messageId") Integer messageId, @Param("roomId") Integer roomId);
+
+    void insertSender(@Param("messageId") Integer messageId, @Param("userId") Integer userId);
+
+    void insertReceiver(@Param("messageId") Integer messageId, @Param("userId") Integer userId);
+
+    List<Message> selectIntervalMessage(@Param("roomId") Integer roomId, @Param("userId") Integer userId, @Param("intervalDays") Integer intervalDays);
 }

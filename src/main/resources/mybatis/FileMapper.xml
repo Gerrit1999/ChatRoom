@@ -71,6 +71,18 @@
         id
         , name, path, size
     </sql>
+    <select id="selectFileByMessageId" resultMap="BaseResultMap">
+        SELECT
+            t_file.id,
+            t_file.`name`,
+            t_file.path,
+            t_file.size
+        FROM
+            t_file
+                RIGHT JOIN inner_message_file ON t_file.id = inner_message_file.file_id
+        WHERE
+            inner_message_file.message_id = #{messageId}
+    </select>
     <select id="selectByExample" parameterType="com.example.entity.FileExample" resultMap="BaseResultMap">
         select
         <if test="distinct">

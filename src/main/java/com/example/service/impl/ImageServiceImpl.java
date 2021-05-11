@@ -15,4 +15,9 @@ public class ImageServiceImpl implements ImageService {
     public void addImage(Image image) {
         imageMapper.insert(image);
     }
+
+    @Override
+    public Image getImageByFileId(Integer fileId) {
+        return imageMapper.selectByFileId(fileId);
+    }
 }

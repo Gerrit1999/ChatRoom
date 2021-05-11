@@ -4,6 +4,7 @@ import com.example.entity.ChatRoom;
 import com.example.entity.Message;
 import com.example.entity.User;
 import com.example.service.ChatRoomService;
+import com.example.service.MessageService;
 import com.example.service.UserService;
 import com.example.utils.ChatRoomMap;
 import com.example.utils.CustomConstant;
@@ -14,7 +15,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.*;
 import java.util.List;
@@ -27,6 +27,9 @@ public class ChatRoomController {
 
     @Autowired
     UserService userService;
+
+    @Autowired
+    MessageService messageService;
 
     private static final int timeout = 20 * 1000;
 
@@ -91,6 +94,8 @@ public class ChatRoomController {
             // 封装数据
             User user = userService.getUserById(userId);
             Message message = new Message(msg, roomId, user);
+            // 保存数据库
+            messageService.addMessage(message);
             // 获取输出流
             ObjectOutputStream oos = SocketMap.getObjectOutputStream(socket);
             if (oos == null) {
@@ -111,7 +116,7 @@ public class ChatRoomController {
     @RequestMapping("/do/exit.json")
     public ResultEntity<String> doExit(@RequestParam("roomId") Integer roomId,
                                        @RequestParam("userId") Integer userId) {
-        // 退出房间
+        // 从数据库移除
         if (!chatRoomService.removeUserFromChatRoom(roomId, userId)) {
             return ResultEntity.createResultEntity(ResultEntity.ResultType.FAILED, CustomConstant.MESSAGE_CHAT_ROOM_NOT_FOUNT, null);
         }
@@ -129,6 +134,8 @@ public class ChatRoomController {
             // 封装数据
             User user = userService.getUserById(userId);
             Message message = new Message(msg, roomId, user);
+            // 保存数据库
+            messageService.addMessage(message);
             // 获取socket
             Socket socket = SocketMap.getSocket(roomId, userId);
             if (socket == null) {

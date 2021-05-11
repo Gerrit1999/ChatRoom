@@ -30,4 +30,6 @@ public interface FileMapper {
     int updateByPrimaryKey(File record);
 
     void insertImage(@Param("fileId") Integer fileId, @Param("imageId") Integer imageId);
+
+    File selectFileByMessageId(@Param("messageId") Integer messageId);
 }

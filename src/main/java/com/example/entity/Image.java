@@ -18,6 +18,9 @@ public class Image implements Serializable {
 
     private Double proportion;
 
+    public Image() {
+    }
+
     public Image(String path, String url) {
         this.url = url;
         // 获取图片宽高

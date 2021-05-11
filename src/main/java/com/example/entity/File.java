@@ -13,6 +13,9 @@ public class File implements Serializable {
 
     private Image image;
 
+    public File() {
+    }
+
     public File(String name, String path, Long size) {
         this.name = name;
         this.path = path;

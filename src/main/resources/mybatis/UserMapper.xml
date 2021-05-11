@@ -70,6 +70,16 @@
     <sql id="Base_Column_List">
         id, username, password, email
     </sql>
+    <select id="selectSenderByMessageId" resultMap="BaseResultMap">
+        SELECT
+            t_user.id,
+            t_user.username
+        FROM
+            t_user
+                RIGHT JOIN inner_message_sender ON t_user.id = inner_message_sender.user_id
+        WHERE
+            inner_message_sender.message_id = #{messageId}
+    </select>
     <select id="selectUsersByRoomId" resultMap="BaseResultMap">
         SELECT t_user.id,
                t_user.username,

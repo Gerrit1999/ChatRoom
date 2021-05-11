@@ -72,6 +72,16 @@
         id
         , url, width, height, proportion
     </sql>
+    <select id="selectByFileId" resultMap="BaseResultMap">
+        SELECT t_image.id,
+               t_image.url,
+               t_image.width,
+               t_image.height,
+               t_image.proportion
+        FROM t_image
+                 RIGHT JOIN inner_file_image ON t_image.id = inner_file_image.image_id
+        WHERE inner_file_image.file_id = #{fileId}
+    </select>
     <select id="selectByExample" parameterType="com.example.entity.ImageExample" resultMap="BaseResultMap">
         select
         <if test="distinct">

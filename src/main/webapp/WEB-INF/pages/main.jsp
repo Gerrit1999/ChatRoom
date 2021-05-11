@@ -81,21 +81,16 @@
 </head>
 <body>
 <div class="panel panel-default" style="width: 882px;margin-left: 370px;margin-top: 30px;padding: 5px">
-    <%--<div class="panel panel-default" style="float: left;width: 270px;height: 668px;margin-bottom: 0">
-        <div class="panel-heading" style="height: 69px;"></div>
-        <div class="list-group" style="overflow:auto;height: 626px">
-            <button href="#" class="list-group-item" style="width: 200px">Dapibus ac facilisis in</button>
-        </div>
-    </div>--%>
     <div class="bs-example" style="float: left;width: 260px;height: 668px;margin-bottom: 0">
         <ul id="roomList" class="nav nav-pills nav-stacked nav-pills-stacked-example">
             <li role="presentation">
                 <div>
                     <div style="float: left;">
                         <img src="images/bg.jpg" alt="头像" height="50px" width="50px">
-                        &nbsp;&nbsp;用户名: <security:authentication property="principal.originalUser.username"/><br/>
+                        &nbsp;&nbsp;用户名: <span id="username"><security:authentication
+                            property="principal.originalUser.username"/></span><br/>
                         <input id="userId" type="hidden"
-                               value="<security:authentication property="principal.originalUser.id"/>">
+                               value=<security:authentication property="principal.originalUser.id"/>>
                     </div>
                     <br/><br/><br/>
                 </div>
@@ -112,7 +107,7 @@
                     <span id="roomName"></span>
                 </h3>
                 <h3 class="panel-title" style="font-size: 15px">
-                    id: <span id="roomId"></span>
+                    id: <span id="roomId">0</span>
                 </h3>
             </div>
             <div style="float: right;margin-top: 1px">
@@ -121,7 +116,8 @@
                 </button>
             </div>
         </div>
-        <div class="panel-body talk_show" id="words"></div>
+        <div id="messageShow">
+        </div>
         <div class="input-group talk_input">
             <div class="btn-group" role="group" aria-label="..." style="margin-bottom: 8px;margin-right: 8px">
                 <div class="dropup" style="float: left">
@@ -175,382 +171,8 @@
 <%@ include file="/WEB-INF/modal/join-chatRoom.jsp" %>
 <%@ include file="/WEB-INF/modal/create-chatRoom.jsp" %>
 <%@ include file="/WEB-INF/modal/exit-confirm.jsp" %>
+<script src="js/chat.js" type="text/javascript"></script>
 <script>
-    /*$(document).keyup(function (event) {
-        if (event.keyCode === 13) {// 按下回车
-            sendMsg();
-        }
-    });*/
-    // 加入聊天室
-    function createChatRoomShow() {
-        $("#createChatRoomModal").modal("show");
-    }
-
-    // 加入聊天室
-    function joinChatRoomShow() {
-        $("#joinChatRoomModal").modal("show");
-    }
-
-    $(function () {
-        // 创建聊天室确认按钮
-        $("#createConfirmBtn").click(function () {
-            const userId = $("#userId").val();
-            const roomName = $("#setRoomName").val();
-            const roomPassword = $("#setRoomPassword").val();
-            $("#roomName").val("");
-            $("#roomPassword").val("");
-            $("#createChatRoomModal").modal("hide");
-            const data = JSON.stringify({
-                hostId: userId,
-                name: roomName,
-                password: roomPassword
-            });
-            $.ajax({
-                url: "chatRoom/create/chatRoom.json",
-                type: "post",
-                contentType: "application/json;charset=utf-8",
-                data: data,
-                dataType: "json",
-                success: function (response) {
-                    const result = response.result;
-                    if (result === "SUCCESS") {
-                        joinChatRoom(response.data, roomPassword)
-                    } else if (result === "FAILED") {
-                        layer.msg("创建失败! " + response.message);
-                    }
-                },
-                error: function (response) {
-                    layer.msg("创建失败! " + response.status + " " + response.statusText)
-                }
-            })
-            $("#setRoomName").val("");
-            $("#setRoomPassword").val("");
-            $("#createChatRoomModal").modal("hide");
-        })
-
-        // 加入聊天室确认按钮
-        $("#joinConfirmBtn").click(function () {
-            const roomId = $("#inputRoomId").val();
-            const roomPassword = $("#inputRoomPassword").val();
-            $("#inputRoomId").val("");
-            $("#inputRoomPassword").val("");
-            $("#joinChatRoomModal").modal("hide");
-            joinChatRoom(roomId, roomPassword);
-        })
-
-        // 发送点击事件
-        $("#sendBtn").click(function () {
-            const image = $("#inputPicture").val();
-            if (image === "") {
-                sendMsg($("#msg").val());
-            } else {// 发送图片
-                const formData = new FormData();
-                const userId = <security:authentication property="principal.originalUser.id"/>;
-                const roomId = $('#roomId').text();
-                formData.append("image", $("#inputPicture")[0].files[0]);
-                formData.append("userId", userId);
-                formData.append("roomId", roomId);
-                $.ajax({
-                    type: "post",
-                    url: "chat/send/image.json",
-                    async: false,
-                    data: formData,
-                    cache: false,
-                    processData: false,
-                    contentType: false,
-                    mimeType: "multipart/form-data",
-                    success: function () {
-                        layer.msg("发送成功!");
-                    },
-                    error: function (response) {
-                        layer.msg("发送失败! " + response.status + " " + response.statusText);
-                    }
-                })
-                $("#msg").val("");
-                $("#inputPicture").val("");
-            }
-        });
-
-        // 退出房间点击事件
-        $("#exitBtn").click(function () {
-            $("#exitConfirmModal").modal("show");
-        })
-
-        // 退出房间确认
-        $("#exitConfirmBtn").click(function () {
-            $.ajax({
-                url: "chatRoom/do/exit.json",
-                type: "post",
-                data: {},
-                dataType: "json",
-                success: function (response) {
-                    const result = response.result;
-                    if (result === "SUCCESS") {
-                    } else if (result === "FAILED") {
-                        layer.msg("退出失败! " + response.message);
-                    }
-                },
-                error: function (response) {
-                    layer.msg("退出失败! " + response.status + " " + response.statusText);
-                }
-            })
-        })
-
-        // 发送文件
-        $("#uploadFile").click(function () {
-            const formData = new FormData();
-            const userId = <security:authentication property="principal.originalUser.id"/>;
-            const roomId = $('#roomId').text();
-            formData.append("files", $("#file")[0].files[0]);
-            formData.append("userId", userId);
-            formData.append("roomId", roomId);
-            $.ajax({
-                type: "post",
-                url: "chat/upload/file.json",
-                data: formData,
-                cache: false,
-                processData: false,
-                contentType: false,
-                mimeType: "multipart/form-data",
-                success: function () {
-                    layer.msg("发送成功!");
-                },
-                error: function (response) {
-                    if (response.status === 0) {
-                        layer.msg("发送失败! 文件大小不能大于200MB!");
-                    } else {
-                        layer.msg("发送失败! " + response.status + " " + response.statusText);
-                    }
-                }
-            })
-            $("#file").val("");
-        })
-
-        // 清屏
-        $("#clearBtn").click(function () {
-            $("#words").empty();
-            layer.msg("清屏成功!");
-        })
-
-        // 点击图片按钮选择文件
-        $("#pictureBtn").click(function () {
-            $("#inputPicture").click();
-        })
-
-        // 设置加粗
-        $("#setBoldBtn").click(function () {
-            $(this).toggleClass("active");
-            if ($(this).hasClass("active")) {
-                $("#msg").css("font-weight", "bold");
-            } else {
-                $("#msg").css("font-weight", "normal");
-            }
-        })
-
-        // 设置斜体
-        $("#setItalicBtn").click(function () {
-            $(this).toggleClass("active");
-            if ($(this).hasClass("active")) {
-                $("#msg").css("font-style", "italic");
-            } else {
-                $("#msg").css("font-style", "normal");
-            }
-        })
-
-        // 页面加载成功后获取所有加入的房间
-        getAllChatRooms();
-    })
-
-    function joinChatRoom(roomId, roomPassword) {
-        const userId = $("#userId").val();
-        $.ajax({
-            url: "chatRoom/join/chatRoom.json",
-            type: "post",
-            data: {
-                "userId": userId,
-                "roomId": roomId,
-                "password": roomPassword
-            },
-            dataType: "json",
-            success: function (response) {
-                const result = response.result;
-                if (result === "SUCCESS") {
-                    layer.msg("加入成功!");
-                    appendRoomItem(response.data);
-                } else if (result === "FAILED") {
-                    layer.msg("加入失败! " + response.message);
-                }
-            },
-            error: function (response) {
-                layer.msg("加入失败! " + response.status + " " + response.statusText)
-            }
-        })
-    }
-
-    // 添加到房间列表
-    function appendRoomItem(roomItem) {
-        const href = "javascript:gotoChatRoom(" + roomItem.id + ",'" + roomItem.name + "')";
-        $('#roomList').append(
-            '<li role="presentation" class="roomItem">' +
-            '<a style="padding: 0" href=' + href + '>' +
-            '<div style="float: left;">' +
-            '<img src="images/bg.jpg" alt="' + roomItem.id + '" width="50px" height="50px">' +
-            '</div>' +
-            '<div style="height: 50px;line-height: 50px">&nbsp;&nbsp;' + roomItem.name + '</div>' +
-            '</a>' +
-            '</li>'
-        );
-        // 接收消息
-        recvMsg(roomItem.id);
-    }
-
-    function gotoChatRoom(roomId, roomName) {
-        $('#roomId').text(roomId);
-        $('#roomName').text(roomName);
-    }
-
-    function getAllChatRooms() {
-        const userId = $('#userId').val();
-        $.ajax({
-            url: "chatRoom/get/allChatRooms.json",
-            type: "post",
-            data: {
-                "userId": userId,
-            },
-            dataType: "json",
-            success: function (response) {
-                const n = response.length;
-                for (let i = 0; i < n; i++) {
-                    const roomItem = response[i];
-                    appendRoomItem(roomItem);
-                    if (i === 0) {
-                        gotoChatRoom(roomItem.id, roomItem.name);
-                    }
-                }
-            },
-            error: function (response) {
-                layer.msg("加入失败! " + response.status + " " + response.statusText)
-            }
-        })
-    }
-
-    // 发送文字信息
-    function sendMsg(message) {
-        const textarea = $("#msg");
-        const id = <security:authentication property="principal.originalUser.id"/>;
-        const username = "<security:authentication property="principal.originalUser.username"/>";
-        const roomId = $('#roomId').text();
-        let fontSize = textarea.css("font-size");
-        fontSize = fontSize.substr(0, fontSize.indexOf('px'));
-        const fontWeight = textarea.css("font-weight");
-        const fontStyle = textarea.css("font-style");
-        const sender = {
-            "id": id,
-            "username": username
-        }
-        const data = JSON.stringify({
-            "message": message,
-            "sender": sender,
-            "roomId": roomId,
-            "fontSize": fontSize,
-            "fontWeight": fontWeight,
-            "fontStyle": fontStyle
-        });
-        $.ajax({
-            url: "chat/send/message.json",
-            type: "post",
-            contentType: "application/json;charset=utf-8",
-            data: data,
-            dataType: "json",
-            success: function (response) {
-                const result = response.result;
-                if (result === "SUCCESS") {
-                    layer.msg("发送成功!");
-                } else if (result === "FAILED") {
-                    layer.msg("发送失败! " + response.message);
-                }
-            },
-            error: function (response) {
-                layer.msg("发送失败! " + response.status + " " + response.statusText);
-            }
-        })
-        textarea.val("");
-    }
-
-    // 设置字体大小
-    function setFontSize(fontSize) {
-        $("#msg").css("font-size", fontSize);
-    }
-
-    // 选择图片后回显到input中
-    function pictureUpload() {
-        var image = $("#inputPicture").val();
-        $("#msg").val(image);
-    }
-
-    /**
-     *长轮询接收消息
-     */
-    function recvMsg(roomId) {
-        console.log(1)
-        const userId = <security:authentication property="principal.originalUser.id"/>;
-        $.ajax({
-            url: "chat/recv/message.json",
-            type: "post",
-            data: {
-                "userId": userId,
-                "roomId": roomId
-            },
-            dataType: "json",
-            timeout: 30000, // 超时时间要大于后台的超时时间
-            success: function (response) {
-                const result = response.result;
-                if (result === "SUCCESS") {
-                    const data = response.data;
-                    const date = data.date;
-                    let message = data.message;
-                    const sender = data.sender;
-                    const file = data.file;
-                    if (sender.id === userId) {// 是我发的消息
-                        $("#words").append('<div style="text-align: right;margin-bottom: 5px;"><span>' + date + '</span></div>')
-                        if (file !== null && file.image !== null) {// 是图片
-                            const image = file.image;
-                            $("#words").append('<div class="iTalk"><span><img width="' + 160 * image.proportion + '" height="160" src="' + image.url + '"></span></div>')
-                        } else {// 是文本
-                            let re = new RegExp("\n", "g");// 匹配所有的\n, g表示全部global
-                            message = message.replace(re, "<br/>");// html中解析换行用<br/>
-                            $("#words").append('<div class="iTalk"><span style="font-size:' + data.fontSize + ';font-weight:' + data.fontWeight + ';font-style:' + data.fontStyle + '">' + message + '</span></div>');
-                        }
-                    } else {// 是其他人发的消息
-                        $("#words").append('<div style="text-align: left;margin-bottom: 5px;"><span>' + date + '  [ From: ' + sender.username + ' ]</span></div>')
-                        if (file == null) {// 是文本
-                            let re = new RegExp("\n", "g");// 匹配所有的\n, g表示全部global
-                            message = message.replace(re, "<br/>");// html中解析换行用<br/>
-                            $("#words").append('<div class="utalk"><span style="font-size:' + data.fontSize + ';font-weight:' + data.fontWeight + ';font-style:' + data.fontStyle + '">' + message + '</span></div>');
-                        } else if (file.image == null) {// 是文件
-                            $("#words").append('<div class="uTalk">' +
-                                '<span>' + message + '</span><br/>' +
-                                '<span style="margin-top: 5px;">' + '<form action="chat/download/file.html" method="post" style="margin: 0">' +
-                                '<input name="file" type="hidden" value="' + file + '">' +
-                                '<input type="submit" value="下载" style="background: #0181cc;color: white;padding: 0;border: 0"></form>' +
-                                '</span></div>');
-                        } else {// 是图片
-                            const image = file.image;
-                            $("#words").append('<div class="uTalk"><span><img width="' + 160 * image.proportion + '" height="160" src="' + image.url + '"></span></div>')
-                        }
-                    }
-                    // 自动滚动到底部
-                    let div = document.getElementById('words');
-                    div.scrollTop = div.scrollHeight;
-                }
-                recvMsg(roomId);
-            },
-            error: function () {
-                recvMsg(roomId);
-            }
-        })
-    }
-
     // 监听后退
     $(document).ready(function () {
         if (window.history && window.history.pushState) {

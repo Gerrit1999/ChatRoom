@@ -25,4 +25,14 @@ public class FileServiceImpl implements FileService {
             fileMapper.insertImage(file.getId(), image.getId());
         }
     }
+
+    @Override
+    public File getFileByMessageId(Integer messageId) {
+        File file = fileMapper.selectFileByMessageId(messageId);
+        if (file != null) {
+            Image image = imageService.getImageByFileId(file.getId());
+            file.setImage(image);
+        }
+        return file;
+    }
 }

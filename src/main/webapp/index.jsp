@@ -70,7 +70,7 @@
     </div>
 </div>
 
-<script src="js/script.js"></script>
+<script src="js/login.js"></script>
 <script src="jquery/jquery-2.1.1.min.js"></script>
 <script type="text/javascript" src="layer/layer.js"></script>
 

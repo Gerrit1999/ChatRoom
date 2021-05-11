@@ -28,4 +28,6 @@ public interface ImageMapper {
     int updateByPrimaryKeySelective(Image record);
 
     int updateByPrimaryKey(Image record);
+
+    Image selectByFileId(@Param("fileId") Integer fileId);
 }
