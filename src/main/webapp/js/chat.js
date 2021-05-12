@@ -50,13 +50,40 @@ function appendRoomItem(roomItem) {
         '<li role="presentation" class="roomItem" id="room_' + roomItem.id + '">' +
         '<a style="padding: 0" href=' + href + '>' +
         '<div style="float: left;">' +
-        '<img src="images/bg.jpg" alt="' + roomItem.id + '" width="50px" height="50px">' +
-        '</div>' +
-        '<div style="height: 50px;line-height: 50px">&nbsp;&nbsp;' + roomItem.name + '</div>' +
-        '</a>' +
-        '</li>'
+        '<img src="images/bg.jpg" alt="' + roomItem.id + '" width="50px" height="50px"></div>' +
+        '<div style="height: 50px;line-height: 50px;float:left">&nbsp;&nbsp;' + roomItem.name + '</div>' +
+        '<div class="redRoundWithNumber" style="display: none">' +
+        '<span>0</span></div></a></li>'
     );
     $('#messageShow').append('<div class="panel-body talk_show" id="words_' + roomItem.id + '"' + ' style="display: none"></div>')
+    // 获取未读信息数
+    const userId = $("#userId").val();
+    $.ajax({
+        url: "chatRoom/get/unread.json",
+        type: "post",
+        async: false,
+        data: {
+            "roomId": roomItem.id,
+            "userId": userId
+        },
+        dataType: "json",
+        success: function (response) {
+            const unread = response.data;
+            if (unread > 0) {
+                const div = $('#room_' + roomItem.id).find('.redRoundWithNumber');
+                div.show();
+                if (unread > 99) {
+                    div.children().text(99);
+                } else {
+                    div.children().text(unread);
+                }
+            }
+        },
+        error: function (response) {
+            layer.msg(response.status + " " + response.statusText)
+        }
+    })
+
     // 接收消息
     recvMsg(roomItem.id);
 }
@@ -64,10 +91,32 @@ function appendRoomItem(roomItem) {
 // 进入房间
 function gotoChatRoom(roomId, roomName) {
     const beforeRoomId = $('#roomId').text();
+    const userId = $("#userId").val();
     if (beforeRoomId !== 0) {
         $('#words_' + beforeRoomId).hide();
     }
     $('#words_' + roomId).show();
+
+    // 清除未读信息
+    const div = $('#room_' + roomId).find('.redRoundWithNumber');
+    if (div.children().text() != 0) {
+        $.ajax({
+            url: "chatRoom/update/unread.json",
+            type: "post",
+            data: {
+                "userId": userId,
+                "roomId": roomId,
+                "unread": 0
+            },
+            dataType: "json",
+            error: function (response) {
+                layer.msg(response.status + " " + response.statusText)
+            }
+        })
+    }
+    div.children().text(0);
+    div.hide();
+
     $('#roomId').text(roomId);
     $('#roomName').text(roomName);
 }
@@ -210,11 +259,37 @@ function recvMsg(roomId) {
             if (result === "SUCCESS") {
                 const msg = response.data;
                 appendMsg(roomId, userId, msg);
+                // 判断是否在当前房间页面
+                const curRoomId = $('#roomId').text();
+                if (roomId != curRoomId) {
+                    // 更新未读红点
+                    const div = $('#room_' + roomId).find('.redRoundWithNumber');
+                    div.show();
+                    let unread = div.children().text();
+                    if (unread < 99) {
+                        unread++;
+                        // 保存未读消息
+                        $.ajax({
+                            url: "chatRoom/update/unread.json",
+                            type: "post",
+                            data: {
+                                "userId": userId,
+                                "roomId": roomId,
+                                "unread": unread
+                            },
+                            dataType: "json",
+                            error: function (response) {
+                                layer.msg(response.status + " " + response.statusText)
+                            }
+                        })
+                    }
+                    div.children().text(unread);
+                }
             }
             recvMsg(roomId);
         },
-        error: function () {
-            recvMsg(roomId);
+        error: function (response) {
+            layer.msg("接收消息失败! 请刷新页面重试 " + response.status + " " + response.statusText)
         }
     })
 }
@@ -385,7 +460,8 @@ $(function () {
 
     // 清屏
     $("#clearBtn").click(function () {
-        $("#words").empty();
+        const roomId = $('#roomId').text();
+        $("#words_" + roomId).empty();
         layer.msg("清屏成功!");
     })
 

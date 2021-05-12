@@ -197,7 +197,23 @@ public class ChatRoomController {
                 e.printStackTrace();
             }
         }
-
         return chatRooms;
+    }
+
+    @ResponseBody
+    @RequestMapping("/update/unread.json")
+    public ResultEntity<Object> updateUnread(@RequestParam("roomId") Integer roomId,
+                                             @RequestParam("userId") Integer userId,
+                                             @RequestParam("unread") Integer unread) {
+        chatRoomService.updateUnread(roomId, userId, unread);
+        return ResultEntity.createResultEntity(ResultEntity.ResultType.SUCCESS, null, null);
+    }
+
+    @ResponseBody
+    @RequestMapping("/get/unread.json")
+    public ResultEntity<Integer> getUnread(@RequestParam("roomId") Integer roomId,
+                                          @RequestParam("userId") Integer userId) {
+        Integer unread = chatRoomService.getUnread(roomId, userId);
+        return ResultEntity.createResultEntity(ResultEntity.ResultType.SUCCESS, null, unread);
     }
 }

@@ -70,6 +70,12 @@
     <sql id="Base_Column_List">
         id, name, password, host_id
     </sql>
+    <select id="getUnread" resultType="java.lang.Integer">
+        select unread
+        from inner_room_user
+        where room_id = #{roomId}
+          and user_id = #{userId}
+    </select>
     <select id="selectUserInRoom" resultMap="BaseResultMap">
         select *
         from inner_room_user
@@ -123,8 +129,8 @@
         </if>
     </delete>
     <insert id="insertUser">
-        insert into inner_room_user(room_id, user_id)
-        values (#{roomId}, #{userId})
+        insert into inner_room_user(room_id, user_id, unread)
+        values (#{roomId}, #{userId}, 0)
     </insert>
     <insert id="insert" parameterType="com.example.entity.ChatRoom" keyProperty="id" useGeneratedKeys="true">
         insert into t_room (id, name, password,
@@ -169,6 +175,12 @@
             <include refid="Example_Where_Clause"/>
         </if>
     </select>
+    <update id="updateUnread">
+        UPDATE inner_room_user
+        SET unread = #{unread}
+        WHERE room_id = #{roomId}
+          AND user_id = #{userId}
+    </update>
     <update id="updateByExampleSelective" parameterType="map">
         update t_room
         <set>

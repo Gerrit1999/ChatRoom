@@ -37,4 +37,8 @@ public interface ChatRoomMapper {
     List<User> selectUserInRoom(@Param("roomId") Integer roomId, @Param("userId") Integer userId);
 
     List<ChatRoom> selectChatRoomsByUserId(@Param("userId") Integer userId);
+
+    void updateUnread(@Param("roomId") Integer roomId, @Param("userId") Integer userId, @Param("unread") Integer unread);
+
+    Integer getUnread(@Param("roomId") Integer roomId, @Param("userId") Integer userId);
 }

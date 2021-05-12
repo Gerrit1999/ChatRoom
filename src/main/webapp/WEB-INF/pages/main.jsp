@@ -77,6 +77,23 @@
         .roomItem a {
             height: 50px;
         }
+
+        .redRoundWithNumber {
+            width: 20px;
+            height: 20px;
+            background-color: #F00;
+            border-radius: 25px;
+            float: right;
+            margin-top: 10px;
+        }
+
+        .redRoundWithNumber span {
+            height: 20px;
+            line-height: 20px;
+            display: block;
+            color: #FFF;
+            text-align: center;
+        }
     </style>
 </head>
 <body>

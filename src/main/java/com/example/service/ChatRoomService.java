@@ -16,4 +16,8 @@ public interface ChatRoomService {
     List<ChatRoom> getChatRoomsByUserId(Integer userId);
 
     ChatRoom getChatRoomById(Integer id);
+
+    void updateUnread(Integer roomId, Integer userId, Integer unread);
+
+    Integer getUnread(Integer roomId, Integer userId);
 }

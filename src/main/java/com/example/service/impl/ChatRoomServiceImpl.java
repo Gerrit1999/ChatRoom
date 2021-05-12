@@ -62,4 +62,14 @@ public class ChatRoomServiceImpl implements ChatRoomService {
     public ChatRoom getChatRoomById(Integer id) {
         return chatRoomMapper.selectByPrimaryKey(id);
     }
+
+    @Override
+    public void updateUnread(Integer roomId, Integer userId, Integer unread) {
+        chatRoomMapper.updateUnread(roomId,userId,unread);
+    }
+
+    @Override
+    public Integer getUnread(Integer roomId, Integer userId) {
+        return chatRoomMapper.getUnread(roomId,userId);
+    }
 }

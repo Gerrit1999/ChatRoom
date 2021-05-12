@@ -45,9 +45,62 @@ public class ChatController {
 
     @ResponseBody
     @RequestMapping("/send/message.json")
-    public ResultEntity<String> sendMessage(@RequestBody Message message) {
+    public ResultEntity<String> sendMessage(@RequestBody Message message, HttpSession session) {
         if (message.getMessage() == null || message.getMessage().isEmpty()) {// msg不能为空
             return ResultEntity.createResultEntity(ResultEntity.ResultType.FAILED, CustomConstant.MESSAGE_STRING_INVALIDATE, null);
+        }
+        int n = message.getMessage().length();
+        if (n > 256) {
+            // 消息过长, 转为txt发送
+            Integer senderId = message.getSender().getId();
+            Integer roomId = message.getRoomId();
+            String fileName = UUID.randomUUID().toString().replace("-", "") + ".txt";
+            String filePath = session.getServletContext().getRealPath("upload") + "\\room_" + roomId + "\\user_" + senderId + '\\' + fileName;
+            File file = new File(filePath);
+            if (!file.getParentFile().exists()) {
+                if (!file.mkdirs()) {
+                    return ResultEntity.createResultEntity(ResultEntity.ResultType.FAILED, CustomConstant.MESSAGE_SYSTEM_ERROR_MKDIRS, null);
+                }
+            }
+            //写入文件
+            FileWriter fileWriter = null;
+            try {
+                fileWriter = new FileWriter(filePath, true);
+                fileWriter.write(message.getMessage());
+            } catch (IOException e) {
+                return ResultEntity.createResultEntity(ResultEntity.ResultType.FAILED, e.toString(), null);
+            } finally {
+                if (fileWriter != null) {
+                    try {
+                        fileWriter.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            // 文件大小
+            String unit;
+            double size = file.length();
+
+            if (size >= 1024 * 1024) {
+                unit = "MB";
+                size /= 1024 * 1024;
+            } else if (size >= 1024) {
+                unit = "KB";
+                size /= 1024;
+            } else {
+                unit = "B";
+            }
+            String msg = message.getSender().getUsername() + " 上传了文件: " + fileName + "(" + new DecimalFormat("#.00").format(size) + unit + ")";
+
+            // 修改message对象
+            com.example.entity.File myFile = new com.example.entity.File();
+            myFile.setName(fileName);
+            myFile.setPath(filePath);
+            myFile.setSize(file.length());
+            message.setMessage(msg);
+            message.setFile(myFile);
         }
         // 保存数据库
         messageService.addMessage(message);
@@ -126,6 +179,7 @@ public class ChatController {
             } else {
                 unit = "B";
             }
+
             // 获取用户名
             String username = userService.getUsernameById(userId);
             String msg = username + " 上传了文件: " + file.getName() + "(" + new DecimalFormat("#.00").format(size) + unit + ")";
@@ -146,7 +200,7 @@ public class ChatController {
     }
 
     @RequestMapping("/download/file.html")
-    public void downloadFile(@RequestParam("path")String path,
+    public void downloadFile(@RequestParam("path") String path,
                              @RequestParam("fileName") String fileName,
                              HttpServletRequest request,
                              HttpServletResponse response) {
