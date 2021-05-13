@@ -4,6 +4,11 @@
         }
     });*/
 
+// 退出登录
+function logout() {
+    $("#logoutConfirmModal").modal("show");
+}
+
 // 加入聊天室
 function createChatRoomShow() {
     $("#createChatRoomModal").modal("show");
@@ -117,8 +122,11 @@ function gotoChatRoom(roomId, roomName) {
     span.text(0);
     span.hide();
 
+    // 更新房间信息
     $('#roomId').text(roomId);
     $('#roomName').text(roomName);
+    // 更新在线列表
+    updateUserList(roomId);
 }
 
 // 获取已加入的房间
@@ -314,8 +322,97 @@ function getHistoryMsg(roomId, userId) {
     })
 }
 
+// 更新在线日期
+function updateRecentActiveTime() {
+    const roomId = $('#roomId').text();
+    if (roomId === 0) {
+        return;
+    }
+    const userId = $('#userId').val();
+    $.ajax({
+        url: "user/update/recentActiveTime.json",
+        type: "post",
+        data: {
+            "userId": userId
+        },
+        dataType: "json",
+        success: function () {
+        }
+    })
+}
+
+// 更新在线列表
+function updateUserList(roomId) {
+    $.ajax({
+        url: "user/get/activeList.json",
+        type: "post",
+        async: false,
+        data: {
+            "roomId": roomId
+        },
+        dataType: "json",
+        success: function (response) {
+            const result = response.result;
+            if (result === "SUCCESS") {
+                const userList = $('#userList');
+                userList.empty();
+                for (let i = 0, n = response.data.length; i < n; i++) {
+                    const user = response.data[i];
+                    userList.append(
+                        '<li role="presentation">' +
+                        '<span>' + user.username + ' 在线</span>' +
+                        '</li>'
+                    )
+                }
+            } else if (result === "FAILED") {
+                layer.msg("更新房间内用户列表失败! " + response.message);
+            }
+        }
+    })
+    $.ajax({
+        url: "user/get/notActiveList.json",
+        type: "post",
+        async: false,
+        data: {
+            "roomId": roomId
+        },
+        dataType: "json",
+        success: function (response) {
+            const result = response.result;
+            if (result === "SUCCESS") {
+                const userList = $('#userList');
+                for (let i = 0, n = response.data.length; i < n; i++) {
+                    const user = response.data[i];
+                    userList.append(
+                        '<li role="presentation">' +
+                        '<span>' + user.username + ' 离线</span>' +
+                        '</li>'
+                    )
+                }
+            } else if (result === "FAILED") {
+                layer.msg("更新房间内用户列表失败! " + response.message);
+            }
+        }
+    })
+}
+
 $(function () {
-    // 创建聊天室确认按钮
+    function update() {
+        const roomId = $('#roomId').text();
+        // 更新在线列表
+        updateUserList(roomId);
+        //每30s更新活跃时间
+        updateRecentActiveTime();
+    }
+    update();
+    setInterval(update, 10 * 1000);
+
+// 退出登录确认
+    $('#logoutConfirmBtn').click(function () {
+        window.location.href = "./security/do/logout.html";
+    })
+
+// 创建聊天室确认按钮
     $("#createConfirmBtn").click(function () {
         const userId = $("#userId").val();
         const roomName = $("#setRoomName").val();
@@ -351,7 +448,7 @@ $(function () {
         $("#createChatRoomModal").modal("hide");
     })
 
-    // 加入聊天室确认按钮
+// 加入聊天室确认按钮
     $("#joinConfirmBtn").click(function () {
         const roomId = $("#inputRoomId").val();
         const roomPassword = $("#inputRoomPassword").val();
@@ -361,7 +458,7 @@ $(function () {
         joinChatRoom(roomId, roomPassword);
     })
 
-    // 发送点击事件
+// 发送点击事件
     $("#sendBtn").click(function () {
         const image = $("#inputPicture").val();
         if (image === "") {
@@ -394,12 +491,12 @@ $(function () {
         }
     });
 
-    // 退出房间点击事件
+// 退出房间点击事件
     $("#exitBtn").click(function () {
         $("#exitConfirmModal").modal("show");
     })
 
-    // 退出房间确认
+// 退出房间确认
     $("#exitConfirmBtn").click(function () {
         const userId = $("#userId").val();
         const roomId = $("#roomId").text();
@@ -417,7 +514,11 @@ $(function () {
                     $("#exitConfirmModal").modal("hide");
                     $('#room_' + roomId).remove();
                     $('#words_' + roomId).remove();
-                    $('#roomList li:eq(0)').children('a')[0].click();
+                    if ($('#roomList li').length > 0) {
+                        $('#roomList li:eq(0)').children('a')[0].click();
+                    } else {
+                        $("#roomId").text(0);
+                    }
                     layer.msg("退出成功!");
                 } else if (result === "FAILED") {
                     layer.msg("退出失败! " + response.message);
@@ -429,7 +530,7 @@ $(function () {
         })
     })
 
-    // 发送文件
+// 发送文件
     $("#uploadFile").click(function () {
         const formData = new FormData();
         const userId = $('#userId').val();
@@ -459,19 +560,19 @@ $(function () {
         $("#file").val("");
     })
 
-    // 清屏
+// 清屏
     $("#clearBtn").click(function () {
         const roomId = $('#roomId').text();
         $("#words_" + roomId).empty();
         layer.msg("清屏成功!");
     })
 
-    // 点击图片按钮选择文件
+// 点击图片按钮选择文件
     $("#pictureBtn").click(function () {
         $("#inputPicture").click();
     })
 
-    // 设置加粗
+// 设置加粗
     $("#setBoldBtn").click(function () {
         $(this).toggleClass("active");
         if ($(this).hasClass("active")) {
@@ -481,7 +582,7 @@ $(function () {
         }
     })
 
-    // 设置斜体
+// 设置斜体
     $("#setItalicBtn").click(function () {
         $(this).toggleClass("active");
         if ($(this).hasClass("active")) {
@@ -491,6 +592,6 @@ $(function () {
         }
     })
 
-    // 页面加载成功后获取所有加入的房间
+// 页面加载成功后获取所有加入的房间
     getAllChatRooms();
 })

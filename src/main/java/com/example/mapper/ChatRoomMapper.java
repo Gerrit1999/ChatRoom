@@ -34,7 +34,7 @@ public interface ChatRoomMapper {
 
     void deleteUser(@Param("roomId") Integer roomId, @Param("userId") Integer userId);
 
-    List<User> selectUserInRoom(@Param("roomId") Integer roomId, @Param("userId") Integer userId);
+    Integer selectUserInRoom(@Param("roomId") Integer roomId, @Param("userId") Integer userId);
 
     List<ChatRoom> selectChatRoomsByUserId(@Param("userId") Integer userId);
 

@@ -1,11 +1,11 @@
 package com.example.mapper;
 
+import com.example.entity.User;
+import com.example.entity.UserExample;
+
 import java.util.List;
 
 import org.apache.ibatis.annotations.Param;
-import com.example.entity.User;
-import com.example.entity.UserExample;
-import org.springframework.stereotype.Repository;
 
 public interface UserMapper {
     long countByExample(UserExample example);
@@ -30,7 +30,9 @@ public interface UserMapper {
 
     int updateByPrimaryKey(User record);
 
-    List<User> selectUsersByRoomId(@Param("roomId") Integer roomId);
+    List<User> selectUsersByRoomIdActive(@Param("roomId") Integer roomId, @Param("activeTime") Integer activeTime);
+
+    List<User> selectUsersByRoomIdNotActive(@Param("roomId") Integer roomId, @Param("activeTime") Integer activeTime);
 
     User selectSenderByMessageId(@Param("messageId") Integer messageId);
 }

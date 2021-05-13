@@ -49,8 +49,7 @@ public class ChatRoomServiceImpl implements ChatRoomService {
 
     @Override
     public boolean judgeUserInRoom(Integer roomId, Integer userId) {
-        List<User> users = chatRoomMapper.selectUserInRoom(roomId, userId);
-        return users.size() == 1;
+        return chatRoomMapper.selectUserInRoom(roomId, userId) == 1;
     }
 
     @Override
@@ -65,11 +64,11 @@ public class ChatRoomServiceImpl implements ChatRoomService {
 
     @Override
     public void updateUnread(Integer roomId, Integer userId, Integer unread) {
-        chatRoomMapper.updateUnread(roomId,userId,unread);
+        chatRoomMapper.updateUnread(roomId, userId, unread);
     }
 
     @Override
     public Integer getUnread(Integer roomId, Integer userId) {
-        return chatRoomMapper.getUnread(roomId,userId);
+        return chatRoomMapper.getUnread(roomId, userId);
     }
 }

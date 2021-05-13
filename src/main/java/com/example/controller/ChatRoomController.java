@@ -212,7 +212,7 @@ public class ChatRoomController {
     @ResponseBody
     @RequestMapping("/get/unread.json")
     public ResultEntity<Integer> getUnread(@RequestParam("roomId") Integer roomId,
-                                          @RequestParam("userId") Integer userId) {
+                                           @RequestParam("userId") Integer userId) {
         Integer unread = chatRoomService.getUnread(roomId, userId);
         return ResultEntity.createResultEntity(ResultEntity.ResultType.SUCCESS, null, unread);
     }

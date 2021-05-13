@@ -15,7 +15,11 @@ public interface UserService {
 
     User findUserByUsername(String username);
 
-    List<User> getUsersByRoomId(int roomId);
+    List<User> getUsersByRoomIdActive(Integer roomId, Integer activeTime);
+
+    List<User> getUsersByRoomIdNotActive(Integer roomId, Integer activeTime);
 
     User getSenderByMessageId(Integer messageId);
+
+    void updateRecentActiveTime(Integer userId);
 }

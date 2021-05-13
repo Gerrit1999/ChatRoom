@@ -1,6 +1,7 @@
 package com.example.entity;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class UserExample {
@@ -305,72 +306,132 @@ public class UserExample {
         }
 
         public Criteria andEmailIsNull() {
-            addCriterion("Email is null");
+            addCriterion("email is null");
             return (Criteria) this;
         }
 
         public Criteria andEmailIsNotNull() {
-            addCriterion("Email is not null");
+            addCriterion("email is not null");
             return (Criteria) this;
         }
 
         public Criteria andEmailEqualTo(String value) {
-            addCriterion("Email =", value, "Email");
+            addCriterion("email =", value, "email");
             return (Criteria) this;
         }
 
         public Criteria andEmailNotEqualTo(String value) {
-            addCriterion("Email <>", value, "Email");
+            addCriterion("email <>", value, "email");
             return (Criteria) this;
         }
 
         public Criteria andEmailGreaterThan(String value) {
-            addCriterion("Email >", value, "Email");
+            addCriterion("email >", value, "email");
             return (Criteria) this;
         }
 
         public Criteria andEmailGreaterThanOrEqualTo(String value) {
-            addCriterion("Email >=", value, "Email");
+            addCriterion("email >=", value, "email");
             return (Criteria) this;
         }
 
         public Criteria andEmailLessThan(String value) {
-            addCriterion("Email <", value, "Email");
+            addCriterion("email <", value, "email");
             return (Criteria) this;
         }
 
         public Criteria andEmailLessThanOrEqualTo(String value) {
-            addCriterion("Email <=", value, "Email");
+            addCriterion("email <=", value, "email");
             return (Criteria) this;
         }
 
         public Criteria andEmailLike(String value) {
-            addCriterion("Email like", value, "Email");
+            addCriterion("email like", value, "email");
             return (Criteria) this;
         }
 
         public Criteria andEmailNotLike(String value) {
-            addCriterion("Email not like", value, "Email");
+            addCriterion("email not like", value, "email");
             return (Criteria) this;
         }
 
         public Criteria andEmailIn(List<String> values) {
-            addCriterion("Email in", values, "Email");
+            addCriterion("email in", values, "email");
             return (Criteria) this;
         }
 
         public Criteria andEmailNotIn(List<String> values) {
-            addCriterion("Email not in", values, "Email");
+            addCriterion("email not in", values, "email");
             return (Criteria) this;
         }
 
         public Criteria andEmailBetween(String value1, String value2) {
-            addCriterion("Email between", value1, value2, "Email");
+            addCriterion("email between", value1, value2, "email");
             return (Criteria) this;
         }
 
         public Criteria andEmailNotBetween(String value1, String value2) {
-            addCriterion("Email not between", value1, value2, "Email");
+            addCriterion("email not between", value1, value2, "email");
+            return (Criteria) this;
+        }
+
+        public Criteria andRecentActiveTimeIsNull() {
+            addCriterion("recent_active_time is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andRecentActiveTimeIsNotNull() {
+            addCriterion("recent_active_time is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andRecentActiveTimeEqualTo(Date value) {
+            addCriterion("recent_active_time =", value, "RecentActiveTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andRecentActiveTimeNotEqualTo(Date value) {
+            addCriterion("recent_active_time <>", value, "RecentActiveTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andRecentActiveTimeGreaterThan(Date value) {
+            addCriterion("recent_active_time >", value, "RecentActiveTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andRecentActiveTimeGreaterThanOrEqualTo(Date value) {
+            addCriterion("recent_active_time >=", value, "RecentActiveTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andRecentActiveTimeLessThan(Date value) {
+            addCriterion("recent_active_time <", value, "RecentActiveTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andRecentActiveTimeLessThanOrEqualTo(Date value) {
+            addCriterion("recent_active_time <=", value, "RecentActiveTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andRecentActiveTimeIn(List<Date> values) {
+            addCriterion("recent_active_time in", values, "RecentActiveTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andRecentActiveTimeNotIn(List<Date> values) {
+            addCriterion("recent_active_time not in", values, "RecentActiveTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andRecentActiveTimeBetween(Date value1, Date value2) {
+            addCriterion("recent_active_time between", value1, value2, "RecentActiveTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andRecentActiveTimeNotBetween(Date value1, Date value2) {
+            addCriterion("recent_active_time not between", value1, value2, "RecentActiveTime");
             return (Criteria) this;
         }
     }

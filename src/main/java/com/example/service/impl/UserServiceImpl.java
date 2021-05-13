@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -57,12 +58,24 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<User> getUsersByRoomId(int roomId) {
-        return userMapper.selectUsersByRoomId(roomId);
+    public List<User> getUsersByRoomIdActive(Integer roomId, Integer activeTime) {
+        return userMapper.selectUsersByRoomIdActive(roomId, activeTime);
+    }
+
+    @Override
+    public List<User> getUsersByRoomIdNotActive(Integer roomId, Integer activeTime) {
+        return userMapper.selectUsersByRoomIdNotActive(roomId, activeTime);
     }
 
     @Override
     public User getSenderByMessageId(Integer messageId) {
         return userMapper.selectSenderByMessageId(messageId);
+    }
+
+    @Override
+    public void updateRecentActiveTime(Integer userId) {
+        User user = userMapper.selectByPrimaryKey(userId);
+        user.setRecentActiveTime(new Date());
+        userMapper.updateByPrimaryKey(user);
     }
 }

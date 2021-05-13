@@ -1,6 +1,7 @@
 package com.example.entity;
 
 import java.io.Serializable;
+import java.util.Date;
 
 public class User implements Serializable {
     private Integer id;
@@ -10,6 +11,8 @@ public class User implements Serializable {
     private String password;
 
     private String email;
+
+    private Date recentActiveTime;
 
     public Integer getId() {
         return id;
@@ -41,5 +44,13 @@ public class User implements Serializable {
 
     public void setEmail(String email) {
         this.email = email == null ? null : email.trim();
+    }
+
+    public Date getRecentActiveTime() {
+        return recentActiveTime;
+    }
+
+    public void setRecentActiveTime(Date recentActiveTime) {
+        this.recentActiveTime = recentActiveTime;
     }
 }

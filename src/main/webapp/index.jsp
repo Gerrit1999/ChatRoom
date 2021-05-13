@@ -5,7 +5,7 @@
   Time: 21:02
   To change this template use File | Settings | File Templates.
 --%>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java" isELIgnored="false" %>
 <html lang="zh-CN">
 
 <head>
@@ -75,7 +75,6 @@
 <script type="text/javascript" src="layer/layer.js"></script>
 
 <script>
-
     function register() {
         const username = $('#username').val();
         const email = $('#email').val();
@@ -110,6 +109,12 @@
         });
     }
 
+    $(function () {
+        if ("${pageContext.request.userPrincipal.name}" !== "") {
+            // 已经登录, 跳转到聊天界面
+            window.location.href = "./to/main.html";
+        }
+    })
 </script>
 
 

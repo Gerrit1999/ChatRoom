@@ -44,6 +44,6 @@
         </javaClientGenerator>
 
         <!-- 指定数据表 -->
-        <table tableName="t_image" domainObjectName="Image"/>
+        <table tableName="t_user" domainObjectName="User"/>
     </context>
 </generatorConfiguration>

@@ -25,27 +25,31 @@
 <body>
 <div class="panel panel-default" style="width: 1152px;height: 680px;margin-left: 220px;margin-top: 30px;padding: 5px">
     <div class="bs-example" style="float: left;width: 260px;height: 668px;margin-bottom: 0;">
-        <ul class="nav nav-pills nav-stacked nav-pills-stacked-example">
-            <li role="presentation">
-                <div>
-                    <div style="float: left;">
-                        <img src="images/bg.jpg" alt="头像" height="50px" width="50px">
-                        &nbsp;&nbsp;用户名: <span id="username"><security:authentication
-                            property="principal.originalUser.username"/></span><br/>
-                        <input id="userId" type="hidden"
-                               value=<security:authentication property="principal.originalUser.id"/>>
-                    </div>
-                    <br/><br/><br/>
-                </div>
-            </li>
-            <li role="presentation" class="active"><a href="javascript:createChatRoomShow();">创建房间</a></li>
-            <li role="presentation"><a href="javascript:joinChatRoomShow();">加入房间</a></li>
-        </ul>
+        <div>
+            <div style="float: left;">
+                <img src="images/bg.jpg" alt="头像" height="50px" width="50px">
+                &nbsp;&nbsp;用户名: <span id="username"><security:authentication
+                    property="principal.originalUser.username"/></span><br/>
+                <input id="userId" type="hidden"
+                       value=<security:authentication property="principal.originalUser.id"/>>
+            </div>
+            <div class="btn-group" style="float: right;margin-top: 10px">
+                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"
+                        aria-haspopup="true" aria-expanded="false">菜单 <span class="caret"></span></button>
+                <ul class="dropdown-menu">
+                    <li><a href="javascript:createChatRoomShow();">创建房间</a></li>
+                    <li><a href="javascript:joinChatRoomShow();">加入房间</a></li>
+                    <li role="separator" class="divider"></li>
+                    <li><a href="javascript:logout();">退出登录</a></li>
+                </ul>
+            </div>
+        </div>
+        <br/><br/><br/>
         <div class="panel panel-default">
             <div class="panel-heading">
                 <h3 class="panel-title">已加入的房间</h3>
             </div>
-            <div class="panel-body" style="height: 483px;overflow:auto;">
+            <div class="panel-body" style="height: 568px;overflow:auto;">
                 <ul id="roomList" class="nav nav-pills nav-stacked nav-pills-stacked-example"></ul>
             </div>
         </div>
@@ -131,8 +135,8 @@
                 <h3 class="panel-title">在线列表</h3>
             </div>
             <div class="panel-body" style="height: 367px;overflow:auto;">
-                <ul class="nav nav-pills nav-stacked nav-pills-stacked-example">
-                    <li role="presentation"></li>
+                <ul id="userList" class="nav nav-pills nav-stacked nav-pills-stacked-example">
+
                 </ul>
             </div>
         </div>
@@ -140,6 +144,7 @@
 </div>
 </body>
 
+<%@ include file="/WEB-INF/modal/logout-confirm.jsp" %>
 <%@ include file="/WEB-INF/modal/join-chatRoom.jsp" %>
 <%@ include file="/WEB-INF/modal/create-chatRoom.jsp" %>
 <%@ include file="/WEB-INF/modal/exit-confirm.jsp" %>

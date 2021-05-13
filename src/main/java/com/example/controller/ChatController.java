@@ -1,12 +1,10 @@
 package com.example.controller;
 
+import com.example.entity.ChatRoom;
 import com.example.entity.Image;
 import com.example.entity.Message;
 import com.example.entity.User;
-import com.example.service.FileService;
-import com.example.service.ImageService;
-import com.example.service.MessageService;
-import com.example.service.UserService;
+import com.example.service.*;
 import com.example.utils.CustomConstant;
 import com.example.utils.ResultEntity;
 import com.example.utils.SocketMap;
@@ -31,6 +29,9 @@ import java.util.UUID;
 public class ChatController {
     @Autowired
     UserService userService;
+
+    @Autowired
+    ChatRoomService chatRoomService;
 
     @Autowired
     MessageService messageService;

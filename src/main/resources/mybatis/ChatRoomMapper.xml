@@ -76,8 +76,8 @@
         where room_id = #{roomId}
           and user_id = #{userId}
     </select>
-    <select id="selectUserInRoom" resultMap="BaseResultMap">
-        select *
+    <select id="selectUserInRoom" resultType="java.lang.Integer">
+        select count(id)
         from inner_room_user
         where room_id = #{roomId}
           and user_id = #{userId}
