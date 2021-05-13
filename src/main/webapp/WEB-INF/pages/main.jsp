@@ -16,90 +16,16 @@
     <title>聊天室</title>
     <base href="http://${pageContext.request.serverName}:${pageContext.request.serverPort}${pageContext.request.contextPath}/">
     <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/chat.css">
     <link rel="stylesheet" type="text/css" href="css/emoji-sprites.css">
     <script type="text/javascript" src="jquery/jquery-2.1.1.min.js"></script>
     <script type="text/javascript" src="bootstrap/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="layer/layer.js"></script>
-    <style type="text/css">
-        .talk_con {
-            width: 600px;
-            height: 668px;
-            /*border: 1px solid #666;*/
-            margin: 0 0 0 270px;
-            background: #f9f9f9;
-        }
-
-        .talk_show {
-            width: 580px;
-            height: 420px;
-            border: 1px #666;
-            background: #fff;
-            margin: 10px auto 0;
-            overflow: auto;
-        }
-
-        .talk_input {
-            width: 580px;
-            margin: 10px auto 0;
-        }
-
-        .uTalk {
-            margin: 10px;
-        }
-
-        .uTalk span {
-            overflow-wrap: break-word;
-            display: inline-block;
-            background: #0181cc;
-            border-radius: 10px;
-            color: #fff;
-            padding: 5px 10px;
-        }
-
-        .iTalk {
-            margin: 0 10px 10px 10px;
-            text-align: right;
-        }
-
-        .iTalk span {
-            overflow-wrap: break-word;
-            display: inline-block;
-            background: #ef8201;
-            border-radius: 10px;
-            color: #fff;
-            padding: 5px 10px;
-        }
-
-        .roomItem {
-            height: 60px;
-        }
-
-        .roomItem a {
-            height: 50px;
-        }
-
-        .redRoundWithNumber {
-            width: 20px;
-            height: 20px;
-            background-color: #F00;
-            border-radius: 25px;
-            float: right;
-            margin-top: 10px;
-        }
-
-        .redRoundWithNumber span {
-            height: 20px;
-            line-height: 20px;
-            display: block;
-            color: #FFF;
-            text-align: center;
-        }
-    </style>
 </head>
 <body>
-<div class="panel panel-default" style="width: 882px;margin-left: 370px;margin-top: 30px;padding: 5px">
-    <div class="bs-example" style="float: left;width: 260px;height: 668px;margin-bottom: 0">
-        <ul id="roomList" class="nav nav-pills nav-stacked nav-pills-stacked-example">
+<div class="panel panel-default" style="width: 1152px;height: 680px;margin-left: 220px;margin-top: 30px;padding: 5px">
+    <div class="bs-example" style="float: left;width: 260px;height: 668px;margin-bottom: 0;">
+        <ul class="nav nav-pills nav-stacked nav-pills-stacked-example">
             <li role="presentation">
                 <div>
                     <div style="float: left;">
@@ -114,10 +40,17 @@
             </li>
             <li role="presentation" class="active"><a href="javascript:createChatRoomShow();">创建房间</a></li>
             <li role="presentation"><a href="javascript:joinChatRoomShow();">加入房间</a></li>
-            已加入的房间
         </ul>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">已加入的房间</h3>
+            </div>
+            <div class="panel-body" style="height: 483px;overflow:auto;">
+                <ul id="roomList" class="nav nav-pills nav-stacked nav-pills-stacked-example"></ul>
+            </div>
+        </div>
     </div>
-    <div class="panel panel-default talk_con">
+    <div class="panel panel-default talk_con" style="float: left">
         <div class="panel-heading" style="height: 70px">
             <div style="float: left;margin-top: 3px">
                 <h3 class="panel-title" style="font-size: 25px">
@@ -179,6 +112,28 @@
                     <button id="sendBtn" class="btn btn-success" type="button"
                             style="width: 85px;height: 100px">发送</button>
                 </span>
+            </div>
+        </div>
+    </div>
+    <div class="bs-example" style="float: left;width: 270px;height: 668px;margin-bottom: 0">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">公告</h3>
+            </div>
+            <div class="panel-body" style="height: 200px;overflow:auto;">
+                <ul class="nav nav-pills nav-stacked nav-pills-stacked-example">
+                    <li role="presentation"></li>
+                </ul>
+            </div>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3 class="panel-title">在线列表</h3>
+            </div>
+            <div class="panel-body" style="height: 367px;overflow:auto;">
+                <ul class="nav nav-pills nav-stacked nav-pills-stacked-example">
+                    <li role="presentation"></li>
+                </ul>
             </div>
         </div>
     </div>

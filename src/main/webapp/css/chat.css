@@ -1,0 +1,55 @@
+.talk_con {
+    width: 600px;
+    height: 668px;
+    margin: 0 5px 0 5px;
+    background: #f9f9f9;
+}
+
+.talk_show {
+    width: 580px;
+    height: 420px;
+    border: 1px #666;
+    background: #fff;
+    margin: 10px auto 0;
+    overflow: auto;
+}
+
+.talk_input {
+    width: 580px;
+    margin: 10px auto 0;
+}
+
+.uTalk {
+    margin: 10px;
+}
+
+.uTalk span {
+    overflow-wrap: break-word;
+    display: inline-block;
+    background: #0181cc;
+    border-radius: 10px;
+    color: #fff;
+    padding: 5px 10px;
+}
+
+.iTalk {
+    margin: 0 10px 10px 10px;
+    text-align: right;
+}
+
+.iTalk span {
+    overflow-wrap: break-word;
+    display: inline-block;
+    background: #ef8201;
+    border-radius: 10px;
+    color: #fff;
+    padding: 5px 10px;
+}
+
+.roomItem {
+    height: 60px;
+}
+
+.roomItem a {
+    height: 50px;
+}

@@ -15,5 +15,5 @@
     </root>
 
     <!--局部日志级别-->
-    <logger name="com.example.mapper" level="DEBUG"/>
+<!--    <logger name="com.example.mapper" level="DEBUG"/>-->
 </configuration>

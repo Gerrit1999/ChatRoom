@@ -108,7 +108,7 @@ public class ChatRoom {
 //                    e.printStackTrace();
                     break;
                 } catch (IOException e){
-                    e.printStackTrace();
+//                    e.printStackTrace();
                 }
             }
         });

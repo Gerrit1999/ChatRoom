@@ -11,7 +11,7 @@
 <head>
     <meta charset="utf-8">
     <title>聊天室</title>
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/login.css">
 </head>
 
 <body>
