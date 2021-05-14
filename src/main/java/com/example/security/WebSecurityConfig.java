@@ -45,7 +45,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .defaultSuccessUrl("/to/main.html")  // 登录成功后跳转的页面
                 .usernameParameter("username") // 账号请求参数名
                 .passwordParameter("password")   // 密码请求参数名
-//                .failureForwardUrl("/user/login/failed.html")   // 登录失败跳转
                 .and()
                 .logout()
                 .logoutUrl("/security/do/logout.html")  // 退出登录请求

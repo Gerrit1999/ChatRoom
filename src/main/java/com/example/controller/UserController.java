@@ -42,11 +42,6 @@ public class UserController {
         return ResultEntity.createResultEntity(ResultEntity.ResultType.SUCCESS, null, null);
     }
 
-    @RequestMapping("/login/failed.html")
-    public String loginFailed() {
-        return "redirect:../../index.jsp";
-    }
-
     @ResponseBody
     @RequestMapping("/update/recentActiveTime.json")
     public ResultEntity<Object> updateRecentActiveTime(@RequestParam("userId") Integer userId) {
