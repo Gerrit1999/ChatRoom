@@ -34,7 +34,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity security) throws Exception {
         security
                 .authorizeRequests()
-                .antMatchers("/index.jsp", "/to/login.html", "/user/do/register.json", "/bootstrap/**", "/css/**", "/images/**", "/jquery/**", "/js/**", "/layer/**", "/layui/**")
+                .antMatchers("/index.jsp", "/user/to/login.html", "/user/do/register.json", "/bootstrap/**", "/css/**", "/images/**", "/jquery/**", "/js/**", "/layer/**", "/layui/**")
                 .permitAll()    // 可以无条件访问
                 .anyRequest()   // 任意请求
                 .authenticated()    //需要登录后访问
@@ -45,6 +45,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .defaultSuccessUrl("/to/main.html")  // 登录成功后跳转的页面
                 .usernameParameter("username") // 账号请求参数名
                 .passwordParameter("password")   // 密码请求参数名
+//                .failureForwardUrl("/user/login/failed.html")   // 登录失败跳转
                 .and()
                 .logout()
                 .logoutUrl("/security/do/logout.html")  // 退出登录请求

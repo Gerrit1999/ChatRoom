@@ -6,6 +6,7 @@
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" isELIgnored="false" %>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <html lang="zh-CN">
 
 <head>
@@ -18,7 +19,6 @@
 <div class="content">
     <div class="form sign-in">
         <h2>欢迎回来</h2>
-        <p>${SPRING_SECURITY_LAST_EXCEPTION.message}</p>
         <form method="post" action="security/do/login.html">
             <%--            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}">--%>
             <label>
@@ -70,45 +70,20 @@
     </div>
 </div>
 
-<script src="js/login.js"></script>
 <script src="jquery/jquery-2.1.1.min.js"></script>
+<script src="js/login.js"></script>
 <script type="text/javascript" src="layer/layer.js"></script>
 
-<script>
-    function register() {
-        const username = $('#username').val();
-        const email = $('#email').val();
-        const password = $('#password').val();
-        const data = JSON.stringify({
-            "username": username,
-            "email": email,
-            "password": password
+<c:if test="${SPRING_SECURITY_LAST_EXCEPTION.message eq 'Bad credentials'}">
+    <script>
+        layer.msg("登录失败! 请检查用户名和密码是否正确!", {
+            time: 2000, //2s后自动关闭
         });
-        $.ajax({
-            url: "user/do/register.json",
-            type: "post",
-            contentType: "application/json;charset=utf-8",
-            data: data,
-            dataType: "json",
-            async: false,
-            success: function (response) {
-                const result = response.result;
-                if (result === "SUCCESS") {
-                    layer.msg("注册成功! 3s后跳转到登录页面");
-                    setTimeout(function () {
-                        $(location).attr("href", "index.jsp");
-                    }, 3000);
-                } else if (result === "FAILED") {
-                    layer.msg("注册失败! " + response.message);
-                }
-            },
-            error: function (response) {
-                console.log(1)
-                layer.msg("注册失败! " + response.status + " " + response.statusText);
-            }
-        });
-    }
+    </script>
+    <c:remove var="SPRING_SECURITY_LAST_EXCEPTION" scope="session"/>
+</c:if>
 
+<script>
     $(function () {
         if ("${pageContext.request.userPrincipal.name}" !== "") {
             // 已经登录, 跳转到聊天界面
@@ -116,7 +91,6 @@
         }
     })
 </script>
-
 
 </body>
 

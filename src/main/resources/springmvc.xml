@@ -18,10 +18,10 @@
         <!--文件所在目录-->
         <property name="prefix" value="/WEB-INF/pages/"/>
         <!--文件后缀-->
-        <property name="suffix" value=".jsp"/>
+<!--        <property name="suffix" value=".jsp"/>-->
     </bean>
 
-    <mvc:view-controller path="/to/main.html" view-name="main"/>
+    <mvc:view-controller path="/to/main.html" view-name="main.jsp"/>
 
     <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
         <property name="defaultEncoding" value="utf-8"/>

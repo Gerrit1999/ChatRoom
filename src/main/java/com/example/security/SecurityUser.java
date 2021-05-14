@@ -11,7 +11,7 @@ public class SecurityUser extends org.springframework.security.core.userdetails.
     public SecurityUser(User originalUser, List<GrantedAuthority> authorities) {
         super(originalUser.getUsername(), originalUser.getPassword(), authorities);
         this.originalUser = originalUser;
-        // 将originalUser的密码擦出
+        // 将originalUser的密码擦除
         this.originalUser.setPassword(null);
     }
 

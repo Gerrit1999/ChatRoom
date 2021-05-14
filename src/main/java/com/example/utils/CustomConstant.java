@@ -18,4 +18,6 @@ public class CustomConstant {
     public static final String MESSAGE_RECEIVE_TIMEOUT = "接收数据超时!";
 
     public static final String MESSAGE_USERNAME_EXIST = "抱歉! 用户名已存在!";
+
+    public static final String MESSAGE_LOGIN_FAILED = "登录失败! 请检查用户名和密码是否正确!";
 }

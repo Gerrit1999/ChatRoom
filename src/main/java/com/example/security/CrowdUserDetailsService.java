@@ -23,6 +23,9 @@ public class CrowdUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         // 根据用户名查找User对象
         User user = userService.getUserByUsername(username);
+        if (user == null) {
+            throw new UsernameNotFoundException("用户名不存在");
+        }
         // 给Admin设置角色权限信息
         List<GrantedAuthority> authorities = new ArrayList<>();
         authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
