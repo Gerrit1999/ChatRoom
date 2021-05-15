@@ -88,9 +88,6 @@ function appendRoomItem(roomItem) {
             layer.msg(response.status + " " + response.statusText)
         }
     })
-
-    // 接收消息
-    recvMsg(roomItem.id);
 }
 
 // 进入房间
@@ -146,6 +143,8 @@ function getAllChatRooms() {
                 appendRoomItem(roomItem);
                 getHistoryMsg(roomItem.id, userId);
                 if (i === 0) {
+                    // 接收消息
+                    recvMsg();
                     gotoChatRoom(roomItem.id, roomItem.name);
                 }
             }
@@ -211,11 +210,12 @@ function sendMsg(message) {
 }
 
 // 添加消息
-function appendMsg(roomId, userId, msg) {
+function appendMsg(userId, msg) {
     const date = msg.date;
     let message = msg.message;
     const sender = msg.sender;
     const file = msg.file;
+    const roomId = msg.roomId;
     const words = $('#words_' + roomId);
     if (sender.id == userId) {// 是我发的消息
         words.append('<div style="text-align: right;margin-bottom: 5px;"><span>' + date + '</span></div>')
@@ -251,14 +251,13 @@ function appendMsg(roomId, userId, msg) {
 }
 
 // 长轮询接收消息
-function recvMsg(roomId) {
+function recvMsg() {
     const userId = $('#userId').val();
     $.ajax({
         url: "chat/recv/message.json",
         type: "post",
         data: {
-            "userId": userId,
-            "roomId": roomId
+            "userId": userId
         },
         dataType: "json",
         timeout: 30000, // 超时时间要大于后台的超时时间
@@ -266,11 +265,12 @@ function recvMsg(roomId) {
             const result = response.result;
             if (result === "SUCCESS") {
                 const msg = response.data;
-                appendMsg(roomId, userId, msg);
+                appendMsg(userId, msg);
                 // 判断是否在当前房间页面
+                const roomId = msg.roomId;
                 const curRoomId = $('#roomId').text();
                 if (roomId != curRoomId) {
-                    // 更新未读红点
+                    // 更新未读标识
                     const span = $('#room_' + roomId).children('span');
                     span.show();
                     let unread = span.text();
@@ -295,7 +295,7 @@ function recvMsg(roomId) {
                     }
                 }
             }
-            recvMsg(roomId);
+            recvMsg();
         },
         error: function (response) {
             layer.msg("接收消息失败! 请刷新页面重试 " + response.status + " " + response.statusText)
@@ -316,7 +316,7 @@ function getHistoryMsg(roomId, userId) {
         success: function (response) {
             const messages = response.data;
             for (let i = 0, n = messages.length; i < n; i++) {
-                appendMsg(roomId, userId, messages[i]);
+                appendMsg(userId, messages[i]);
             }
         }
     })
@@ -401,9 +401,11 @@ $(function () {
         const roomId = $('#roomId').text();
         // 更新在线列表
         updateUserList(roomId);
-        //每30s更新活跃时间
+        // 更新活跃时间
         updateRecentActiveTime();
     }
+
+    // 每10s更新一次
     update();
     setInterval(update, 10 * 1000);
 

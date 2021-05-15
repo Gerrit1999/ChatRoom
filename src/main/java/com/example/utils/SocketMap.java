@@ -8,38 +8,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class SocketMap {
 
-    private static class Key {
-        private final Integer roomId;
-        private final Integer userId;
-
-        public Key(Integer roomId, Integer userId) {
-            this.roomId = roomId;
-            this.userId = userId;
-        }
-
-        @Override
-        public int hashCode() {
-            final int prime = 31;
-            int result = 1;
-            result = prime * result + ((roomId == null) ? 0 : roomId.hashCode());
-            result = prime * result + ((userId == null) ? 0 : userId.hashCode());
-            return result;
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            if (!(obj instanceof Key)) {
-                return false;
-            }
-            Key key = (Key) obj;
-            return Objects.equals(key.roomId, this.roomId) && Objects.equals(key.userId, this.userId);
-        }
-    }
-
-    private static final Map<Key, Socket> socketMap = new ConcurrentHashMap<>();
+    private static final Map<Integer, Socket> acceptSocket = new ConcurrentHashMap<>();
+    private static final Map<Integer, Socket> connectSocket = new ConcurrentHashMap<>();
     private static final Map<Socket, ObjectOutputStream> outputMap = new ConcurrentHashMap<>();
     private static final Map<Socket, ObjectInputStream> inputMap = new ConcurrentHashMap<>();
 
@@ -50,28 +20,50 @@ public class SocketMap {
         for (Map.Entry<Socket, ObjectInputStream> entry : inputMap.entrySet()) {
             entry.getValue().close();
         }
-        for (Map.Entry<Key, Socket> entry : socketMap.entrySet()) {
+        for (Map.Entry<Integer, Socket> entry : acceptSocket.entrySet()) {
+            entry.getValue().close();
+        }
+        for (Map.Entry<Integer, Socket> entry : connectSocket.entrySet()) {
             entry.getValue().close();
         }
     }
 
-    public static void addSocket(Integer roomId, Integer userId, Socket socket) {
-        Key key = new Key(roomId, userId);
-        socketMap.put(key, socket);
+    public static void addAcceptSocket(Integer userId, Socket socket) {
+        acceptSocket.put(userId, socket);
     }
 
-    public static void removeSocket(Integer roomId, Integer userId) {
-        Key key = new Key(roomId, userId);
-        socketMap.remove(key);
+    public static void addConnectSocket(Integer userId, Socket socket) {
+        connectSocket.put(userId, socket);
     }
 
-    public static boolean containsSocket(Integer roomId, Integer userId) {
-        Key key = new Key(roomId, userId);
-        return socketMap.containsKey(key);
+    public static void removeAcceptSocket(Integer userId) throws IOException {
+        if (containsAcceptSocket(userId)) {
+            Socket socket = acceptSocket.remove(userId);
+            socket.close();
+        }
     }
 
-    public static Socket getSocket(Integer roomId, Integer userId) {
-        return socketMap.get(new Key(roomId, userId));
+    public static void removeConnectSocket(Integer userId) throws IOException {
+        if (containsConnectSocket(userId)) {
+            Socket socket = connectSocket.remove(userId);
+            socket.close();
+        }
+    }
+
+    public static boolean containsAcceptSocket(Integer userId) {
+        return acceptSocket.containsKey(userId);
+    }
+
+    public static boolean containsConnectSocket(Integer userId) {
+        return connectSocket.containsKey(userId);
+    }
+
+    public static Socket getAcceptSocket(Integer userId) {
+        return acceptSocket.get(userId);
+    }
+
+    public static Socket getConnectSocket(Integer userId) {
+        return connectSocket.get(userId);
     }
 
     public static ObjectOutputStream getObjectOutputStream(Socket socket) throws IOException {

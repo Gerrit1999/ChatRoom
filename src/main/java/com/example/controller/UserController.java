@@ -25,7 +25,6 @@ import java.util.List;
 @SessionAttributes("sessionInfo")
 @RequestMapping("/user")
 public class UserController {
-
     @Autowired
     UserService userService;
 
@@ -53,16 +52,14 @@ public class UserController {
     @ResponseBody
     @RequestMapping("/get/activeList.json")
     public ResultEntity<List<User>> getActiveList(@RequestParam("roomId") Integer roomId) {
-        int activeTime = 10;   // 60s内在线
-        List<User> users = userService.getUsersByRoomIdActive(roomId, activeTime);
+        List<User> users = userService.getUsersByRoomIdActive(roomId, CustomConstant.activeTime);
         return ResultEntity.createResultEntity(ResultEntity.ResultType.SUCCESS, null, users);
     }
 
     @ResponseBody
     @RequestMapping("/get/notActiveList.json")
     public ResultEntity<List<User>> getNotActiveList(@RequestParam("roomId") Integer roomId) {
-        int activeTime = 10;   // 60s内在线
-        List<User> users = userService.getUsersByRoomIdNotActive(roomId, activeTime);
+        List<User> users = userService.getUsersByRoomIdNotActive(roomId, CustomConstant.activeTime);
         return ResultEntity.createResultEntity(ResultEntity.ResultType.SUCCESS, null, users);
     }
 }

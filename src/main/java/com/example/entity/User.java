@@ -14,6 +14,13 @@ public class User implements Serializable {
 
     private Date recentActiveTime;
 
+    public User() {
+    }
+
+    public User(Integer id) {
+        this.id = id;
+    }
+
     public Integer getId() {
         return id;
     }

@@ -1,6 +1,5 @@
 package com.example.controller;
 
-import com.example.entity.ChatRoom;
 import com.example.entity.Image;
 import com.example.entity.Message;
 import com.example.entity.User;
@@ -105,9 +104,8 @@ public class ChatController {
         }
         // 保存数据库
         messageService.addMessage(message);
-        Integer roomId = message.getRoomId();
         Integer userId = message.getSender().getId();
-        Socket socket = SocketMap.getSocket(roomId, userId);// 获取对应的socket
+        Socket socket = SocketMap.getConnectSocket(userId);// 获取对应的socket
         if (socket == null) {
             return ResultEntity.createResultEntity(ResultEntity.ResultType.FAILED, CustomConstant.MESSAGE_SOCKET_NOT_FOUND, null);
         }
@@ -126,9 +124,8 @@ public class ChatController {
 
     @ResponseBody
     @RequestMapping("/recv/message.json")
-    public ResultEntity<Message> recvMessage(@RequestParam("roomId") Integer roomId,
-                                             @RequestParam("userId") Integer userId) {
-        Socket socket = SocketMap.getSocket(roomId, userId);    // 获取对应的socket
+    public ResultEntity<Message> recvMessage(@RequestParam("userId") Integer userId) {
+        Socket socket = SocketMap.getConnectSocket(userId);    // 获取对应的socket
         if (socket == null) {
             return ResultEntity.createResultEntity(ResultEntity.ResultType.FAILED, CustomConstant.MESSAGE_SOCKET_NOT_FOUND, null);
         }
@@ -159,7 +156,7 @@ public class ChatController {
                                            HttpSession session) {
         try {
             // 获取套接字
-            Socket socket = SocketMap.getSocket(roomId, userId);
+            Socket socket = SocketMap.getConnectSocket(userId);
             if (socket == null) {
                 return ResultEntity.createResultEntity(ResultEntity.ResultType.FAILED, CustomConstant.MESSAGE_SOCKET_NOT_FOUND, null);
             }
@@ -263,7 +260,7 @@ public class ChatController {
         }
         try {
             // 获取套接字
-            Socket socket = SocketMap.getSocket(roomId, userId);
+            Socket socket = SocketMap.getConnectSocket(userId);
             if (socket == null) {
                 return ResultEntity.createResultEntity(ResultEntity.ResultType.FAILED, CustomConstant.MESSAGE_SOCKET_NOT_FOUND, null);
             }
@@ -296,6 +293,9 @@ public class ChatController {
                                                          @RequestParam("userId") Integer userId) {
         // 获取最近7天的数据
         List<Message> messages = messageService.getIntervalMessage(roomId, userId, intervalDays);
+        for (Message message : messages) {
+            message.setRoomId(roomId);
+        }
         return ResultEntity.createResultEntity(ResultEntity.ResultType.SUCCESS, null, messages);
     }
 
