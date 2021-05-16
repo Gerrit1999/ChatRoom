@@ -21,5 +21,7 @@ public interface UserService {
 
     User getSenderByMessageId(Integer messageId);
 
+    User getReceiverByMessageId(Integer messageId);
+
     void updateRecentActiveTime(Integer userId);
 }

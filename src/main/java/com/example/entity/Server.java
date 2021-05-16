@@ -7,15 +7,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import sun.security.krb5.internal.HostAddress;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.*;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 @Component
 public class Server {
@@ -65,10 +62,16 @@ public class Server {
                                 Message message = (Message) ois.readObject();
                                 if (message != null) {
                                     logger.info("服务器收到一条消息: " + message);
+                                    Integer senderId = message.getSender().getId();
+                                    User receiver = message.getReceiver();
+                                    Integer receiverId = receiver == null ? 0 : message.getReceiver().getId();
                                     // -----转发-----
                                     // 获取活跃的用户
                                     List<User> users = userService.getUsersByRoomIdActive(message.getRoomId(), CustomConstant.activeTime);
                                     for (User user : users) {
+                                        if (receiverId != 0 && !senderId.equals(user.getId()) && !receiverId.equals(user.getId())) {
+                                            continue;
+                                        }
                                         Socket member = SocketMap.getAcceptSocket(user.getId());
                                         if (member != null) {
                                             // 获取输出流

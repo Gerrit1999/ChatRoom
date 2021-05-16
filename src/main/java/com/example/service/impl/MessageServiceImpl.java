@@ -28,7 +28,9 @@ public class MessageServiceImpl implements MessageService {
         messageMapper.insert(message);
         messageMapper.insertRoom(message.getId(), message.getRoomId());
         messageMapper.insertSender(message.getId(), message.getSender().getId());
-        messageMapper.insertReceiver(message.getId(), message.getReceiverId());
+        if (message.getReceiver() != null) {
+            messageMapper.insertReceiver(message.getId(), message.getReceiver().getId());
+        }
         if (message.getFile() != null) {
             File file = message.getFile();
             fileService.addFile(file);
@@ -41,7 +43,9 @@ public class MessageServiceImpl implements MessageService {
         List<Message> messages = messageMapper.selectIntervalMessage(roomId, userId, intervalDays);
         for (Message message : messages) {
             User sender = userService.getSenderByMessageId(message.getId());
+            User receiver = userService.getReceiverByMessageId(message.getId());
             message.setSender(sender);
+            message.setReceiver(receiver);
             com.example.entity.File file = fileService.getFileByMessageId(message.getId());
             message.setFile(file);
         }

@@ -23,7 +23,7 @@
     <script type="text/javascript" src="layer/layer.js"></script>
 </head>
 <body>
-<div class="panel panel-default" style="width: 1152px;height: 680px;margin-left: 220px;margin-top: 30px;padding: 5px">
+<div class="panel panel-default" style="width: 1152px;height: 680px;margin-left: 220px;margin-top: 20px;padding: 5px">
     <div class="bs-example" style="float: left;width: 260px;height: 668px;margin-bottom: 0;">
         <div>
             <div style="float: left;">
@@ -47,9 +47,9 @@
         <br/><br/><br/>
         <div class="panel panel-default">
             <div class="panel-heading">
-                <h3 class="panel-title">已加入的房间</h3>
+                <h3 class="panel-title">消息</h3>
             </div>
-            <div class="panel-body" style="height: 568px;overflow:auto;">
+            <div class="panel-body" style="height: 568px;overflow:auto;padding: 6px">
                 <ul id="roomList" class="nav nav-pills nav-stacked nav-pills-stacked-example"></ul>
             </div>
         </div>
@@ -66,20 +66,21 @@
             </div>
             <div style="float: right;margin-top: 1px">
                 <button id="exitBtn" type="button" class="btn btn-primary btn-lg active" style="margin-left: 20px">
-                    退出房间
+                    退出
                 </button>
             </div>
         </div>
         <div id="messageShow">
         </div>
         <div class="input-group talk_input">
-            <div class="btn-group" role="group" aria-label="..." style="margin-bottom: 8px;margin-right: 8px">
+            <div class="btn-group" role="group" aria-label="..." style="margin-right: 26px">
                 <div class="dropup" style="float: left">
                     <button class="btn btn-default dropdown-toggle" type="button" id="expressionBtn"
                             data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="height: 39px">
                         <i class="glyphicon glyphicon-star-empty"></i>
                     </button>
-                    <div class="dropdown-menu" id="expressionMenu" aria-labelledby="expressionBtn" style="padding: 0">
+                    <div class="dropdown-menu" id="expressionMenu" aria-labelledby="expressionBtn"
+                         style="padding: 0">
                         <%--导入表情--%>
                         <%@include file="/WEB-INF/pages/emoji.jsp" %>
                     </div>
@@ -105,17 +106,32 @@
                 <button type="button" id="clearBtn" class="btn btn-default" style="height: 39px;margin-left: -1px"><i
                         class="glyphicon glyphicon-trash"></i></button>
             </div>
-            <div class="btn-group" role="group" aria-label="..." style="margin-bottom: 8px;">
+            <div class="btn-group" role="group" aria-label="...">
                 <input id="file" type="file" class="btn btn-default" style="width: 236px">
                 <input id="uploadFile" type="button" value="上传文件" class="btn btn-default" style="height: 39px">
             </div>
             <div class="input-group">
+                <label for="msg"></label>
                 <textarea id="msg" class="form-control" placeholder="请输入文本..."
-                          style="resize: none;height: 100px;font-size: 15px"></textarea>
-                <span class="input-group-btn">
-                    <button id="sendBtn" class="btn btn-success" type="button"
-                            style="width: 85px;height: 100px">发送</button>
-                </span>
+                          style="resize: none;height: 80px;width: 580px;font-size: 15px;margin-top: 3px;border-style: none;"></textarea>
+            </div>
+
+            <div style="z-index:10;float: left;">
+                <button id="whisperBtn" type="button" class="btn btn-info dropdown-toggle"
+                        style="height: 25px;padding: 2px;margin-top: 5px;display: none">
+                    <span style="font-size: 16px">私聊:</span>
+                    <%--id--%> <span style="font-size: 16px;display: none">0</span>
+                    <%--username--%> <span style="font-size: 16px"></span>
+                    <%--关闭--%> <span style="color: black;font-size: 16px;display: none">×</span>
+                </button>
+            </div>
+            <div style="float: right">
+                <button id="sendBtn" class="btn btn-success" type="button"
+                        style="width: 85px;height: 25px;padding: 2px;margin-top: 5px;">发送
+                </button>
+            </div>
+            <div style="float: right;margin-right: 10px;margin-top: 10px">
+                <span style="color: gray">按下Ctrl+Enter换行</span>
             </div>
         </div>
     </div>
@@ -132,11 +148,10 @@
         </div>
         <div class="panel panel-default">
             <div class="panel-heading">
-                <h3 class="panel-title">在线列表</h3>
+                <h3 class="panel-title">成员</h3>
             </div>
-            <div class="panel-body" style="height: 367px;overflow:auto;">
-                <ul id="userList" class="nav nav-pills nav-stacked nav-pills-stacked-example">
-
+            <div class="panel-body" style="height: 367px;overflow:auto;padding: 6px">
+                <ul id="userList" class="list-group">
                 </ul>
             </div>
         </div>

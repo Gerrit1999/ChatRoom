@@ -71,6 +71,10 @@ public class UserServiceImpl implements UserService {
     public User getSenderByMessageId(Integer messageId) {
         return userMapper.selectSenderByMessageId(messageId);
     }
+    @Override
+    public User getReceiverByMessageId(Integer messageId) {
+        return userMapper.selectReceiverByMessageId(messageId);
+    }
 
     @Override
     public void updateRecentActiveTime(Integer userId) {

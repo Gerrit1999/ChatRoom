@@ -53,5 +53,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .csrf()
                 .disable()
         ;
+        // 只能在一处登录
+        security.sessionManagement().maximumSessions(1).expiredUrl("/security/do/login.html");
     }
 }

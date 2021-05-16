@@ -1,8 +1,11 @@
-/*$(document).keyup(function (event) {
-        if (event.keyCode === 13) {// 按下回车
-            sendMsg();
-        }
-    });*/
+$(document).keyup(function (event) {
+    const msg = $('#msg').val();
+    if (event.keyCode == 13 && event.ctrlKey) {
+        $('#msg').val(msg + '\n'); //换行
+    } else if (event.keyCode === 13) {// 按下回车
+        sendMsg(msg);
+    }
+});
 
 // 退出登录
 function logout() {
@@ -180,10 +183,15 @@ function sendMsg(message) {
         "id": id,
         "username": username
     }
+    const receiver = {
+        "id": $('#whisperBtn').children().eq(1).text(),
+        "username": $('#whisperBtn').children().eq(2).text(),
+    }
     const data = JSON.stringify({
         "message": message,
         "sender": sender,
         "roomId": roomId,
+        "receiver": receiver,
         "fontSize": fontSize,
         "fontWeight": fontWeight,
         "fontStyle": fontStyle
@@ -218,7 +226,10 @@ function appendMsg(userId, msg) {
     const roomId = msg.roomId;
     const words = $('#words_' + roomId);
     if (sender.id == userId) {// 是我发的消息
-        words.append('<div style="text-align: right;margin-bottom: 5px;"><span>' + date + '</span></div>')
+        words.append('<div style="text-align: right;margin-bottom: 5px;"><span>' + date + '</span></div>');
+        if (msg.receiver !== null && msg.receiver.id !== 0) {  // 悄悄话
+            words.append('<div style="text-align: right;margin-bottom: 5px;"><span>我悄悄对 ' + msg.receiver.username + ' 说:</span></div>')
+        }
         if (file !== null && file.image !== null) {// 是图片
             const image = file.image;
             words.append('<div class="iTalk"><span><img width="' + 160 * image.proportion + '" height="160" src="' + image.url + '"></span></div>')
@@ -229,6 +240,9 @@ function appendMsg(userId, msg) {
         }
     } else {// 是其他人发的消息
         words.append('<div style="text-align: left;margin-bottom: 5px;"><span>' + date + '  [ From: ' + sender.username + ' ]</span></div>')
+        if (msg.receiver !== null && msg.receiver.id !== 0) {  // 悄悄话
+            words.append('<div style="text-align: left;margin-bottom: 5px;"><span> ' + msg.sender.username + ' 悄悄对我说:</span></div>')
+        }
         if (file == null) {// 是文本
             let re = new RegExp("\n", "g");// 匹配所有的\n, g表示全部global
             message = message.replace(re, "<br/>");// html中解析换行用<br/>
@@ -341,6 +355,23 @@ function updateRecentActiveTime() {
     })
 }
 
+// 鼠标停留显示私聊
+function memberOver(div) {
+    $(div).children().eq(1).show()
+}
+
+// 鼠标移开隐藏私聊
+function memberLeave(div) {
+    $(div).children().eq(1).hide()
+}
+
+// 私聊提示
+function whisper(userId, username) {
+    $('#whisperBtn').show();
+    $('#whisperBtn').children().eq(1).text(userId)
+    $('#whisperBtn').children().eq(2).text(username);
+}
+
 // 更新在线列表
 function updateUserList(roomId) {
     $.ajax({
@@ -358,9 +389,15 @@ function updateUserList(roomId) {
                 userList.empty();
                 for (let i = 0, n = response.data.length; i < n; i++) {
                     const user = response.data[i];
+                    const username = user.username;
                     userList.append(
-                        '<li role="presentation">' +
-                        '<span>' + user.username + ' 在线</span>' +
+                        '<li class="list-group-item list-group-item-success"  onmouseover="memberOver(this)" onmouseleave="memberLeave(this)" style="height: 40px;font-size: 16px;border-radius:5px;padding-top:5px;padding-bottom: 5px ">' +
+                        '<div style="float: left">' +
+                        '<span>' + username + '</span>' +
+                        '</div>' +
+                        '<div style="float:right;position: absolute;display: none;">' +
+                        '<button class="btn btn-info" type="button" onclick="whisper(' + user.id + ',\'' + username + '\')" style="height: 28px;width: 40px;font-size: 12px;padding: 2px;margin-left: 190px">私聊</button>' +
+                        '</div>' +
                         '</li>'
                     )
                 }
@@ -369,6 +406,7 @@ function updateUserList(roomId) {
             }
         }
     })
+
     $.ajax({
         url: "user/get/notActiveList.json",
         type: "post",
@@ -383,9 +421,15 @@ function updateUserList(roomId) {
                 const userList = $('#userList');
                 for (let i = 0, n = response.data.length; i < n; i++) {
                     const user = response.data[i];
+                    const username = user.username;
                     userList.append(
-                        '<li role="presentation">' +
-                        '<span>' + user.username + ' 离线</span>' +
+                        '<li class="list-group-item list-group-item-danger"  onmouseover="memberOver(this)" onmouseleave="memberLeave(this)" style="height: 40px;font-size: 16px;border-radius:5px;padding-top:5px;padding-bottom: 5px ">' +
+                        '<div style="float: left">' +
+                        '<span>' + username + '</span>' +
+                        '</div>' +
+                        '<div style="float:right;position: absolute;display: none;">' +
+                        '<button class="btn btn-info" type="button" onclick="whisper(' + user.id + ',\'' + username + '\')" style="height: 28px;width: 40px;font-size: 12px;padding: 2px;margin-left: 190px">私聊</button>' +
+                        '</div>' +
                         '</li>'
                     )
                 }
@@ -467,10 +511,12 @@ $(function () {
             sendMsg($("#msg").val());
         } else {// 发送图片
             const formData = new FormData();
-            const userId = $('#userId').val();
+            const senderId = $('#userId').val();
+            const receiverId = $('#whisperBtn').children().eq(1).text();
             const roomId = $('#roomId').text();
             formData.append("image", $("#inputPicture")[0].files[0]);
-            formData.append("userId", userId);
+            formData.append("senderId", senderId);
+            formData.append("receiverId", receiverId);
             formData.append("roomId", roomId);
             $.ajax({
                 type: "post",
@@ -535,10 +581,12 @@ $(function () {
 // 发送文件
     $("#uploadFile").click(function () {
         const formData = new FormData();
-        const userId = $('#userId').val();
+        const senderId = $('#userId').val();
+        const receiverId = $('#whisperBtn').children().eq(1).text();
         const roomId = $('#roomId').text();
         formData.append("multipartFile", $("#file")[0].files[0]);
-        formData.append("userId", userId);
+        formData.append("senderId", senderId);
+        formData.append("receiverId", receiverId);
         formData.append("roomId", roomId);
         $.ajax({
             type: "post",
@@ -584,7 +632,7 @@ $(function () {
         }
     })
 
-// 设置斜体
+    // 设置斜体
     $("#setItalicBtn").click(function () {
         $(this).toggleClass("active");
         if ($(this).hasClass("active")) {
@@ -594,6 +642,24 @@ $(function () {
         }
     })
 
-// 页面加载成功后获取所有加入的房间
+    $
+
+    // 显示关闭私聊
+    $('#whisperBtn').mouseover(function () {
+        $(this).children().eq(3).show();
+    })
+
+    // 隐藏关闭私聊
+    $('#whisperBtn').mouseleave(function () {
+        $(this).children().eq(3).hide();
+    })
+
+    // 关闭私聊
+    $('#whisperBtn').click(function () {
+        $(this).children().eq(1).text(0);
+        $(this).hide();
+    })
+
+    // 页面加载成功后获取所有加入的房间
     getAllChatRooms();
 })

@@ -152,16 +152,17 @@ public class ChatController {
     @RequestMapping("/upload/file.json")
     public ResultEntity<String> uploadFile(@RequestParam(value = "multipartFile", required = false) MultipartFile multipartFile,
                                            @RequestParam("roomId") Integer roomId,
-                                           @RequestParam("userId") Integer userId,
+                                           @RequestParam("senderId") Integer senderId,
+                                           @RequestParam("receiverId") Integer receiverId,
                                            HttpSession session) {
         try {
             // 获取套接字
-            Socket socket = SocketMap.getConnectSocket(userId);
+            Socket socket = SocketMap.getConnectSocket(senderId);
             if (socket == null) {
                 return ResultEntity.createResultEntity(ResultEntity.ResultType.FAILED, CustomConstant.MESSAGE_SOCKET_NOT_FOUND, null);
             }
             // 保存文件
-            com.example.entity.File file = saveFile(roomId, userId, multipartFile, session);
+            com.example.entity.File file = saveFile(roomId, senderId, multipartFile, session);
             // -----提示信息-----
 
             // 文件大小
@@ -179,11 +180,12 @@ public class ChatController {
             }
 
             // 获取用户名
-            String username = userService.getUsernameById(userId);
+            String username = userService.getUsernameById(senderId);
             String msg = username + " 上传了文件: " + file.getName() + "(" + new DecimalFormat("#.00").format(size) + unit + ")";
             // 封装数据
-            User user = userService.getUserById(userId);
-            Message message = new Message(msg, roomId, user);
+            User sender = userService.getUserById(senderId);
+            User receiver = userService.getUserById(receiverId);
+            Message message = new Message(msg, roomId, sender, receiver);
             message.setFile(file);
             // 保存数据库
             messageService.addMessage(message);
@@ -252,7 +254,8 @@ public class ChatController {
     @RequestMapping("/send/image.json")
     public ResultEntity<String> sendImage(@RequestParam(value = "image", required = false) MultipartFile multipartFile,
                                           @RequestParam("roomId") Integer roomId,
-                                          @RequestParam("userId") Integer userId,
+                                          @RequestParam("senderId") Integer senderId,
+                                          @RequestParam("receiverId") Integer receiverId,
                                           HttpSession session,
                                           HttpServletRequest request) {
         if (multipartFile.getSize() > 20 * 1024 * 1024) {// 图片大小不能大于20MB
@@ -260,17 +263,18 @@ public class ChatController {
         }
         try {
             // 获取套接字
-            Socket socket = SocketMap.getConnectSocket(userId);
+            Socket socket = SocketMap.getConnectSocket(senderId);
             if (socket == null) {
                 return ResultEntity.createResultEntity(ResultEntity.ResultType.FAILED, CustomConstant.MESSAGE_SOCKET_NOT_FOUND, null);
             }
             // 保存文件
-            com.example.entity.File file = saveFile(roomId, userId, multipartFile, session);
-            Image image = saveImage(roomId, userId, request, file);
+            com.example.entity.File file = saveFile(roomId, senderId, multipartFile, session);
+            Image image = saveImage(roomId, senderId, request, file);
             file.setImage(image);
             // 封装数据
-            User user = userService.getUserById(userId);
-            Message message = new Message(null, roomId, user);
+            User sender = userService.getUserById(senderId);
+            User receiver = userService.getUserById(receiverId);
+            Message message = new Message(null, roomId, sender, receiver);
             message.setFile(file);
             // 保存数据库
             messageService.addMessage(message);

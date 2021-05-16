@@ -81,10 +81,12 @@
                t_message.font_weight,
                t_message.font_style
         FROM t_message
-                 RIGHT JOIN inner_message_receiver ON t_message.id = inner_message_receiver.message_id
                  RIGHT JOIN inner_message_room ON t_message.id = inner_message_room.message_id
+                 RIGHT JOIN inner_message_receiver ON t_message.id = inner_message_receiver.message_id
+                 RIGHT JOIN inner_message_sender ON t_message.id = inner_message_sender.message_id
         WHERE inner_message_room.room_id = #{roomId}
-          AND (inner_message_receiver.user_id = #{userId} OR inner_message_receiver.user_id = 0)
+          AND (inner_message_receiver.user_id = 0 OR inner_message_sender.user_id = #{userId} OR
+               inner_message_receiver.user_id = #{userId})
           AND t_message.date >= DATE_SUB(NOW(), INTERVAL #{intervalDays} DAY)
         GROUP BY t_message.date ASC
     </select>

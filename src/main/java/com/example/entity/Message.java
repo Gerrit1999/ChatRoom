@@ -11,9 +11,9 @@ public class Message implements Serializable {
 
     private Integer roomId;
 
-    private User sender;// 发送方
+    private User sender;    // 发送方
 
-    private Integer receiverId;// 接收方id
+    private User receiver;  // 接收方
 
     private File file;
 
@@ -26,16 +26,19 @@ public class Message implements Serializable {
     private String fontStyle;
 
     public Message() {
-        receiverId = 0;  // 默认群发
         date = new Date();
     }
 
-    public Message(String message, Integer roomId, User user) {
+    public Message(String message, Integer roomId, User sender, User receiver) {
         this();
         this.message = message;
         this.roomId = roomId;
-        user.setPassword(null);
-        this.sender = user;
+        sender.setPassword(null);
+        this.sender = sender;
+        if (receiver != null) {
+            receiver.setPassword(null);
+            this.receiver = receiver;
+        }
     }
 
     public Integer getId() {
@@ -71,12 +74,12 @@ public class Message implements Serializable {
         this.sender = sender;
     }
 
-    public Integer getReceiverId() {
-        return receiverId;
+    public User getReceiver() {
+        return receiver;
     }
 
-    public void setReceiverId(Integer receiverId) {
-        this.receiverId = receiverId;
+    public void setReceiver(User receiver) {
+        this.receiver = receiver;
     }
 
     public File getFile() {
@@ -126,7 +129,7 @@ public class Message implements Serializable {
                 ", date=" + date +
                 ", roomId=" + roomId +
                 ", sender=" + sender +
-                ", receiverId=" + receiverId +
+                ", receiver=" + receiver +
                 ", file=" + file +
                 ", message='" + message + '\'' +
                 ", fontSize=" + fontSize +

@@ -72,6 +72,13 @@
         id
         , username, password, email, recent_active_time
     </sql>
+    <select id="selectReceiverByMessageId" resultMap="BaseResultMap">
+        SELECT t_user.id,
+               t_user.username
+        FROM t_user
+                 RIGHT JOIN inner_message_receiver ON t_user.id = inner_message_receiver.user_id
+        WHERE inner_message_receiver.message_id = #{messageId}
+    </select>
     <select id="selectSenderByMessageId" resultMap="BaseResultMap">
         SELECT t_user.id,
                t_user.username

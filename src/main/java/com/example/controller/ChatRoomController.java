@@ -47,7 +47,7 @@ public class ChatRoomController {
      */
     @ResponseBody
     @RequestMapping("/join/chatRoom.json")
-    public ResultEntity<ChatRoom> toChatRoom(@RequestParam("userId") Integer userId,
+    public ResultEntity<ChatRoom> joinChatRoom(@RequestParam("userId") Integer userId,
                                              @RequestParam("roomId") Integer roomId,
                                              @RequestParam("password") String password) {
         if (chatRoomService.judgeUserInRoom(roomId, userId)) { // 已经在房间中
@@ -75,13 +75,13 @@ public class ChatRoomController {
                 // 获取输出流
                 oos = SocketMap.getObjectOutputStream(socket);
                 // 连接到server
-                oos.writeObject(new Message(null, roomId, user));
+                oos.writeObject(new Message(null, roomId, user, null));
             }
             // 获取用户名
             String username = user.getUsername();
             // 提示信息
             String msg = username + " 已进入房间";
-            Message message = new Message(msg, roomId, user);
+            Message message = new Message(msg, roomId, user, null);
             // 保存数据库
             messageService.addMessage(message);
             // 发送数据
@@ -113,7 +113,7 @@ public class ChatRoomController {
             String msg = username + " 已退出房间";
             // 封装数据
             User user = userService.getUserById(userId);
-            Message message = new Message(msg, roomId, user);
+            Message message = new Message(msg, roomId, user, null);
             // 保存数据库
             messageService.addMessage(message);
             // 获取socket
@@ -151,7 +151,7 @@ public class ChatRoomController {
             // 获取输出流
             ObjectOutputStream oos = SocketMap.getObjectOutputStream(socket);
             // 连接到server
-            oos.writeObject(new Message(null, null, new User(userId)));
+            oos.writeObject(new Message(null, null, new User(userId), null));
         } catch (IOException e) {
             e.printStackTrace();
         }

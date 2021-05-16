@@ -35,4 +35,6 @@ public interface UserMapper {
     List<User> selectUsersByRoomIdNotActive(@Param("roomId") Integer roomId, @Param("activeTime") Integer activeTime);
 
     User selectSenderByMessageId(@Param("messageId") Integer messageId);
+
+    User selectReceiverByMessageId(Integer messageId);
 }
