@@ -1,6 +1,6 @@
 /*==============================================================*/
 /* DBMS name:      MySQL 5.0                                    */
-/* Created on:     2021/5/12 14:12:27                           */
+/* Created on:     2021/5/17 14:06:23                           */
 /*==============================================================*/
 
 
@@ -94,7 +94,7 @@ create table inner_room_user
    id                   int not null auto_increment,
    room_id              int not null,
    user_id              int not null,
-   date                 timestamp default CURRENT_TIMESTAMP,
+   join_time            timestamp default CURRENT_TIMESTAMP,
    unread               int not null,
    primary key (id)
 )
@@ -151,6 +151,7 @@ create table t_room
    name                 varchar(32) not null,
    password             char(100) not null,
    host_id              int not null,
+   enable               bool not null default true,
    primary key (id)
 )
 charset = utf8mb4;
@@ -164,6 +165,7 @@ create table t_user
    username             varchar(32) not null,
    password             char(100) not null,
    email                char(32) not null,
+   recent_active_time   timestamp default CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
    primary key (id),
    unique key AK_username (username)
 )
