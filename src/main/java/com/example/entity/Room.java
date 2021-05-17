@@ -1,6 +1,6 @@
 package com.example.entity;
 
-public class ChatRoom {
+public class Room {
     private Integer id;
 
     private String name;
@@ -8,6 +8,15 @@ public class ChatRoom {
     private String password;
 
     private Integer hostId;
+
+    private Boolean enable;
+
+    public Room() {
+    }
+
+    public Room(Integer id) {
+        this.id = id;
+    }
 
     public Integer getId() {
         return id;
@@ -41,13 +50,22 @@ public class ChatRoom {
         this.hostId = hostId;
     }
 
+    public Boolean getEnable() {
+        return enable;
+    }
+
+    public void setEnable(Boolean enable) {
+        this.enable = enable;
+    }
+
     @Override
     public String toString() {
-        return "ChatRoom{" +
+        return "Room{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", password='" + password + '\'' +
                 ", hostId=" + hostId +
+                ", enable=" + enable +
                 '}';
     }
 }

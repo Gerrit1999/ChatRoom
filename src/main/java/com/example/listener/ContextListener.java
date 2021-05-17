@@ -1,14 +1,11 @@
 package com.example.listener;
 
-import com.example.entity.ChatRoom;
 import com.example.entity.Server;
 import com.example.utils.SocketMap;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import java.io.IOException;
-import java.net.Socket;
-import java.util.Map;
 
 /**
  * 服务器关闭后的资源回收操作

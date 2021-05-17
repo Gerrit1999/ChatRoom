@@ -35,7 +35,9 @@ public class Message implements Serializable {
         this.roomId = roomId;
         sender.setPassword(null);
         this.sender = sender;
-        if (receiver != null) {
+        if (receiver == null) {
+            this.receiver = new User(0);
+        } else {
             receiver.setPassword(null);
             this.receiver = receiver;
         }

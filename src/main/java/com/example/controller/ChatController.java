@@ -2,6 +2,7 @@ package com.example.controller;
 
 import com.example.entity.Image;
 import com.example.entity.Message;
+import com.example.entity.Room;
 import com.example.entity.User;
 import com.example.service.*;
 import com.example.utils.CustomConstant;
@@ -30,7 +31,7 @@ public class ChatController {
     UserService userService;
 
     @Autowired
-    ChatRoomService chatRoomService;
+    RoomService roomService;
 
     @Autowired
     MessageService messageService;
@@ -48,6 +49,10 @@ public class ChatController {
     public ResultEntity<String> sendMessage(@RequestBody Message message, HttpSession session) {
         if (message.getMessage() == null || message.getMessage().isEmpty()) {// msg不能为空
             return ResultEntity.createResultEntity(ResultEntity.ResultType.FAILED, CustomConstant.MESSAGE_STRING_INVALIDATE, null);
+        }
+        Room room = roomService.getRoomById(message.getRoomId());
+        if (!room.getEnable()) {  // 房间已关闭
+            return ResultEntity.createResultEntity(ResultEntity.ResultType.FAILED, CustomConstant.MESSAGE_ROOM_DISABLE, null);
         }
         int n = message.getMessage().length();
         if (n > 256) {
@@ -156,6 +161,10 @@ public class ChatController {
                                            @RequestParam("receiverId") Integer receiverId,
                                            HttpSession session) {
         try {
+            Room room = roomService.getRoomById(roomId);
+            if (!room.getEnable()) {  // 房间已关闭
+                return ResultEntity.createResultEntity(ResultEntity.ResultType.FAILED, CustomConstant.MESSAGE_ROOM_DISABLE, null);
+            }
             // 获取套接字
             Socket socket = SocketMap.getConnectSocket(senderId);
             if (socket == null) {
@@ -258,6 +267,10 @@ public class ChatController {
                                           @RequestParam("receiverId") Integer receiverId,
                                           HttpSession session,
                                           HttpServletRequest request) {
+        Room room = roomService.getRoomById(roomId);
+        if (!room.getEnable()) {  // 房间已关闭
+            return ResultEntity.createResultEntity(ResultEntity.ResultType.FAILED, CustomConstant.MESSAGE_ROOM_DISABLE, null);
+        }
         if (multipartFile.getSize() > 20 * 1024 * 1024) {// 图片大小不能大于20MB
             return ResultEntity.createResultEntity(ResultEntity.ResultType.FAILED, CustomConstant.MESSAGE_IMAGE_SIZE_TOO_LARGE, null);
         }

@@ -18,7 +18,7 @@
       <Collation>utf8_general_ci</Collation>
     </schema>
     <schema id="5" parent="1" name="mysql">
-      <Collation>latin1_swedish_ci</Collation>
+      <Collation>utf8mb4_unicode_ci</Collation>
     </schema>
     <schema id="6" parent="1" name="performance_schema">
       <Collation>utf8_general_ci</Collation>
@@ -765,13 +765,13 @@
       <Collation>utf8_general_ci</Collation>
     </table>
     <table id="240" parent="2" name="t_message">
-      <Collation>utf8_general_ci</Collation>
+      <Collation>utf8mb4_general_ci</Collation>
     </table>
     <table id="241" parent="2" name="t_room">
       <Collation>utf8_general_ci</Collation>
     </table>
     <table id="242" parent="2" name="t_user">
-      <Collation>utf8_general_ci</Collation>
+      <Collation>utf8mb4_general_ci</Collation>
     </table>
     <column id="243" parent="232" name="id">
       <Position>1</Position>
@@ -894,7 +894,7 @@
       <DataType>int(11)|0s</DataType>
       <NotNull>1</NotNull>
     </column>
-    <column id="266" parent="237" name="date">
+    <column id="266" parent="237" name="join_time">
       <Position>4</Position>
       <DataType>timestamp|0s</DataType>
       <NotNull>1</NotNull>
@@ -1021,43 +1021,56 @@
       <DataType>int(11)|0s</DataType>
       <NotNull>1</NotNull>
     </column>
-    <key id="291" parent="241" name="PRIMARY">
+    <column id="291" parent="241" name="enable">
+      <Position>5</Position>
+      <DataType>tinyint(1)|0s</DataType>
+      <NotNull>1</NotNull>
+      <DefaultExpression>1</DefaultExpression>
+    </column>
+    <key id="292" parent="241" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <ColNames>id</ColNames>
       <Primary>1</Primary>
     </key>
-    <column id="292" parent="242" name="id">
+    <column id="293" parent="242" name="id">
       <Position>1</Position>
       <DataType>int(11)|0s</DataType>
       <NotNull>1</NotNull>
       <SequenceIdentity>null</SequenceIdentity>
     </column>
-    <column id="293" parent="242" name="username">
+    <column id="294" parent="242" name="username">
       <Position>2</Position>
       <DataType>varchar(32)|0s</DataType>
       <NotNull>1</NotNull>
     </column>
-    <column id="294" parent="242" name="password">
+    <column id="295" parent="242" name="password">
       <Position>3</Position>
       <DataType>char(100)|0s</DataType>
       <NotNull>1</NotNull>
     </column>
-    <column id="295" parent="242" name="email">
+    <column id="296" parent="242" name="email">
       <Position>4</Position>
       <DataType>char(32)|0s</DataType>
       <NotNull>1</NotNull>
     </column>
-    <index id="296" parent="242" name="AK_username">
+    <column id="297" parent="242" name="recent_active_time">
+      <Position>5</Position>
+      <DataType>timestamp|0s</DataType>
+      <NotNull>1</NotNull>
+      <DefaultExpression>CURRENT_TIMESTAMP</DefaultExpression>
+      <OnUpdate>CURRENT_TIMESTAMP</OnUpdate>
+    </column>
+    <index id="298" parent="242" name="AK_username">
       <ColNames>username</ColNames>
       <Unique>1</Unique>
       <Type>btree</Type>
     </index>
-    <key id="297" parent="242" name="PRIMARY">
+    <key id="299" parent="242" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <ColNames>id</ColNames>
       <Primary>1</Primary>
     </key>
-    <key id="298" parent="242" name="AK_username">
+    <key id="300" parent="242" name="AK_username">
       <ColNames>username</ColNames>
       <UnderlyingIndexName>AK_username</UnderlyingIndexName>
     </key>

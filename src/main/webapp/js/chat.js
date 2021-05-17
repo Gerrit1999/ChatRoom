@@ -26,7 +26,7 @@ function joinChatRoomShow() {
 function joinChatRoom(roomId, roomPassword) {
     const userId = $("#userId").val();
     $.ajax({
-        url: "chatRoom/join/chatRoom.json",
+        url: "room/join.json",
         type: "post",
         data: {
             "userId": userId,
@@ -40,7 +40,7 @@ function joinChatRoom(roomId, roomPassword) {
                 layer.msg("加入成功!");
                 const room = response.data;
                 appendRoomItem(room);
-                gotoChatRoom(room.id, room.name);
+                gotoChatRoom(room);
             } else if (result === "FAILED") {
                 layer.msg("加入失败! " + response.message);
             }
@@ -53,7 +53,7 @@ function joinChatRoom(roomId, roomPassword) {
 
 // 添加到房间列表
 function appendRoomItem(roomItem) {
-    const href = "javascript:gotoChatRoom(" + roomItem.id + ",'" + roomItem.name + "')";
+    const href = "javascript:gotoChatRoom(" + JSON.stringify(roomItem) + ")";
     $('#roomList').append(
         '<li role="presentation" class="roomItem" id="room_' + roomItem.id + '">' +
         '<span id="" class="badge" style="float: right;margin:10px 10px 0 0;display: none">0</span>' +
@@ -67,7 +67,7 @@ function appendRoomItem(roomItem) {
     // 获取未读信息数
     const userId = $("#userId").val();
     $.ajax({
-        url: "chatRoom/get/unread.json",
+        url: "room/get/unread.json",
         type: "post",
         async: false,
         data: {
@@ -94,7 +94,10 @@ function appendRoomItem(roomItem) {
 }
 
 // 进入房间
-function gotoChatRoom(roomId, roomName) {
+function gotoChatRoom(room) {
+    const roomName = room.name;
+    const roomId = room.id;
+    const hostId = room.hostId;
     const beforeRoomId = $('#roomId').text();
     const userId = $("#userId").val();
     if (beforeRoomId !== 0) {
@@ -106,7 +109,7 @@ function gotoChatRoom(roomId, roomName) {
     const span = $('#room_' + roomId).children('span');
     if (span.text() != 0) {
         $.ajax({
-            url: "chatRoom/update/unread.json",
+            url: "room/update/unread.json",
             type: "post",
             data: {
                 "userId": userId,
@@ -125,15 +128,31 @@ function gotoChatRoom(roomId, roomName) {
     // 更新房间信息
     $('#roomId').text(roomId);
     $('#roomName').text(roomName);
+    if (userId == hostId) {
+        if (room.enable) {
+            $("#closeRoomBtn").show();
+            $("#openRoomBtn").hide();
+        } else {
+            $("#closeRoomBtn").hide();
+            $("#openRoomBtn").show();
+        }
+    } else {
+        $('#exitRoomBtn').show();
+        $('#closeRoomBtn').hide();
+        $("#openRoomBtn").hide();
+    }
     // 更新在线列表
     updateUserList(roomId);
+    // 关闭私聊
+    $('#whisperBtn').children().eq(1).text(0);
+    $('#whisperBtn').hide();
 }
 
 // 获取已加入的房间
 function getAllChatRooms() {
     const userId = $('#userId').val();
     $.ajax({
-        url: "chatRoom/get/allChatRooms.json",
+        url: "room/get/allRooms.json",
         type: "post",
         data: {
             "userId": userId,
@@ -148,7 +167,7 @@ function getAllChatRooms() {
                 if (i === 0) {
                     // 接收消息
                     recvMsg();
-                    gotoChatRoom(roomItem.id, roomItem.name);
+                    gotoChatRoom(roomItem);
                 }
             }
         },
@@ -291,7 +310,7 @@ function recvMsg() {
                     if (unread++ < 100) {
                         // 保存未读消息
                         $.ajax({
-                            url: "chatRoom/update/unread.json",
+                            url: "room/update/unread.json",
                             type: "post",
                             data: {
                                 "userId": userId,
@@ -472,7 +491,7 @@ $(function () {
             password: roomPassword
         });
         $.ajax({
-            url: "chatRoom/create/chatRoom.json",
+            url: "room/create.json",
             type: "post",
             contentType: "application/json;charset=utf-8",
             data: data,
@@ -494,7 +513,7 @@ $(function () {
         $("#createChatRoomModal").modal("hide");
     })
 
-// 加入聊天室确认按钮
+    // 加入聊天室确认按钮
     $("#joinConfirmBtn").click(function () {
         const roomId = $("#inputRoomId").val();
         const roomPassword = $("#inputRoomPassword").val();
@@ -504,7 +523,7 @@ $(function () {
         joinChatRoom(roomId, roomPassword);
     })
 
-// 发送点击事件
+    // 发送点击事件
     $("#sendBtn").click(function () {
         const image = $("#inputPicture").val();
         if (image === "") {
@@ -527,8 +546,14 @@ $(function () {
                 processData: false,
                 contentType: false,
                 mimeType: "multipart/form-data",
-                success: function () {
-                    layer.msg("发送成功!");
+                dataType: "json",
+                success: function (response) {
+                    const result = response.result;
+                    if (result === "SUCCESS") {
+                        layer.msg("发送成功!");
+                    } else if (result === "FAILED") {
+                        layer.msg("发送失败! " + response.message);
+                    }
                 },
                 error: function (response) {
                     layer.msg("发送失败! " + response.status + " " + response.statusText);
@@ -540,16 +565,16 @@ $(function () {
     });
 
 // 退出房间点击事件
-    $("#exitBtn").click(function () {
-        $("#exitConfirmModal").modal("show");
+    $("#exitRoomBtn").click(function () {
+        $("#exitRoomConfirmModal").modal("show");
     })
 
 // 退出房间确认
-    $("#exitConfirmBtn").click(function () {
+    $("#exitRoomConfirmBtn").click(function () {
         const userId = $("#userId").val();
         const roomId = $("#roomId").text();
         $.ajax({
-            url: "chatRoom/do/exit.json",
+            url: "room/do/exitRoom.json",
             type: "post",
             data: {
                 "userId": userId,
@@ -559,7 +584,7 @@ $(function () {
             success: function (response) {
                 const result = response.result;
                 if (result === "SUCCESS") {
-                    $("#exitConfirmModal").modal("hide");
+                    $("#exitRoomConfirmModal").modal("hide");
                     $('#room_' + roomId).remove();
                     $('#words_' + roomId).remove();
                     if ($('#roomList li').length > 0) {
@@ -578,7 +603,72 @@ $(function () {
         })
     })
 
-// 发送文件
+
+// 关闭房间点击事件
+    $("#closeRoomBtn").click(function () {
+        $("#closeRoomConfirmModal").modal("show");
+    })
+
+// 关闭房间确认
+    $("#closeRoomConfirmBtn").click(function () {
+        const userId = $("#userId").val();
+        const password = $('#closeRoomPswd').val();
+        const roomId = $("#roomId").text();
+        $.ajax({
+            url: "room/do/closeRoom.json",
+            type: "post",
+            data: {
+                "userId": userId,
+                "password": password,
+                "roomId": roomId
+            },
+            dataType: "json",
+            success: function (response) {
+                const result = response.result;
+                if (result === "SUCCESS") {
+                    $("#closeRoomConfirmModal").modal("hide");
+                    $('#closeRoomBtn').hide()
+                    $('#openRoomBtn').show()
+                    layer.msg("关闭成功!");
+                } else if (result === "FAILED") {
+                    layer.msg("关闭失败! " + response.message);
+                }
+            },
+            error: function (response) {
+                layer.msg("关闭失败! " + response.status + " " + response.statusText);
+            }
+        })
+    })
+
+    // 开启房间
+    $("#openRoomBtn").click(function () {
+        const userId = $("#userId").val();
+        const roomId = $("#roomId").text();
+        $.ajax({
+            url: "room/do/openRoom.json",
+            type: "post",
+            data: {
+                "userId": userId,
+                "roomId": roomId
+            },
+            dataType: "json",
+            success: function (response) {
+                const result = response.result;
+                if (result === "SUCCESS") {
+                    $('#closeRoomBtn').show()
+                    $('#openRoomBtn').hide()
+                    layer.msg("开启成功!");
+                } else if (result === "FAILED") {
+                    layer.msg("开启失败! " + response.message);
+                }
+            },
+            error: function (response) {
+                layer.msg("开启失败! " + response.status + " " + response.statusText);
+            }
+        })
+    })
+
+    // 发送文件
     $("#uploadFile").click(function () {
         const formData = new FormData();
         const senderId = $('#userId').val();
@@ -596,8 +686,14 @@ $(function () {
             processData: false,
             contentType: false,
             mimeType: "multipart/form-data",
-            success: function () {
-                layer.msg("发送成功!");
+            dataType: "json",
+            success: function (response) {
+                const result = response.result;
+                if (result === "SUCCESS") {
+                    layer.msg("发送成功!");
+                } else if (result === "FAILED") {
+                    layer.msg("发送失败! " + response.message);
+                }
             },
             error: function (response) {
                 if (response.status === 0) {
@@ -641,8 +737,6 @@ $(function () {
             $("#msg").css("font-style", "normal");
         }
     })
-
-    $
 
     // 显示关闭私聊
     $('#whisperBtn').mouseover(function () {

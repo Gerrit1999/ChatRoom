@@ -65,8 +65,16 @@
                 </h3>
             </div>
             <div style="float: right;margin-top: 1px">
-                <button id="exitBtn" type="button" class="btn btn-primary btn-lg active" style="margin-left: 20px">
-                    退出
+                <button id="exitRoomBtn" type="button" class="btn btn-primary btn-lg active" style="margin-left: 20px">
+                    退出房间
+                </button>
+                <button id="closeRoomBtn" type="button" class="btn btn-primary btn-lg active"
+                        style="margin-left: 20px;display: none">
+                    关闭房间
+                </button>
+                <button id="openRoomBtn" type="button" class="btn btn-primary btn-lg active"
+                        style="margin-left: 20px;display: none">
+                    开启房间
                 </button>
             </div>
         </div>
@@ -108,7 +116,7 @@
             </div>
             <div class="btn-group" role="group" aria-label="...">
                 <input id="file" type="file" class="btn btn-default" style="width: 236px">
-                <input id="uploadFile" type="button" value="上传文件" class="btn btn-default" style="height: 39px">
+                <input id="uploadFile" type="button" value="发送文件" class="btn btn-default" style="height: 39px">
             </div>
             <div class="input-group">
                 <label for="msg"></label>
@@ -162,7 +170,8 @@
 <%@ include file="/WEB-INF/modal/logout-confirm.jsp" %>
 <%@ include file="/WEB-INF/modal/join-chatRoom.jsp" %>
 <%@ include file="/WEB-INF/modal/create-chatRoom.jsp" %>
-<%@ include file="/WEB-INF/modal/exit-confirm.jsp" %>
+<%@ include file="/WEB-INF/modal/exit-room-confirm.jsp" %>
+<%@ include file="/WEB-INF/modal/close-room-confirm.jsp" %>
 <script src="js/chat.js" type="text/javascript"></script>
 <script>
     // 监听后退

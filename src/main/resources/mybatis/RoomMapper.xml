@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.example.mapper.ChatRoomMapper">
-    <resultMap id="BaseResultMap" type="com.example.entity.ChatRoom">
+<mapper namespace="com.example.mapper.RoomMapper">
+    <resultMap id="BaseResultMap" type="com.example.entity.Room">
         <id column="id" jdbcType="INTEGER" property="id"/>
         <result column="name" jdbcType="VARCHAR" property="name"/>
         <result column="password" jdbcType="CHAR" property="password"/>
         <result column="host_id" jdbcType="INTEGER" property="hostId"/>
+        <result column="enable" jdbcType="BIT" property="enable"/>
     </resultMap>
     <sql id="Example_Where_Clause">
         <where>
@@ -68,7 +69,7 @@
         </where>
     </sql>
     <sql id="Base_Column_List">
-        id, name, password, host_id
+        id, name, password, host_id, enable
     </sql>
     <select id="getUnread" resultType="java.lang.Integer">
         select unread
@@ -86,12 +87,13 @@
         SELECT t_room.id,
                t_room.`name`,
                t_room.`password`,
-               t_room.host_id
+               t_room.host_id,
+               t_room.enable
         FROM t_room
                  RIGHT JOIN inner_room_user ON t_room.id = inner_room_user.room_id
         WHERE user_id = #{userId}
     </select>
-    <select id="selectByExample" parameterType="com.example.entity.ChatRoomExample" resultMap="BaseResultMap">
+    <select id="selectByExample" parameterType="com.example.entity.RoomExample" resultMap="BaseResultMap">
         select
         <if test="distinct">
             distinct
@@ -122,7 +124,7 @@
         from t_room
         where id = #{id,jdbcType=INTEGER}
     </delete>
-    <delete id="deleteByExample" parameterType="com.example.entity.ChatRoomExample">
+    <delete id="deleteByExample" parameterType="com.example.entity.RoomExample">
         delete from t_room
         <if test="_parameter != null">
             <include refid="Example_Where_Clause"/>
@@ -132,13 +134,13 @@
         insert into inner_room_user(room_id, user_id, unread)
         values (#{roomId}, #{userId}, 0)
     </insert>
-    <insert id="insert" parameterType="com.example.entity.ChatRoom" keyProperty="id" useGeneratedKeys="true">
+    <insert id="insert" parameterType="com.example.entity.Room" keyProperty="id" useGeneratedKeys="true">
         insert into t_room (id, name, password,
-                            host_id)
+                            host_id, enable)
         values (#{id,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, #{password,jdbcType=CHAR},
-                #{hostId,jdbcType=INTEGER})
+                #{hostId,jdbcType=INTEGER}, #{enable,jdbcType=BIT})
     </insert>
-    <insert id="insertSelective" parameterType="com.example.entity.ChatRoom" keyProperty="id" useGeneratedKeys="true">
+    <insert id="insertSelective" parameterType="com.example.entity.Room" keyProperty="id" useGeneratedKeys="true">
         insert into t_room
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="id != null">
@@ -152,6 +154,9 @@
             </if>
             <if test="hostId != null">
                 host_id,
+            </if>
+            <if test="enable != null">
+                enable,
             </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -167,9 +172,12 @@
             <if test="hostId != null">
                 #{hostId,jdbcType=INTEGER},
             </if>
+            <if test="enable != null">
+                #{enable,jdbcType=BIT},
+            </if>
         </trim>
     </insert>
-    <select id="countByExample" parameterType="com.example.entity.ChatRoomExample" resultType="java.lang.Long">
+    <select id="countByExample" parameterType="com.example.entity.RoomExample" resultType="java.lang.Long">
         select count(*) from t_room
         <if test="_parameter != null">
             <include refid="Example_Where_Clause"/>
@@ -196,6 +204,9 @@
             <if test="record.hostId != null">
                 host_id = #{record.hostId,jdbcType=INTEGER},
             </if>
+            <if test="record.enable != null">
+                enable = #{record.enable,jdbcType=BIT},
+            </if>
         </set>
         <if test="_parameter != null">
             <include refid="Update_By_Example_Where_Clause"/>
@@ -206,12 +217,13 @@
         set id = #{record.id,jdbcType=INTEGER},
         name = #{record.name,jdbcType=VARCHAR},
         password = #{record.password,jdbcType=CHAR},
-        host_id = #{record.hostId,jdbcType=INTEGER}
+        host_id = #{record.hostId,jdbcType=INTEGER},
+        enable = #{record.enable,jdbcType=BIT}
         <if test="_parameter != null">
             <include refid="Update_By_Example_Where_Clause"/>
         </if>
     </update>
-    <update id="updateByPrimaryKeySelective" parameterType="com.example.entity.ChatRoom">
+    <update id="updateByPrimaryKeySelective" parameterType="com.example.entity.Room">
         update t_room
         <set>
             <if test="name != null">
@@ -223,14 +235,18 @@
             <if test="hostId != null">
                 host_id = #{hostId,jdbcType=INTEGER},
             </if>
+            <if test="enable != null">
+                enable = #{enable,jdbcType=BIT},
+            </if>
         </set>
         where id = #{id,jdbcType=INTEGER}
     </update>
-    <update id="updateByPrimaryKey" parameterType="com.example.entity.ChatRoom">
+    <update id="updateByPrimaryKey" parameterType="com.example.entity.Room">
         update t_room
         set name     = #{name,jdbcType=VARCHAR},
             password = #{password,jdbcType=CHAR},
-            host_id  = #{hostId,jdbcType=INTEGER}
+            host_id  = #{hostId,jdbcType=INTEGER},
+            enable   = #{enable,jdbcType=BIT}
         where id = #{id,jdbcType=INTEGER}
     </update>
 </mapper>
