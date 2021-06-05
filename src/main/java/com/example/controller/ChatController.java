@@ -110,7 +110,7 @@ public class ChatController {
         // 保存数据库
         messageService.addMessage(message);
         Integer userId = message.getSender().getId();
-        Socket socket = SocketMap.getConnectSocket(userId);// 获取对应的socket
+        Socket socket = SocketMap.getConnectSocket(userId); // 获取对应的socket
         if (socket == null) {
             return ResultEntity.createResultEntity(ResultEntity.ResultType.FAILED, CustomConstant.MESSAGE_SOCKET_NOT_FOUND, null);
         }
@@ -218,8 +218,8 @@ public class ChatController {
         OutputStream os = null;
         try {
             request.setCharacterEncoding("utf-8");
-            //下载文件需要设置消息头
-            response.addHeader("content-Type", "application/octet-stream");//MIME类型:二进制文件(任意文件)
+            // 下载文件需要设置消息头
+            response.addHeader("content-Type", "application/octet-stream"); // MIME类型:二进制文件(任意文件)
             response.addHeader("content-Disposition", "attachment;filename=" + UriUtils.encode(fileName, "utf-8"));//filename包含后缀
 
             osw = new OutputStreamWriter(response.getOutputStream(), StandardCharsets.UTF_8);

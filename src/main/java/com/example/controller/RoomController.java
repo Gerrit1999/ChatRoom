@@ -2,7 +2,7 @@ package com.example.controller;
 
 import com.example.entity.Room;
 import com.example.entity.Message;
-import com.example.entity.Server;
+import com.example.utils.Server;
 import com.example.entity.User;
 import com.example.service.RoomService;
 import com.example.service.MessageService;

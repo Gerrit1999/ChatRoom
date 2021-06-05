@@ -3,13 +3,13 @@ package com.example.entity;
 public class Room {
     private Integer id;
 
-    private String name;
+    private String name;        // 房间名
 
-    private String password;
+    private String password;    // 房间密码
 
-    private Integer hostId;
+    private Integer hostId;     // 房主id
 
-    private Boolean enable;
+    private Boolean enable;     // 是否启用
 
     public Room() {
     }

@@ -42,6 +42,9 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean addUser(User user) {
         String password = user.getPassword();
+        if (password == null) {
+            return false;
+        }
         password = passwordEncoder.encode(password);
         user.setPassword(password);
         int cnt = userMapper.insertSelective(user);
@@ -71,6 +74,7 @@ public class UserServiceImpl implements UserService {
     public User getSenderByMessageId(Integer messageId) {
         return userMapper.selectSenderByMessageId(messageId);
     }
+
     @Override
     public User getReceiverByMessageId(Integer messageId) {
         return userMapper.selectReceiverByMessageId(messageId);

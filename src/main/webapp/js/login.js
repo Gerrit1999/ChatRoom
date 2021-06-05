@@ -1,5 +1,7 @@
 document.querySelector('.img__btn').addEventListener('click', function () {
     document.querySelector('.content').classList.toggle('s--signup')
+    $('#registerFormClearBtn').click()
+    $('#loginFormClearBtn').click()
 })
 
 function register() {
@@ -21,16 +23,15 @@ function register() {
         success: function (response) {
             const result = response.result;
             if (result === "SUCCESS") {
-                layer.msg("注册成功! 3s后跳转到登录页面");
+                layer.msg("注册成功! 正在跳转到登录页面");
                 setTimeout(function () {
                     $(location).attr("href", "index.jsp");
-                }, 3000);
+                }, 1000);
             } else if (result === "FAILED") {
                 layer.msg("注册失败! " + response.message);
             }
         },
         error: function (response) {
-            console.log(1)
             layer.msg("注册失败! " + response.status + " " + response.statusText);
         }
     });

@@ -1,8 +1,8 @@
-package com.example.entity;
+package com.example.utils;
 
+import com.example.entity.Message;
+import com.example.entity.User;
 import com.example.service.UserService;
-import com.example.utils.CustomConstant;
-import com.example.utils.SocketMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,12 +24,13 @@ public class Server {
         }
     }
 
-    private static ServerSocket serverSocket;
+    private static ServerSocket serverSocket;   // 服务端套接字
+
+    public static String hostAddress;           // 服务器ip
+
+    public static Integer localPort;            // 服务器端口号
 
     private static UserService userService;
-
-    public static String hostAddress;
-    public static Integer localPort;
 
     @Autowired
     public Server(UserService userService) {
@@ -47,7 +48,7 @@ public class Server {
         Thread serverThread = new Thread(() -> {
             while (true) {
                 try {
-                    Socket socket = serverSocket.accept();// 发送消息的人
+                    Socket socket = serverSocket.accept();
                     // 获取输入流
                     ObjectInputStream ois = SocketMap.getObjectInputStream(socket);
                     // 获取连接信息
@@ -85,7 +86,6 @@ public class Server {
                                     break;
                                 }
                             } catch (IOException e) {
-//                                e.printStackTrace();
                                 break;
                             } catch (ClassNotFoundException e) {
                                 e.printStackTrace();
@@ -94,11 +94,8 @@ public class Server {
                     });
                     readThread.start();
                 } catch (SocketException e) {
-//                    e.printStackTrace();
                     break;
-                } catch (IOException e) {
-//                    e.printStackTrace();
-                } catch (ClassNotFoundException e) {
+                } catch (IOException | ClassNotFoundException e) {
                     e.printStackTrace();
                 }
             }

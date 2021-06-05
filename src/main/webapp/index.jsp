@@ -23,13 +23,16 @@
             <%--            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}">--%>
             <label>
                 <span>用户名</span>
-                <input type="text" name="username" required="required"/>
+                <input type="text" name="username" required="required" oninvalid="setCustomValidity('请输入用户名')"
+                       oninput="setCustomValidity('')"/>
             </label>
             <label>
                 <span>密码</span>
-                <input type="password" name="password" required="required"/>
+                <input type="password" name="password" required="required" oninvalid="setCustomValidity('请输入密码')"
+                       oninput="setCustomValidity('')"/>
             </label>
             <button type="submit" class="submit">登 录</button>
+            <button id="loginFormClearBtn" type="reset" style="display: none"></button>
         </form>
     </div>
     <div class="sub-cont">
@@ -54,17 +57,21 @@
                 <iframe id="rfFrame" name="rfFrame" src="about:blank" style="display:none;"></iframe>
                 <label>
                     <span>用户名</span>
-                    <input type="text" id="username" required="required"/>
+                    <input type="text" id="username" required="required" oninvalid="setCustomValidity('请输入用户名')"
+                           oninput="setCustomValidity('')"/>
                 </label>
                 <label>
                     <span>邮箱</span>
-                    <input type="email" id="email" required="required"/>
+                    <input type="email" id="email" required="required" oninvalid="setCustomValidity('请输入邮箱')"
+                           oninput="setCustomValidity('')"/>
                 </label>
                 <label>
                     <span>密码</span>
-                    <input type="password" id="password" required="required"/>
+                    <input type="password" id="password" required="required" oninvalid="setCustomValidity('请输入密码')"
+                           oninput="setCustomValidity('')"/>
                 </label>
                 <button class="submit" type="submit">注册</button>
+                <button id="registerFormClearBtn" type="reset" style="display: none"></button>
             </form>
         </div>
     </div>

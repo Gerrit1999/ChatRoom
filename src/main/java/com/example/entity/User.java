@@ -6,13 +6,13 @@ import java.util.Date;
 public class User implements Serializable {
     private Integer id;
 
-    private String username;
+    private String username;        // 用户名
 
-    private String password;
+    private String password;        // 密码
 
-    private String email;
+    private String email;           // 邮箱
 
-    private Date recentActiveTime;
+    private Date recentActiveTime;  // 最后活跃时间
 
     public User() {
     }

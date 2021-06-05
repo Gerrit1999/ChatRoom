@@ -6,11 +6,11 @@ public class ResultEntity<T> {
         FAILED;
     }
 
-    private ResultType result;//当前请求处理结果
+    private ResultType result;  // 当前请求处理结果
 
-    private String message;//错误消息
+    private String message;     // 错误消息
 
-    private T data;//返回的数据
+    private T data;             // 返回的数据
 
     public static <Type> ResultEntity<Type> createResultEntity(ResultType result, String message, Type data) {
         return new ResultEntity<>(result, message, data);

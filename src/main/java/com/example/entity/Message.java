@@ -7,23 +7,23 @@ import java.util.Date;
 public class Message implements Serializable {
     private Integer id;
 
-    private Date date;
+    private Date date;			// 发送时间
 
-    private Integer roomId;
+    private Integer roomId;		// 消息所在房间id
 
-    private User sender;    // 发送方
+    private User sender;    	// 发送方
 
-    private User receiver;  // 接收方
+    private User receiver;  	// 接收方
 
-    private File file;
+    private File file;			// 文件
 
-    private String message;
+    private String message;		// 消息内容
 
-    private Integer fontSize;
+    private Integer fontSize;	// 字体大小
 
-    private Integer fontWeight;
+    private Integer fontWeight;	// 字体粗细
 
-    private String fontStyle;
+    private String fontStyle;	// 字体
 
     public Message() {
         date = new Date();

@@ -10,13 +10,13 @@ import java.text.DecimalFormat;
 public class Image implements Serializable {
     private Integer id;
 
-    private String url;
+    private String url;         // 图片路径
 
-    private Integer width;
+    private Integer width;      // 图片宽度
 
-    private Integer height;
+    private Integer height;     // 图片长度
 
-    private Double proportion;
+    private Double proportion;  // 宽长比
 
     public Image() {
     }

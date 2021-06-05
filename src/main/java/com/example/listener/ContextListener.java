@@ -1,6 +1,6 @@
 package com.example.listener;
 
-import com.example.entity.Server;
+import com.example.utils.Server;
 import com.example.utils.SocketMap;
 
 import javax.servlet.ServletContextEvent;

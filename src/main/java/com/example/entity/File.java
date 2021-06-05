@@ -5,13 +5,13 @@ import java.io.Serializable;
 public class File implements Serializable {
     private Integer id;
 
-    private String name;
+    private String name;    // 文件名
 
-    private String path;
+    private String path;    // 文件路径
 
-    private Long size;
+    private Long size;      // 文件大小
 
-    private Image image;
+    private Image image;    // 包含的图片
 
     public File() {
     }
